@@ -1,0 +1,18 @@
+#ifndef LIBCHESS_MOVEGEN_HPP
+#define LIBCHESS_MOVEGEN_HPP
+
+#include <cstdint>
+#include "bitboard.hpp"
+#include "square.hpp"
+
+namespace libchess::movegen {
+
+Bitboard knight_moves(const Square sq, const Bitboard &occ);
+Bitboard bishop_moves(const Square sq, const Bitboard &occ);
+Bitboard rook_moves(const Square sq, const Bitboard &occ);
+Bitboard queen_moves(const Square sq, const Bitboard &occ);
+Bitboard king_moves(const Square sq, const Bitboard &occ);
+
+}  // namespace libchess::movegen
+
+#endif

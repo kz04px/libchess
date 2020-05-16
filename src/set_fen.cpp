@@ -115,6 +115,12 @@ void Position::set_fen(const std::string &fen) noexcept {
         ep_ = sq.file();
     }
 
+    // Halfmove clock
+    ss >> halfmove_clock_;
+
+    // Fullmove clock
+    ss >> fullmove_clock_;
+
     assert(valid());
 }
 

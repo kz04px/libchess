@@ -82,9 +82,7 @@ class Position {
 
     void set_fen(const std::string &fen) noexcept;
 
-    [[nodiscard]] std::string get_fen() const noexcept {
-        return "";
-    }
+    [[nodiscard]] std::string get_fen() const noexcept;
 
     [[nodiscard]] bool is_legal(const Move &m) const noexcept;
 
@@ -292,8 +290,8 @@ class Position {
 
     Bitboard colours_[2];
     Bitboard pieces_[6];
-    unsigned int halfmove_clock_;
-    unsigned int fullmove_clock_;
+    int halfmove_clock_;
+    int fullmove_clock_;
     std::uint64_t hash_;
     bool castling_[4];
     Side to_move_;

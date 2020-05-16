@@ -27,6 +27,7 @@ add_library(
     src/checkers.cpp
     src/check_evasions.cpp
     src/count_moves.cpp
+    src/get_fen.cpp
     src/is_legal.cpp
     src/king_allowed.cpp
     src/legal_moves.cpp
@@ -52,6 +53,7 @@ add_library(
     src/checkers.cpp
     src/check_evasions.cpp
     src/count_moves.cpp
+    src/get_fen.cpp
     src/is_legal.cpp
     src/king_allowed.cpp
     src/legal_moves.cpp

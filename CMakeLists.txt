@@ -84,6 +84,7 @@ add_executable(
     tests/iterator.cpp
     tests/perft.cpp
     tests/pinned.cpp
+    tests/squares_attacked.cpp
 )
 
 # Add example

@@ -76,6 +76,7 @@ add_executable(
     libchess-test
     tests/main.cpp
     tests/checkers.cpp
+    tests/consistency.cpp
     tests/fen.cpp
     tests/in_check.cpp
     tests/is_capture.cpp

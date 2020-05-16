@@ -94,6 +94,14 @@ class Position {
         return halfmove_clock_ >= 100;
     }
 
+    [[nodiscard]] constexpr int halfmoves() const noexcept {
+        return halfmove_clock_;
+    }
+
+    [[nodiscard]] constexpr int fullmoves() const noexcept {
+        return fullmove_clock_;
+    }
+
     [[nodiscard]] constexpr Square king_position(const Side s) const noexcept {
         return pieces(s, Piece::King).lsbll();
     }

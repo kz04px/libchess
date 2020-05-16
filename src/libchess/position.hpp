@@ -293,6 +293,7 @@ class Position {
     struct meh {
         Move move;
         int ep;
+        int halfmove_clock;
         bool castling[4];
     };
 

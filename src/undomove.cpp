@@ -16,6 +16,9 @@ void Position::undomove() noexcept {
     // En passant
     ep_ = history_.back().ep;
 
+    // Halfmoves
+    halfmove_clock_ = history_.back().halfmove_clock;
+
     // Castling
     castling_[0] = history_.back().castling[0];
     castling_[1] = history_.back().castling[1];

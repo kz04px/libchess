@@ -11,6 +11,7 @@ void Position::makemove(const Move &move) noexcept {
     const auto captured = move.captured();
     const auto promo = move.promotion();
     const auto ep_old = ep_;
+    const auto halfmove_clock_old = halfmove_clock_;
 
     assert(to != from);
     assert(piece != Piece::None);
@@ -29,14 +30,21 @@ void Position::makemove(const Move &move) noexcept {
     // Remove ep
     ep_ = 0xFF;
 
+    // Increment halfmove clock
+    halfmove_clock_++;
+
     switch (move.type()) {
         case MoveType::Normal:
             assert(captured == Piece::None);
             assert(promo == Piece::None);
+
+            halfmove_clock_ += (piece == Piece::Pawn);
             break;
         case MoveType::Capture:
             assert(captured != Piece::None);
             assert(promo == Piece::None);
+
+            halfmove_clock_ = 0;
 
             // Remove the captured piece
             pieces_[captured] ^= move.to();
@@ -48,6 +56,7 @@ void Position::makemove(const Move &move) noexcept {
             assert(promo == Piece::None);
             assert(to.file() == from.file());
 
+            halfmove_clock_ = 0;
             ep_ = to.file();
             break;
         case MoveType::enpassant:
@@ -55,6 +64,8 @@ void Position::makemove(const Move &move) noexcept {
             assert(captured == Piece::Pawn);
             assert(promo == Piece::None);
             assert(to.file() == ep_old);
+
+            halfmove_clock_ = 0;
 
             // Remove the captured pawn
             if (turn() == Side::White) {
@@ -94,6 +105,8 @@ void Position::makemove(const Move &move) noexcept {
             assert(captured == Piece::None);
             assert(promo != Piece::None);
 
+            halfmove_clock_ = 0;
+
             // Replace pawn with piece
             pieces_[Piece::Pawn] ^= move.to();
             pieces_[promo] ^= move.to();
@@ -102,6 +115,8 @@ void Position::makemove(const Move &move) noexcept {
             assert(piece == Piece::Pawn);
             assert(captured != Piece::None);
             assert(promo != Piece::None);
+
+            halfmove_clock_ = 0;
 
             // Replace pawn with piece
             pieces_[Piece::Pawn] ^= move.to();
@@ -118,6 +133,7 @@ void Position::makemove(const Move &move) noexcept {
     history_.push_back(
         meh{move,
             ep_old,
+            halfmove_clock_old,
             {castling_[0], castling_[1], castling_[2], castling_[3]}});
 
     // Castling permissions

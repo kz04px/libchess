@@ -1,6 +1,5 @@
 #include <chrono>
 #include <iostream>
-#include <libchess/movegen.hpp>
 #include <libchess/position.hpp>
 
 int main(int argc, char **argv) {

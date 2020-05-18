@@ -1,7 +1,6 @@
 #ifndef LIBCHESS_MOVEGEN_HPP
 #define LIBCHESS_MOVEGEN_HPP
 
-#include <cstdint>
 #include "bitboard.hpp"
 #include "square.hpp"
 

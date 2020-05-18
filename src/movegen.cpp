@@ -1,4 +1,5 @@
 #include "libchess/movegen.hpp"
+#include <cstdint>
 
 namespace libchess::movegen {
 

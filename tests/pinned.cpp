@@ -1,6 +1,5 @@
 #include <libchess/position.hpp>
 #include <string>
-#include <vector>
 #include "catch.hpp"
 
 const std::pair<libchess::Bitboard, std::string> positions[] = {

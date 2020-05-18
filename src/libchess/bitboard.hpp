@@ -55,7 +55,8 @@ class Bitboard {
     }
 
     [[nodiscard]] constexpr Bitboard adjacent() const noexcept {
-        return north() | south();
+        return north() | south() | east() | west() | north().east() |
+               north().west() | south().east() | south().west();
     }
 
     constexpr void clear() noexcept {

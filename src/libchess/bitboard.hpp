@@ -156,16 +156,6 @@ class Bitboard {
         return (mask_ >> 1) & ~0x8080808080808080ULL;
     }
 
-    /*
-    [[nodiscard]] constexpr Bitboard east() const noexcept {
-        return (mask_ << 1) & (~constants::FileA);
-    }
-
-    [[nodiscard]] constexpr Bitboard west() const noexcept {
-        return (mask_ >> 1) & (~constants::FileH);
-    }
-    */
-
    private:
     std::uint64_t mask_;
 };

@@ -255,6 +255,7 @@ constexpr Bitboard LightSquares = {0x55aa55aa55aa55aa};
 constexpr Bitboard DarkSquares = {0xaa55aa55aa55aa55};
 constexpr Bitboard Empty = {0x0000000000000000};
 constexpr Bitboard AllSquares = {0xffffffffffffffff};
+constexpr Bitboard Edge = {0xff818181818181ff};
 
 static_assert(Empty.count() == 0);
 static_assert(Empty.empty());
@@ -270,6 +271,7 @@ static_assert((LightSquares & DarkSquares) == Empty);
 static_assert((LightSquares | DarkSquares) == AllSquares);
 static_assert(~LightSquares == DarkSquares);
 static_assert(~DarkSquares == LightSquares);
+static_assert(Edge == (FileA | FileH | Rank1 | Rank8));
 static_assert(Rank1.north() == Rank2);
 static_assert(Rank2.north() == Rank3);
 static_assert(Rank3.north() == Rank4);

@@ -89,7 +89,7 @@ void Position::knight_moves(
     const Bitboard &pieces,
     const Bitboard &allowed = bitboards::AllSquares) const noexcept {
     for (const auto &fr : pieces) {
-        const auto mask = movegen::knight_moves(fr, 0) & allowed;
+        const auto mask = movegen::knight_moves(fr) & allowed;
         // Captures
         for (const auto &to : occupancy(!turn()) & mask) {
             const auto cap = piece_on(to);
@@ -169,7 +169,7 @@ void Position::king_moves(std::vector<Move> &moves,
                           const Bitboard &allowed = bitboards::AllSquares) const
     noexcept {
     for (const auto &fr : pieces) {
-        const auto mask = movegen::king_moves(fr, 0) & allowed;
+        const auto mask = movegen::king_moves(fr) & allowed;
         // Captures
         for (const auto &to : occupancy(!turn()) & mask) {
             const auto cap = piece_on(to);

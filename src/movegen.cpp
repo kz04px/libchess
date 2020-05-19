@@ -356,8 +356,8 @@ std::array<std::uint64_t, 89524> generate_magic_moves() {
 
 const auto magic_moves = generate_magic_moves();
 
-Bitboard knight_moves(const Square sq, const Bitboard &occ) {
-    return knight_masks[static_cast<int>(sq)] & ~occ;
+Bitboard knight_moves(const Square sq) {
+    return knight_masks[static_cast<int>(sq)];
 }
 
 Bitboard bishop_moves(const Square sq, const Bitboard &occ) {
@@ -376,8 +376,8 @@ Bitboard queen_moves(const Square sq, const Bitboard &occ) {
     return bishop_moves(sq, occ) | rook_moves(sq, occ);
 }
 
-Bitboard king_moves(const Square sq, const Bitboard &occ) {
-    return king_masks[static_cast<int>(sq)] & ~occ;
+Bitboard king_moves(const Square sq) {
+    return king_masks[static_cast<int>(sq)];
 }
 
 }  // namespace libchess::movegen

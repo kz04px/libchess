@@ -18,7 +18,7 @@ namespace libchess {
         mask |= pawns & bb.north().west();
     }
 
-    mask |= movegen::knight_moves(sq, 0) & pieces(s, Piece::Knight);
+    mask |= movegen::knight_moves(sq) & pieces(s, Piece::Knight);
 
     mask |= movegen::bishop_moves(sq, ~empty()) &
             (pieces(s, Piece::Bishop) | pieces(s, Piece::Queen));
@@ -26,7 +26,7 @@ namespace libchess {
     mask |= movegen::rook_moves(sq, ~empty()) &
             (pieces(s, Piece::Rook) | pieces(s, Piece::Queen));
 
-    mask |= movegen::king_moves(sq, occupancy(!s)) & pieces(s, Piece::King);
+    mask |= movegen::king_moves(sq) & pieces(s, Piece::King);
 
     return mask;
 }

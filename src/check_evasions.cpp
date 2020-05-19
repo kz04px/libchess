@@ -9,7 +9,7 @@ namespace libchess {
 
     const auto ksq = king_position(turn());
     const auto safe = king_allowed(turn());
-    const auto mask = movegen::king_moves(ksq, ~safe);
+    const auto mask = movegen::king_moves(ksq) & safe;
 
     // Captures
     for (const auto &to : occupancy(!turn()) & mask) {

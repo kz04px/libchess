@@ -19,7 +19,7 @@ namespace libchess {
 
     // Knights
     for (const auto &fr : pieces(s, Piece::Knight)) {
-        mask |= movegen::knight_moves(fr, 0);
+        mask |= movegen::knight_moves(fr);
     }
 
     // Bishops
@@ -38,7 +38,7 @@ namespace libchess {
     }
 
     // King
-    mask |= movegen::king_moves(king_position(s), 0);
+    mask |= movegen::king_moves(king_position(s));
 
     return mask;
 }

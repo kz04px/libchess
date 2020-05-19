@@ -1,4 +1,5 @@
 #include "libchess/movegen.hpp"
+#include <array>
 #include <cstdint>
 
 namespace libchess::movegen {
@@ -89530,139 +89531,106 @@ constexpr const std::uint64_t magic_moves[] = {
     0x40a0400000,
 };
 
-constexpr const Bitboard knights[] = {
-    0x20400,
-    0x50800,
-    0xa1100,
-    0x142200,
-    0x284400,
-    0x508800,
-    0xa01000,
-    0x402000,
-    0x2040004,
-    0x5080008,
-    0xa110011,
-    0x14220022,
-    0x28440044,
-    0x50880088,
-    0xa0100010,
-    0x40200020,
-    0x204000402,
-    0x508000805,
-    0xa1100110a,
-    0x1422002214,
-    0x2844004428,
-    0x5088008850,
-    0xa0100010a0,
-    0x4020002040,
-    0x20400040200,
-    0x50800080500,
-    0xa1100110a00,
-    0x142200221400,
-    0x284400442800,
-    0x508800885000,
-    0xa0100010a000,
-    0x402000204000,
-    0x2040004020000,
-    0x5080008050000,
-    0xa1100110a0000,
-    0x14220022140000,
-    0x28440044280000,
-    0x50880088500000,
-    0xa0100010a00000,
-    0x40200020400000,
-    0x204000402000000,
-    0x508000805000000,
-    0xa1100110a000000,
-    0x1422002214000000,
-    0x2844004428000000,
-    0x5088008850000000,
-    0xa0100010a0000000,
-    0x4020002040000000,
-    0x400040200000000,
-    0x800080500000000,
-    0x1100110a00000000,
-    0x2200221400000000,
-    0x4400442800000000,
-    0x8800885000000000,
-    0x100010a000000000,
-    0x2000204000000000,
-    0x4020000000000,
-    0x8050000000000,
-    0x110a0000000000,
-    0x22140000000000,
-    0x44280000000000,
-    0x88500000000000,
-    0x10a00000000000,
-    0x20400000000000,
-};
+[[nodiscard]] constexpr std::array<Bitboard, 64> calculate_knight_masks() {
+    std::array<Bitboard, 64> result = {};
+    for (int i = 0; i < 64; ++i) {
+        const auto sq = Square{i};
+        const auto bb = Bitboard{sq};
 
-constexpr const Bitboard kings[] = {
-    0x302,
-    0x705,
-    0xe0a,
-    0x1c14,
-    0x3828,
-    0x7050,
-    0xe0a0,
-    0xc040,
-    0x30203,
-    0x70507,
-    0xe0a0e,
-    0x1c141c,
-    0x382838,
-    0x705070,
-    0xe0a0e0,
-    0xc040c0,
-    0x3020300,
-    0x7050700,
-    0xe0a0e00,
-    0x1c141c00,
-    0x38283800,
-    0x70507000,
-    0xe0a0e000,
-    0xc040c000,
-    0x302030000,
-    0x705070000,
-    0xe0a0e0000,
-    0x1c141c0000,
-    0x3828380000,
-    0x7050700000,
-    0xe0a0e00000,
-    0xc040c00000,
-    0x30203000000,
-    0x70507000000,
-    0xe0a0e000000,
-    0x1c141c000000,
-    0x382838000000,
-    0x705070000000,
-    0xe0a0e0000000,
-    0xc040c0000000,
-    0x3020300000000,
-    0x7050700000000,
-    0xe0a0e00000000,
-    0x1c141c00000000,
-    0x38283800000000,
-    0x70507000000000,
-    0xe0a0e000000000,
-    0xc040c000000000,
-    0x302030000000000,
-    0x705070000000000,
-    0xe0a0e0000000000,
-    0x1c141c0000000000,
-    0x3828380000000000,
-    0x7050700000000000,
-    0xe0a0e00000000000,
-    0xc040c00000000000,
-    0x203000000000000,
-    0x507000000000000,
-    0xa0e000000000000,
-    0x141c000000000000,
-    0x2838000000000000,
-    0x5070000000000000,
-    0xa0e0000000000000,
-    0x40c0000000000000,
-};
+        result[i] = bb.north().north().east();
+        result[i] |= bb.north().north().west();
+        result[i] |= bb.south().south().east();
+        result[i] |= bb.south().south().west();
+        result[i] |= bb.east().east().north();
+        result[i] |= bb.east().east().south();
+        result[i] |= bb.west().west().north();
+        result[i] |= bb.west().west().south();
+    }
+    return result;
+}
+
+[[nodiscard]] constexpr std::array<Bitboard, 64> calculate_bishop_masks() {
+    std::array<Bitboard, 64> result = {};
+    for (int i = 0; i < 64; ++i) {
+        const auto sq = Square{i};
+        const int file = sq.file();
+        const int rank = sq.rank();
+
+        // Up 1 Right 1
+        for (int y = rank + 1, x = file + 1; y <= 6 && x <= 6; ++y, ++x) {
+            const auto nsq = Square{x + y * 8};
+            result[i] |= Bitboard{nsq};
+        }
+
+        // Up 1 Left 1
+        for (int y = rank + 1, x = file - 1; y <= 6 && x >= 1; ++y, --x) {
+            const auto nsq = Square{x + y * 8};
+            result[i] |= Bitboard{nsq};
+        }
+
+        // Down 1 Right 1
+        for (int y = rank - 1, x = file + 1; y >= 1 && x <= 6; --y, ++x) {
+            const auto nsq = Square{x + y * 8};
+            result[i] |= Bitboard{nsq};
+        }
+
+        // Down 1 Left 1
+        for (int y = rank - 1, x = file - 1; y >= 1 && x >= 1; --y, --x) {
+            const auto nsq = Square{x + y * 8};
+            result[i] |= Bitboard{nsq};
+        }
+    }
+    return result;
+}
+
+[[nodiscard]] constexpr std::array<Bitboard, 64> generate_rook_masks() {
+    std::array<Bitboard, 64> result = {};
+    for (int i = 0; i < 64; ++i) {
+        const auto sq = Square{i};
+        const int file = sq.file();
+        const int rank = sq.rank();
+
+        // Right
+        for (int r = rank + 1; r <= 6; ++r) {
+            const auto nsq = Square{file + r * 8};
+            result[i] |= Bitboard{nsq};
+        }
+
+        // Left
+        for (int r = rank - 1; r >= 1; --r) {
+            const auto nsq = Square{file + r * 8};
+            result[i] |= Bitboard{nsq};
+        }
+
+        // Up
+        for (int r = file + 1; r <= 6; ++r) {
+            const auto nsq = Square{r + rank * 8};
+            result[i] |= Bitboard{nsq};
+        }
+
+        // Down
+        for (int r = file - 1; r >= 1; --r) {
+            const auto nsq = Square{r + rank * 8};
+            result[i] |= Bitboard{nsq};
+        }
+    }
+    return result;
+}
+
+[[nodiscard]] constexpr std::array<Bitboard, 64> calculate_king_masks() {
+    std::array<Bitboard, 64> result = {};
+    for (int i = 0; i < 64; ++i) {
+        const auto sq = Square{i};
+        const auto bb = Bitboard{sq};
+        result[i] = bb.adjacent();
+    }
+    return result;
+}
+
+constexpr auto knight_masks = calculate_knight_masks();
+constexpr auto bishop_masks = calculate_bishop_masks();
+constexpr auto rook_masks = generate_rook_masks();
+constexpr auto king_masks = calculate_king_masks();
 
 // clang-format off
 const std::uint64_t bishop_magic[64] = {
@@ -89766,64 +89734,20 @@ const std::uint64_t *rook_offsets[64] = {
 };
 // clang-format on
 
-constexpr const Bitboard bishop_mask[] = {
-    0x40201008040200, 0x402010080400,   0x4020100a00,     0x40221400,
-    0x2442800,        0x204085000,      0x20408102000,    0x2040810204000,
-    0x20100804020000, 0x40201008040000, 0x4020100a0000,   0x4022140000,
-    0x244280000,      0x20408500000,    0x2040810200000,  0x4081020400000,
-    0x10080402000200, 0x20100804000400, 0x4020100a000a00, 0x402214001400,
-    0x24428002800,    0x2040850005000,  0x4081020002000,  0x8102040004000,
-    0x8040200020400,  0x10080400040800, 0x20100a000a1000, 0x40221400142200,
-    0x2442800284400,  0x4085000500800,  0x8102000201000,  0x10204000402000,
-    0x4020002040800,  0x8040004081000,  0x100a000a102000, 0x22140014224000,
-    0x44280028440200, 0x8500050080400,  0x10200020100800, 0x20400040201000,
-    0x2000204081000,  0x4000408102000,  0xa000a10204000,  0x14001422400000,
-    0x28002844020000, 0x50005008040200, 0x20002010080400, 0x40004020100800,
-    0x20408102000,    0x40810204000,    0xa1020400000,    0x142240000000,
-    0x284402000000,   0x500804020000,   0x201008040200,   0x402010080400,
-    0x2040810204000,  0x4081020400000,  0xa102040000000,  0x14224000000000,
-    0x28440200000000, 0x50080402000000, 0x20100804020000, 0x40201008040200,
-};
-
-constexpr const Bitboard rook_mask[] = {
-    0x101010101017e,    0x202020202027c,    0x404040404047a,
-    0x8080808080876,    0x1010101010106e,   0x2020202020205e,
-    0x4040404040403e,   0x8080808080807e,   0x1010101017e00,
-    0x2020202027c00,    0x4040404047a00,    0x8080808087600,
-    0x10101010106e00,   0x20202020205e00,   0x40404040403e00,
-    0x80808080807e00,   0x10101017e0100,    0x20202027c0200,
-    0x40404047a0400,    0x8080808760800,    0x101010106e1000,
-    0x202020205e2000,   0x404040403e4000,   0x808080807e8000,
-    0x101017e010100,    0x202027c020200,    0x404047a040400,
-    0x8080876080800,    0x1010106e101000,   0x2020205e202000,
-    0x4040403e404000,   0x8080807e808000,   0x1017e01010100,
-    0x2027c02020200,    0x4047a04040400,    0x8087608080800,
-    0x10106e10101000,   0x20205e20202000,   0x40403e40404000,
-    0x80807e80808000,   0x17e0101010100,    0x27c0202020200,
-    0x47a0404040400,    0x8760808080800,    0x106e1010101000,
-    0x205e2020202000,   0x403e4040404000,   0x807e8080808000,
-    0x7e010101010100,   0x7c020202020200,   0x7a040404040400,
-    0x76080808080800,   0x6e101010101000,   0x5e202020202000,
-    0x3e404040404000,   0x7e808080808000,   0x7e01010101010100,
-    0x7c02020202020200, 0x7a04040404040400, 0x7608080808080800,
-    0x6e10101010101000, 0x5e20202020202000, 0x3e40404040404000,
-    0x7e80808080808000,
-};
-
 Bitboard knight_moves(const Square sq, const Bitboard &occ) {
-    return knights[static_cast<int>(sq)] & ~occ;
+    return knight_masks[static_cast<int>(sq)] & ~occ;
 }
 
 Bitboard bishop_moves(const Square sq, const Bitboard &occ) {
     const int idx = static_cast<int>(sq);
     return *(bishop_offsets[idx] +
-             (((occ & bishop_mask[idx]).value() * bishop_magic[idx]) >> 55));
+             (((occ & bishop_masks[idx]).value() * bishop_magic[idx]) >> 55));
 }
 
 Bitboard rook_moves(const Square sq, const Bitboard &occ) {
     const int idx = static_cast<int>(sq);
     return *(rook_offsets[idx] +
-             (((occ & rook_mask[idx]).value() * rook_magic[idx]) >> 52));
+             (((occ & rook_masks[idx]).value() * rook_magic[idx]) >> 52));
 }
 
 Bitboard queen_moves(const Square sq, const Bitboard &occ) {
@@ -89831,7 +89755,7 @@ Bitboard queen_moves(const Square sq, const Bitboard &occ) {
 }
 
 Bitboard king_moves(const Square sq, const Bitboard &occ) {
-    return kings[static_cast<int>(sq)] & ~occ;
+    return king_masks[static_cast<int>(sq)] & ~occ;
 }
 
 }  // namespace libchess::movegen

@@ -5,107 +5,75 @@
 
 namespace libchess::movegen {
 
-// clang-format off
-constexpr std::uint64_t bishop_magic[64] = {
-    0x404040404040ULL,   0xa060401007fcULL,  0x401020200000ULL,
-    0x806004000000ULL,   0x440200000000ULL,  0x80100800000ULL,
-    0x104104004000ULL,   0x20020820080ULL,   0x40100202004ULL,
-    0x20080200802ULL,    0x10040080200ULL,   0x8060040000ULL,
-    0x4402000000ULL,     0x21c100b200ULL,    0x400410080ULL,
-    0x3f7f05fffc0ULL,    0x4228040808010ULL, 0x200040404040ULL,
-    0x400080808080ULL,   0x200200801000ULL,  0x240080840000ULL,
-    0x18000c03fff8ULL,   0xa5840208020ULL,   0x58408404010ULL,
-    0x2022000408020ULL,  0x402000408080ULL,  0x804000810100ULL,
-    0x100403c0403ffULL,  0x78402a8802000ULL, 0x101000804400ULL,
-    0x80800104100ULL,    0x400480101008ULL,  0x1010102004040ULL,
-    0x808090402020ULL,   0x7fefe08810010ULL, 0x3ff0f833fc080ULL,
-    0x7fe08019003042ULL, 0x202040008040ULL,  0x1004008381008ULL,
-    0x802003700808ULL,   0x208200400080ULL,  0x104100200040ULL,
-    0x3ffdf7f833fc0ULL,  0x8840450020ULL,    0x20040100100ULL,
-    0x7fffdd80140028ULL, 0x202020200040ULL,  0x1004010039004ULL,
-    0x40041008000ULL,    0x3ffefe0c02200ULL, 0x1010806000ULL,
-    0x08403000ULL,       0x100202000ULL,     0x40100200800ULL,
-    0x404040404000ULL,   0x6020601803f4ULL,  0x3ffdfdfc28048ULL,
-    0x820820020ULL,      0x10108060ULL,      0x00084030ULL,
-    0x01002020ULL,       0x40408020ULL,      0x4040404040ULL,
-    0x404040404040ULL,
+constexpr std::pair<std::uint64_t, int> bishop_stuff[64] = {
+    {0x007fbfbfbfbfbfffULL, 5378},  {0x0000a060401007fcULL, 4093},
+    {0x0001004008020000ULL, 4314},  {0x0000806004000000ULL, 6587},
+    {0x0000100400000000ULL, 6491},  {0x000021c100b20000ULL, 6330},
+    {0x0000040041008000ULL, 5609},  {0x00000fb0203fff80ULL, 22236},
+    {0x0000040100401004ULL, 6106},  {0x0000020080200802ULL, 5625},
+    {0x0000004010202000ULL, 16785}, {0x0000008060040000ULL, 16817},
+    {0x0000004402000000ULL, 6842},  {0x0000000801008000ULL, 7003},
+    {0x000007efe0bfff80ULL, 4197},  {0x0000000820820020ULL, 7356},
+    {0x0000400080808080ULL, 4602},  {0x00021f0100400808ULL, 4538},
+    {0x00018000c06f3fffULL, 29531}, {0x0000258200801000ULL, 45393},
+    {0x0000240080840000ULL, 12420}, {0x000018000c03fff8ULL, 15763},
+    {0x00000a5840208020ULL, 5050},  {0x0000020008208020ULL, 4346},
+    {0x0000804000810100ULL, 6074},  {0x0001011900802008ULL, 7866},
+    {0x0000804000810100ULL, 32139}, {0x000100403c0403ffULL, 57673},
+    {0x00078402a8802000ULL, 55365}, {0x0000101000804400ULL, 15818},
+    {0x0000080800104100ULL, 5562},  {0x00004004c0082008ULL, 6390},
+    {0x0001010120008020ULL, 7930},  {0x000080809a004010ULL, 13329},
+    {0x0007fefe08810010ULL, 7170},  {0x0003ff0f833fc080ULL, 27267},
+    {0x007fe08019003042ULL, 53787}, {0x003fffefea003000ULL, 5097},
+    {0x0000101010002080ULL, 6643},  {0x0000802005080804ULL, 6138},
+    {0x0000808080a80040ULL, 7418},  {0x0000104100200040ULL, 7898},
+    {0x0003ffdf7f833fc0ULL, 42012}, {0x0000008840450020ULL, 57350},
+    {0x00007ffc80180030ULL, 22813}, {0x007fffdd80140028ULL, 56693},
+    {0x00020080200a0004ULL, 5818},  {0x0000101010100020ULL, 7098},
+    {0x0007ffdfc1805000ULL, 4451},  {0x0003ffefe0c02200ULL, 4709},
+    {0x0000000820806000ULL, 4794},  {0x0000000008403000ULL, 13364},
+    {0x0000000100202000ULL, 4570},  {0x0000004040802000ULL, 4282},
+    {0x0004010040100400ULL, 14964}, {0x00006020601803f4ULL, 4026},
+    {0x0003ffdfdfc28048ULL, 4826},  {0x0000000820820020ULL, 7354},
+    {0x0000000008208060ULL, 4848},  {0x0000000000808020ULL, 15946},
+    {0x0000000001002020ULL, 14932}, {0x0000000401002008ULL, 16588},
+    {0x0000004040404040ULL, 6905},  {0x007fff9fdf7ff813ULL, 16076},
 };
 
-constexpr std::uint64_t bishop_offsets[64] = {
-    33104, 4094,  24764,
-    13882, 23090, 32640,
-    11558, 32912, 13674,
-    6109,  26494, 17919,
-    25757, 17338, 16983,
-    16659, 13610, 2224,
-    60405, 7983,  17,
-    34321, 33216, 17127,
-    6397,  22169, 42727,
-    155,   8601,  21101,
-    29885, 29340, 19785,
-    12258, 50451, 1712,
-    78475, 7855,  13642,
-    8156,  4348,  28794,
-    22578, 50315, 85452,
-    32816, 13930, 17967,
-    33200, 32456, 7762,
-    7794,  22761, 14918,
-    11620, 15925, 32528,
-    12196, 32720, 26781,
-    19817, 24732, 25468,
-    10186,
+constexpr std::pair<std::uint64_t, int> rook_stuff[64] = {
+    {0x00280077ffebfffeULL, 26304}, {0x2004010201097fffULL, 35520},
+    {0x0010020010053fffULL, 38592}, {0x0040040008004002ULL, 8026},
+    {0x7fd00441ffffd003ULL, 22196}, {0x4020008887dffffeULL, 80870},
+    {0x004000888847ffffULL, 76747}, {0x006800fbff75fffdULL, 30400},
+    {0x000028010113ffffULL, 11115}, {0x0020040201fcffffULL, 18205},
+    {0x007fe80042ffffe8ULL, 53577}, {0x00001800217fffe8ULL, 62724},
+    {0x00001800073fffe8ULL, 34282}, {0x00001800e05fffe8ULL, 29196},
+    {0x00001800602fffe8ULL, 23806}, {0x000030002fffffa0ULL, 49481},
+    {0x00300018010bffffULL, 2410},  {0x0003000c0085fffbULL, 36498},
+    {0x0004000802010008ULL, 24478}, {0x0004002020020004ULL, 10074},
+    {0x0001002002002001ULL, 79315}, {0x0001001000801040ULL, 51779},
+    {0x0000004040008001ULL, 13586}, {0x0000006800cdfff4ULL, 19323},
+    {0x0040200010080010ULL, 70612}, {0x0000080010040010ULL, 83652},
+    {0x0004010008020008ULL, 63110}, {0x0000040020200200ULL, 34496},
+    {0x0002008010100100ULL, 84966}, {0x0000008020010020ULL, 54341},
+    {0x0000008020200040ULL, 60421}, {0x0000820020004020ULL, 86402},
+    {0x00fffd1800300030ULL, 50245}, {0x007fff7fbfd40020ULL, 76622},
+    {0x003fffbd00180018ULL, 84676}, {0x001fffde80180018ULL, 78757},
+    {0x000fffe0bfe80018ULL, 37346}, {0x0001000080202001ULL, 370},
+    {0x0003fffbff980180ULL, 42182}, {0x0001fffdff9000e0ULL, 45385},
+    {0x00fffefeebffd800ULL, 61659}, {0x007ffff7ffc01400ULL, 12790},
+    {0x003fffbfe4ffe800ULL, 16762}, {0x001ffff01fc03000ULL, 0},
+    {0x000fffe7f8bfe800ULL, 38380}, {0x0007ffdfdf3ff808ULL, 11098},
+    {0x0003fff85fffa804ULL, 21803}, {0x0001fffd75ffa802ULL, 39189},
+    {0x00ffffd7ffebffd8ULL, 58628}, {0x007fff75ff7fbfd8ULL, 44116},
+    {0x003fff863fbf7fd8ULL, 78357}, {0x001fffbfdfd7ffd8ULL, 44481},
+    {0x000ffff810280028ULL, 64134}, {0x0007ffd7f7feffd8ULL, 41759},
+    {0x0003fffc0c480048ULL, 1394},  {0x0001ffffafd7ffd8ULL, 40910},
+    {0x00ffffe4ffdfa3baULL, 66516}, {0x007fffef7ff3d3daULL, 3897},
+    {0x003fffbfdfeff7faULL, 3930},  {0x001fffeff7fbfc22ULL, 72934},
+    {0x0000020408001001ULL, 72662}, {0x0007fffeffff77fdULL, 56325},
+    {0x0003ffffbf7dfeecULL, 66501}, {0x0001ffff9dffa333ULL, 14826},
 };
-
-constexpr std::uint64_t rook_magic[64] = {
-    0x280077ffebfffeULL, 0x2004010201097fffULL, 0x10020010053fffULL,
-    0x30002ff71ffffaULL, 0x7fd00441ffffd003ULL, 0x4001d9e03ffff7ULL,
-    0x4000888847ffffULL, 0x6800fbff75fffdULL,   0x28010113ffffULL,
-    0x20040201fcffffULL, 0x7fe80042ffffe8ULL,   0x1800217fffe8ULL,
-    0x1800073fffe8ULL,   0x7fe8009effffe8ULL,   0x1800602fffe8ULL,
-    0x30002fffffa0ULL,   0x300018010bffffULL,   0x3000c0085fffbULL,
-    0x4000802010008ULL,  0x2002004002002ULL,    0x2002020010002ULL,
-    0x1002020008001ULL,  0x4040008001ULL,       0x802000200040ULL,
-    0x40200010080010ULL, 0x80010040010ULL,      0x4010008020008ULL,
-    0x40020200200ULL,    0x10020020020ULL,      0x10020200080ULL,
-    0x8020200040ULL,     0x200020004081ULL,     0xfffd1800300030ULL,
-    0x7fff7fbfd40020ULL, 0x3fffbd00180018ULL,   0x1fffde80180018ULL,
-    0xfffe0bfe80018ULL,  0x1000080202001ULL,    0x3fffbff980180ULL,
-    0x1fffdff9000e0ULL,  0xfffeebfeffd800ULL,   0x7ffff7ffc01400ULL,
-    0x408104200204ULL,   0x1ffff01fc03000ULL,   0xfffe7f8bfe800ULL,
-    0x8001002020ULL,     0x3fff85fffa804ULL,    0x1fffd75ffa802ULL,
-    0xffffec00280028ULL, 0x7fff75ff7fbfd8ULL,   0x3fff863fbf7fd8ULL,
-    0x1fffbfdfd7ffd8ULL, 0xffff810280028ULL,    0x7ffd7f7feffd8ULL,
-    0x3fffc0c480048ULL,  0x1ffffafd7ffd8ULL,    0xffffe4ffdfa3baULL,
-    0x7fffef7ff3d3daULL, 0x3fffbfdfeff7faULL,   0x1fffeff7fbfc22ULL,
-    0x20408001001ULL,    0x7fffeffff77fdULL,    0x3ffffbf7dfeecULL,
-    0x1ffff9dffa333ULL,
-};
-
-constexpr std::uint64_t rook_offsets[64] = {
-    41305, 14326, 24477,
-    8223,  49795, 60546,
-    28543, 79282, 6457,
-    4125,  81021, 42341,
-    14139, 19465, 9514,
-    71090, 75419, 33476,
-    27117, 85964, 54915,
-    36544, 71854, 37996,
-    30398, 55939, 53891,
-    56963, 77451, 12319,
-    88500, 51405, 72878,
-    676,   83122, 22206,
-    75186, 681,   36453,
-    20369, 1981,  13343,
-    10650, 57987, 26302,
-    58357, 40546, 0,
-    14967, 80361, 40905,
-    58347, 20381, 81868,
-    59381, 84404, 45811,
-    62898, 45796, 66994,
-    67204, 32448, 62946,
-    17005,
-};
-// clang-format on
 
 [[nodiscard]] constexpr std::array<Bitboard, 64> calculate_knight_masks() {
     std::array<Bitboard, 64> result = {};
@@ -318,8 +286,8 @@ constexpr auto bishop_masks = calculate_bishop_masks();
 constexpr auto rook_masks = generate_rook_masks();
 constexpr auto king_masks = calculate_king_masks();
 
-std::array<std::uint64_t, 89524> generate_magic_moves() {
-    std::array<std::uint64_t, 89524> result = {};
+std::array<std::uint64_t, 88772> generate_magic_moves() {
+    std::array<std::uint64_t, 88772> result = {};
 
     for (int i = 0; i < 64; ++i) {
         assert(bishop_masks[i]);
@@ -332,9 +300,9 @@ std::array<std::uint64_t, 89524> generate_magic_moves() {
         perm = 0;
         do {
             std::uint64_t *index =
-                (std::uint64_t *)(result.data() + bishop_offsets[i] +
+                (std::uint64_t *)(result.data() + bishop_stuff[i].second +
                                   (((perm & bishop_masks[i]).value() *
-                                    bishop_magic[i]) >>
+                                    bishop_stuff[i].first) >>
                                    55));
             *index = calculate_bishop_moves(sq, perm).value();
         } while ((perm = permute(bishop_masks[i], perm)));
@@ -343,9 +311,9 @@ std::array<std::uint64_t, 89524> generate_magic_moves() {
         perm = 0;
         do {
             std::uint64_t *index =
-                (std::uint64_t *)(result.data() + rook_offsets[i] +
+                (std::uint64_t *)(result.data() + rook_stuff[i].second +
                                   (((perm & rook_masks[i]).value() *
-                                    rook_magic[i]) >>
+                                    rook_stuff[i].first) >>
                                    52));
             *index = calculate_rook_moves(sq, perm).value();
         } while ((perm = permute(rook_masks[i], perm)));
@@ -362,14 +330,15 @@ Bitboard knight_moves(const Square sq) {
 
 Bitboard bishop_moves(const Square sq, const Bitboard &occ) {
     const int idx = static_cast<int>(sq);
-    return *(magic_moves.data() + bishop_offsets[idx] +
-             (((occ & bishop_masks[idx]).value() * bishop_magic[idx]) >> 55));
+    return *(
+        magic_moves.data() + bishop_stuff[idx].second +
+        (((occ & bishop_masks[idx]).value() * bishop_stuff[idx].first) >> 55));
 }
 
 Bitboard rook_moves(const Square sq, const Bitboard &occ) {
     const int idx = static_cast<int>(sq);
-    return *(magic_moves.data() + rook_offsets[idx] +
-             (((occ & rook_masks[idx]).value() * rook_magic[idx]) >> 52));
+    return *(magic_moves.data() + rook_stuff[idx].second +
+             (((occ & rook_masks[idx]).value() * rook_stuff[idx].first) >> 52));
 }
 
 Bitboard queen_moves(const Square sq, const Bitboard &occ) {

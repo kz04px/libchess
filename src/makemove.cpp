@@ -18,6 +18,7 @@ void Position::makemove(const Move &move) noexcept {
     assert(captured != Piece::King);
     assert(promo != Piece::Pawn);
     assert(promo != Piece::King);
+    assert(piece_on(move.from()) == piece);
 
     // Remove piece
     colours_[us] ^= move.from();
@@ -55,6 +56,10 @@ void Position::makemove(const Move &move) noexcept {
             assert(captured == Piece::None);
             assert(promo == Piece::None);
             assert(to.file() == from.file());
+            assert((us == Side::White && move.to().rank() == 3) ||
+                   (us == Side::Black && move.to().rank() == 4));
+            assert((us == Side::White && move.from().rank() == 1) ||
+                   (us == Side::Black && move.from().rank() == 6));
 
             halfmove_clock_ = 0;
             ep_ = to.file();
@@ -64,6 +69,12 @@ void Position::makemove(const Move &move) noexcept {
             assert(captured == Piece::Pawn);
             assert(promo == Piece::None);
             assert(to.file() == ep_old);
+            assert((us == Side::White && move.to().rank() == 5) ||
+                   (us == Side::Black && move.to().rank() == 2));
+            assert((us == Side::White && move.from().rank() == 4) ||
+                   (us == Side::Black && move.from().rank() == 3));
+            assert(to.file() - from.file() == 1 ||
+                   from.file() - to.file() == 1);
 
             halfmove_clock_ = 0;
 
@@ -80,6 +91,25 @@ void Position::makemove(const Move &move) noexcept {
             assert(piece == Piece::King);
             assert(captured == Piece::None);
             assert(promo == Piece::None);
+            assert(can_castle(us, MoveType::ksc));
+            assert(us == Side::White ? move.from() == squares::E1
+                                     : move.from() == squares::E8);
+            assert(us == Side::White ? move.to() == squares::G1
+                                     : move.to() == squares::G8);
+            assert(us == Side::White ? piece_on(squares::E1) == Piece::None
+                                     : piece_on(squares::E8) == Piece::None);
+            assert(us == Side::White ? piece_on(squares::F1) == Piece::None
+                                     : piece_on(squares::F8) == Piece::None);
+            assert(us == Side::White ? piece_on(squares::G1) == Piece::King
+                                     : piece_on(squares::G8) == Piece::King);
+            assert(us == Side::White ? piece_on(squares::H1) == Piece::Rook
+                                     : piece_on(squares::H8) == Piece::Rook);
+            assert(us == Side::White ? !square_attacked(squares::E1, them)
+                                     : !square_attacked(squares::E8, them));
+            assert(us == Side::White ? !square_attacked(squares::F1, them)
+                                     : !square_attacked(squares::F8, them));
+            assert(us == Side::White ? !square_attacked(squares::G1, them)
+                                     : !square_attacked(squares::G8, them));
 
             // Remove the rook
             colours_[us] ^= ksc_rook_fr[us];
@@ -92,6 +122,27 @@ void Position::makemove(const Move &move) noexcept {
             assert(piece == Piece::King);
             assert(captured == Piece::None);
             assert(promo == Piece::None);
+            assert(can_castle(us, MoveType::qsc));
+            assert(us == Side::White ? move.from() == squares::E1
+                                     : move.from() == squares::E8);
+            assert(us == Side::White ? move.to() == squares::C1
+                                     : move.to() == squares::C8);
+            assert(us == Side::White ? piece_on(squares::E1) == Piece::None
+                                     : piece_on(squares::E8) == Piece::None);
+            assert(us == Side::White ? piece_on(squares::D1) == Piece::None
+                                     : piece_on(squares::D8) == Piece::None);
+            assert(us == Side::White ? piece_on(squares::C1) == Piece::King
+                                     : piece_on(squares::C8) == Piece::King);
+            assert(us == Side::White ? piece_on(squares::B1) == Piece::None
+                                     : piece_on(squares::B8) == Piece::None);
+            assert(us == Side::White ? piece_on(squares::A1) == Piece::Rook
+                                     : piece_on(squares::A8) == Piece::Rook);
+            assert(us == Side::White ? !square_attacked(squares::E1, them)
+                                     : !square_attacked(squares::E8, them));
+            assert(us == Side::White ? !square_attacked(squares::D1, them)
+                                     : !square_attacked(squares::D8, them));
+            assert(us == Side::White ? !square_attacked(squares::C1, them)
+                                     : !square_attacked(squares::C8, them));
 
             // Remove the rook
             colours_[us] ^= qsc_rook_fr[us];
@@ -104,6 +155,11 @@ void Position::makemove(const Move &move) noexcept {
             assert(piece == Piece::Pawn);
             assert(captured == Piece::None);
             assert(promo != Piece::None);
+            assert(move.to().file() == move.from().file());
+            assert((us == Side::White && move.to().rank() == 7) ||
+                   (us == Side::Black && move.to().rank() == 0));
+            assert((us == Side::White && move.from().rank() == 6) ||
+                   (us == Side::Black && move.from().rank() == 1));
 
             halfmove_clock_ = 0;
 
@@ -115,6 +171,11 @@ void Position::makemove(const Move &move) noexcept {
             assert(piece == Piece::Pawn);
             assert(captured != Piece::None);
             assert(promo != Piece::None);
+            assert(move.to().file() != move.from().file());
+            assert((us == Side::White && move.to().rank() == 7) ||
+                   (us == Side::Black && move.to().rank() == 0));
+            assert((us == Side::White && move.from().rank() == 6) ||
+                   (us == Side::Black && move.from().rank() == 1));
 
             halfmove_clock_ = 0;
 

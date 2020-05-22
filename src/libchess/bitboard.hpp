@@ -1,6 +1,7 @@
 #ifndef LIBCHESS_BITBOARD_HPP
 #define LIBCHESS_BITBOARD_HPP
 
+#include <array>
 #include <cassert>
 #include <cstdint>
 #include <ostream>
@@ -181,31 +182,47 @@ inline std::ostream &operator<<(std::ostream &os, const Bitboard &bb) noexcept {
     return os;
 }
 
-[[nodiscard]] constexpr Bitboard squares_between(Square sq1, const Square sq2) {
-    const auto dx = (sq2.file() - sq1.file());
-    const auto dy = (sq2.rank() - sq1.rank());
-    const auto adx = dx > 0 ? dx : -dx;
-    const auto ady = dy > 0 ? dy : -dy;
+constexpr std::array<std::array<Bitboard, 64>, 64> calculate_squares_between() {
+    std::array<std::array<Bitboard, 64>, 64> result;
 
-    if (dx == 0 || dy == 0 || adx == ady) {
-        Bitboard mask;
-        while (sq1 != sq2) {
-            if (dx > 0) {
-                sq1 = sq1.east();
-            } else if (dx < 0) {
-                sq1 = sq1.west();
+    for (int i = 0; i < 64; ++i) {
+        for (int j = 0; j < 64; ++j) {
+            auto sq1 = Square{i};
+            auto sq2 = Square{j};
+
+            const auto dx = (sq2.file() - sq1.file());
+            const auto dy = (sq2.rank() - sq1.rank());
+            const auto adx = dx > 0 ? dx : -dx;
+            const auto ady = dy > 0 ? dy : -dy;
+
+            if (dx == 0 || dy == 0 || adx == ady) {
+                Bitboard mask;
+                while (sq1 != sq2) {
+                    if (dx > 0) {
+                        sq1 = sq1.east();
+                    } else if (dx < 0) {
+                        sq1 = sq1.west();
+                    }
+                    if (dy > 0) {
+                        sq1 = sq1.north();
+                    } else if (dy < 0) {
+                        sq1 = sq1.south();
+                    }
+                    mask |= Bitboard{sq1};
+                }
+                result[i][j] = mask & ~Bitboard{sq2};
             }
-            if (dy > 0) {
-                sq1 = sq1.north();
-            } else if (dy < 0) {
-                sq1 = sq1.south();
-            }
-            mask |= Bitboard{sq1};
         }
-        return mask & ~Bitboard{sq2};
     }
 
-    return {};
+    return result;
+}
+
+constexpr auto lut_squares_between = calculate_squares_between();
+
+[[nodiscard]] constexpr Bitboard squares_between(const Square sq1,
+                                                 const Square sq2) {
+    return lut_squares_between[static_cast<int>(sq1)][static_cast<int>(sq2)];
 }
 
 namespace bitboards {

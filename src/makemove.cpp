@@ -10,6 +10,7 @@ void Position::makemove(const Move &move) noexcept {
     const auto piece = move.piece();
     const auto captured = move.captured();
     const auto promo = move.promotion();
+    const auto hash_old = hash_;
     const auto ep_old = ep_;
     const auto halfmove_clock_old = halfmove_clock_;
 
@@ -27,6 +28,12 @@ void Position::makemove(const Move &move) noexcept {
     // Add piece
     colours_[us] ^= move.to();
     pieces_[piece] ^= move.to();
+
+#ifndef NO_HASH
+    hash_ ^= zobrist::turn_key();
+    hash_ ^= zobrist::piece_key(piece, us, move.from());
+    hash_ ^= zobrist::piece_key(piece, us, move.to());
+#endif
 
     // Remove ep
     ep_ = 0xFF;
@@ -46,6 +53,10 @@ void Position::makemove(const Move &move) noexcept {
             assert(promo == Piece::None);
 
             halfmove_clock_ = 0;
+
+#ifndef NO_HASH
+            hash_ ^= zobrist::piece_key(captured, them, move.to());
+#endif
 
             // Remove the captured piece
             pieces_[captured] ^= move.to();
@@ -82,9 +93,17 @@ void Position::makemove(const Move &move) noexcept {
             if (turn() == Side::White) {
                 pieces_[Piece::Pawn] ^= move.to().south();
                 colours_[Side::Black] ^= move.to().south();
+#ifndef NO_HASH
+                hash_ ^=
+                    zobrist::piece_key(Piece::Pawn, them, move.to().south());
+#endif
             } else {
                 pieces_[Piece::Pawn] ^= move.to().north();
                 colours_[Side::White] ^= move.to().north();
+#ifndef NO_HASH
+                hash_ ^=
+                    zobrist::piece_key(Piece::Pawn, them, move.to().north());
+#endif
             }
             break;
         case MoveType::ksc:
@@ -110,6 +129,11 @@ void Position::makemove(const Move &move) noexcept {
                                      : !square_attacked(squares::F8, them));
             assert(us == Side::White ? !square_attacked(squares::G1, them)
                                      : !square_attacked(squares::G8, them));
+
+#ifndef NO_HASH
+            hash_ ^= zobrist::piece_key(Piece::Rook, us, ksc_rook_fr[us]);
+            hash_ ^= zobrist::piece_key(Piece::Rook, us, ksc_rook_to[us]);
+#endif
 
             // Remove the rook
             colours_[us] ^= ksc_rook_fr[us];
@@ -144,6 +168,11 @@ void Position::makemove(const Move &move) noexcept {
             assert(us == Side::White ? !square_attacked(squares::C1, them)
                                      : !square_attacked(squares::C8, them));
 
+#ifndef NO_HASH
+            hash_ ^= zobrist::piece_key(Piece::Rook, us, qsc_rook_fr[us]);
+            hash_ ^= zobrist::piece_key(Piece::Rook, us, qsc_rook_to[us]);
+#endif
+
             // Remove the rook
             colours_[us] ^= qsc_rook_fr[us];
             pieces_[Piece::Rook] ^= qsc_rook_fr[us];
@@ -163,6 +192,11 @@ void Position::makemove(const Move &move) noexcept {
 
             halfmove_clock_ = 0;
 
+#ifndef NO_HASH
+            hash_ ^= zobrist::piece_key(Piece::Pawn, us, move.to());
+            hash_ ^= zobrist::piece_key(promo, us, move.to());
+#endif
+
             // Replace pawn with piece
             pieces_[Piece::Pawn] ^= move.to();
             pieces_[promo] ^= move.to();
@@ -179,6 +213,12 @@ void Position::makemove(const Move &move) noexcept {
 
             halfmove_clock_ = 0;
 
+#ifndef NO_HASH
+            hash_ ^= zobrist::piece_key(captured, them, move.to());
+            hash_ ^= zobrist::piece_key(Piece::Pawn, us, move.to());
+            hash_ ^= zobrist::piece_key(promo, us, move.to());
+#endif
+
             // Replace pawn with piece
             pieces_[Piece::Pawn] ^= move.to();
             pieces_[promo] ^= move.to();
@@ -190,9 +230,19 @@ void Position::makemove(const Move &move) noexcept {
             abort();
     }
 
+#ifndef NO_HASH
+    const bool castling_old[] = {
+        castling_[0],
+        castling_[1],
+        castling_[2],
+        castling_[3],
+    };
+#endif
+
     // Add to history
     history_.push_back(
-        meh{move,
+        meh{hash_old,
+            move,
             ep_old,
             halfmove_clock_old,
             {castling_[0], castling_[1], castling_[2], castling_[3]}});
@@ -206,6 +256,21 @@ void Position::makemove(const Move &move) noexcept {
         !(to == squares::H8 || from == squares::E8 || from == squares::H8);
     castling_[themQSC] &=
         !(to == squares::A8 || from == squares::E8 || from == squares::A8);
+
+#ifndef NO_HASH
+    if (castling_[usKSC] != castling_old[usKSC]) {
+        hash_ ^= zobrist::castling_key(usKSC);
+    }
+    if (castling_[usQSC] != castling_old[usQSC]) {
+        hash_ ^= zobrist::castling_key(usQSC);
+    }
+    if (castling_[themKSC] != castling_old[themKSC]) {
+        hash_ ^= zobrist::castling_key(themKSC);
+    }
+    if (castling_[themQSC] != castling_old[themQSC]) {
+        hash_ ^= zobrist::castling_key(themQSC);
+    }
+#endif
 
     // Swap sides
     to_move_ = !to_move_;

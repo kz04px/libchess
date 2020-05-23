@@ -121,6 +121,13 @@ void Position::set_fen(const std::string &fen) noexcept {
     // Fullmove clock
     ss >> fullmove_clock_;
 
+    // Calculate hash
+#ifdef NO_HASH
+    hash_ = 0;
+#else
+    hash_ = calculate_hash();
+#endif
+
     assert(valid());
 }
 

@@ -8,6 +8,7 @@
 #include "move.hpp"
 #include "piece.hpp"
 #include "side.hpp"
+#include "zobrist.hpp"
 
 namespace libchess {
 
@@ -205,8 +206,84 @@ class Position {
     void undomove() noexcept;
 
     void makenull() noexcept {
-        history_.push_back(meh{});
+        history_.push_back(meh{
+            hash(),
+            {},
+            ep_,
+            halfmoves(),
+            {},
+        });
+
+#ifndef NO_HASH
+        if (ep_ != 0xFF) {
+            hash_ ^= zobrist::ep_key(ep_);
+        }
+        hash_ ^= zobrist::turn_key();
+#endif
+
         to_move_ = !to_move_;
+        ep_ = 0xFF;
+        halfmove_clock_ = 0;
+    }
+
+    void undonull() noexcept {
+        hash_ = history_.back().hash;
+        ep_ = history_.back().ep;
+        halfmove_clock_ = history_.back().halfmove_clock;
+        to_move_ = !to_move_;
+        history_.pop_back();
+    }
+
+    [[nodiscard]] constexpr std::uint64_t calculate_hash() const noexcept {
+        std::uint64_t hash = 0;
+
+        // Turn
+        if (turn() == Side::Black) {
+            hash ^= zobrist::turn_key();
+        }
+
+        // Pieces
+        for (const auto s : {Side::White, Side::Black}) {
+            for (const auto &sq : pieces(s, Piece::Pawn)) {
+                hash ^= zobrist::piece_key(Piece::Pawn, s, sq);
+            }
+            for (const auto &sq : pieces(s, Piece::Knight)) {
+                hash ^= zobrist::piece_key(Piece::Knight, s, sq);
+            }
+            for (const auto &sq : pieces(s, Piece::Bishop)) {
+                hash ^= zobrist::piece_key(Piece::Bishop, s, sq);
+            }
+            for (const auto &sq : pieces(s, Piece::Rook)) {
+                hash ^= zobrist::piece_key(Piece::Rook, s, sq);
+            }
+            for (const auto &sq : pieces(s, Piece::Queen)) {
+                hash ^= zobrist::piece_key(Piece::Queen, s, sq);
+            }
+            for (const auto &sq : pieces(s, Piece::King)) {
+                hash ^= zobrist::piece_key(Piece::King, s, sq);
+            }
+        }
+
+        // Castling
+        if (can_castle(Side::White, MoveType::ksc)) {
+            hash ^= zobrist::castling_key(usKSC);
+        }
+        if (can_castle(Side::White, MoveType::qsc)) {
+            hash ^= zobrist::castling_key(usQSC);
+        }
+        if (can_castle(Side::Black, MoveType::ksc)) {
+            hash ^= zobrist::castling_key(themKSC);
+        }
+        if (can_castle(Side::Black, MoveType::qsc)) {
+            hash ^= zobrist::castling_key(themQSC);
+        }
+
+        // EP
+        if (ep_ != 0xFF) {
+            hash ^= zobrist::ep_key(ep_);
+        }
+
+        return hash;
     }
 
     void clear() noexcept {
@@ -247,7 +324,17 @@ class Position {
         return Piece::None;
     }
 
-    [[nodiscard]] constexpr bool valid() const noexcept {
+    [[nodiscard]] bool valid() const noexcept {
+#ifdef NO_HASH
+        if (hash_ != 0) {
+            return false;
+        }
+#else
+        if (hash_ != calculate_hash()) {
+            return false;
+        }
+#endif
+
         if (ep_ != 0xFF && ep_ > 7) {
             return false;
         }
@@ -327,6 +414,7 @@ class Position {
     }
 
     struct meh {
+        std::uint64_t hash;
         Move move;
         int ep;
         int halfmove_clock;

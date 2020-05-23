@@ -25,6 +25,10 @@ void Position::undomove() noexcept {
     castling_[2] = history_.back().castling[2];
     castling_[3] = history_.back().castling[3];
 
+#ifndef NO_HASH
+    hash_ = history_.back().hash;
+#endif
+
     // Remove piece
     colours_[us] ^= move.to();
     pieces_[piece] ^= move.to();

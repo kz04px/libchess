@@ -18,6 +18,22 @@ void valid(libchess::Position &pos, const int depth) noexcept {
         return;
     }
 
+    {
+        const auto halfmoves = pos.halfmoves();
+        const auto fullmoves = pos.fullmoves();
+        const auto hash = pos.hash();
+        const auto turn = pos.turn();
+
+        pos.makenull();
+        valid(pos, depth - 1);
+        pos.undonull();
+
+        REQUIRE(halfmoves == pos.halfmoves());
+        REQUIRE(fullmoves == pos.fullmoves());
+        REQUIRE(hash == pos.hash());
+        REQUIRE(turn == pos.turn());
+    }
+
     const auto moves = pos.legal_moves();
     for (const auto &move : moves) {
         const auto halfmoves = pos.halfmoves();

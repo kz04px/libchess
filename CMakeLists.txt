@@ -78,6 +78,7 @@ add_executable(
     tests/checkers.cpp
     tests/consistency.cpp
     tests/fen.cpp
+    tests/hash.cpp
     tests/in_check.cpp
     tests/is_capture.cpp
     tests/is_legal.cpp

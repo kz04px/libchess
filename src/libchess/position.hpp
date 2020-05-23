@@ -143,6 +143,32 @@ class Position {
         return {};
     }
 
+    [[nodiscard]] constexpr Bitboard passed_pawns() const noexcept {
+        return passed_pawns(turn());
+    }
+
+    [[nodiscard]] constexpr Bitboard passed_pawns(const Side s) const noexcept {
+        auto mask = pieces(!s, Piece::Pawn);
+        if (s == Side::White) {
+            mask |= mask.south().east();
+            mask |= mask.south().west();
+            mask |= mask.south();
+            mask |= mask.south();
+            mask |= mask.south();
+            mask |= mask.south();
+            mask |= mask.south();
+        } else {
+            mask |= mask.north().east();
+            mask |= mask.north().west();
+            mask |= mask.north();
+            mask |= mask.north();
+            mask |= mask.north();
+            mask |= mask.north();
+            mask |= mask.north();
+        }
+        return pieces(s, Piece::Pawn) & ~mask;
+    }
+
     void pawn_moves_white(std::vector<Move> &moves,
                           const Bitboard &piece_mask,
                           const Bitboard &allowed) const noexcept;

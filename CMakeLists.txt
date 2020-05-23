@@ -84,6 +84,7 @@ add_executable(
     tests/is_legal.cpp
     tests/iterator.cpp
     tests/movegen.cpp
+    tests/passed_pawns.cpp
     tests/perft.cpp
     tests/pinned.cpp
     tests/squares_attacked.cpp

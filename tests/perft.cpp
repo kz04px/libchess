@@ -23,6 +23,8 @@ const std::pair<std::string, std::vector<std::uint64_t>> positions[] = {
     {"4k3/8/8/8/2pPp3/8/8/4K3 b - d3 0 1", {1, 9, 47, 376}},
     {"2r3k1/1q1nbppp/r3p3/3pP3/pPpP4/P1Q2N2/2RN1PPP/2R4K b - b3 0 23",
      {1, 46, 1356, 56661}},
+    {"4k3/8/8/4pP2/3K4/8/8/8 w - e6 0 2", {1, 9}},
+    {"8/8/8/4k3/5Pp1/8/8/3K4 b - f3 0 1", {1, 9}},
 };
 
 TEST_CASE("Position::perft()") {

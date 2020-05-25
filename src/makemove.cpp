@@ -33,6 +33,9 @@ void Position::makemove(const Move &move) noexcept {
     hash_ ^= zobrist::turn_key();
     hash_ ^= zobrist::piece_key(piece, us, move.from());
     hash_ ^= zobrist::piece_key(piece, us, move.to());
+    if (ep_ != 0xFF) {
+        hash_ ^= zobrist::ep_key(ep_);
+    }
 #endif
 
     // Remove ep
@@ -74,6 +77,10 @@ void Position::makemove(const Move &move) noexcept {
 
             halfmove_clock_ = 0;
             ep_ = to.file();
+
+#ifndef NO_HASH
+            hash_ ^= zobrist::ep_key(ep_);
+#endif
             break;
         case MoveType::enpassant:
             assert(piece == Piece::Pawn);

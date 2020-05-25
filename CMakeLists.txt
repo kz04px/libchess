@@ -98,6 +98,12 @@ add_executable(
 
 # Add example
 add_executable(
+    ttperft
+    examples/ttperft.cpp
+)
+
+# Add example
+add_executable(
     split
     examples/split.cpp
 )
@@ -130,5 +136,6 @@ set_property(TARGET libchess-test PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELEASE 
 
 target_link_libraries(libchess-test libchess-static)
 target_link_libraries(perft libchess-static)
+target_link_libraries(ttperft libchess-static)
 target_link_libraries(split libchess-static)
 target_link_libraries(suite libchess-static)

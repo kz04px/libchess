@@ -30,15 +30,13 @@ add_library(
     src/get_fen.cpp
     src/is_legal.cpp
     src/king_allowed.cpp
+    src/legal_captures.cpp
     src/legal_moves.cpp
+    src/legal_noncaptures.cpp
     src/makemove.cpp
     src/movegen.cpp
-    src/pawn_moves_black.cpp
-    src/pawn_moves_white.cpp
     src/perft.cpp
     src/pinned.cpp
-    src/promotions_black.cpp
-    src/promotions_white.cpp
     src/set_fen.cpp
     src/square_attacked.cpp
     src/squares_attacked.cpp
@@ -56,15 +54,13 @@ add_library(
     src/get_fen.cpp
     src/is_legal.cpp
     src/king_allowed.cpp
+    src/legal_captures.cpp
     src/legal_moves.cpp
+    src/legal_noncaptures.cpp
     src/makemove.cpp
     src/movegen.cpp
-    src/pawn_moves_black.cpp
-    src/pawn_moves_white.cpp
     src/perft.cpp
     src/pinned.cpp
-    src/promotions_black.cpp
-    src/promotions_white.cpp
     src/set_fen.cpp
     src/square_attacked.cpp
     src/squares_attacked.cpp

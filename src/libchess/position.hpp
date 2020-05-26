@@ -135,13 +135,13 @@ class Position {
 
     [[nodiscard]] std::vector<Move> legal_moves() const noexcept;
 
-    void pinned_moves(std::vector<Move> &moves,
-                      const Bitboard &pieces,
-                      const Bitboard &allowed) const noexcept;
+    [[nodiscard]] std::vector<Move> legal_captures() const noexcept;
 
-    [[nodiscard]] std::vector<Move> legal_captures() const noexcept {
-        return {};
-    }
+    [[nodiscard]] std::vector<Move> legal_noncaptures() const noexcept;
+
+    void legal_captures(std::vector<Move> &moves) const noexcept;
+
+    void legal_noncaptures(std::vector<Move> &moves) const noexcept;
 
     [[nodiscard]] constexpr Bitboard passed_pawns() const noexcept {
         return passed_pawns(turn());
@@ -168,42 +168,6 @@ class Position {
         }
         return pieces(s, Piece::Pawn) & ~mask;
     }
-
-    void pawn_moves_white(std::vector<Move> &moves,
-                          const Bitboard &piece_mask,
-                          const Bitboard &allowed) const noexcept;
-
-    void promotions_white(std::vector<Move> &moves,
-                          const Bitboard &piece_mask,
-                          const Bitboard &allowed) const noexcept;
-
-    void pawn_moves_black(std::vector<Move> &moves,
-                          const Bitboard &piece_mask,
-                          const Bitboard &allowed) const noexcept;
-
-    void promotions_black(std::vector<Move> &moves,
-                          const Bitboard &piece_mask,
-                          const Bitboard &allowed) const noexcept;
-
-    void knight_moves(std::vector<Move> &moves,
-                      const Bitboard &piece_mask,
-                      const Bitboard &allowed) const noexcept;
-
-    void bishop_moves(std::vector<Move> &moves,
-                      const Bitboard &piece_mask,
-                      const Bitboard &allowed) const noexcept;
-
-    void rook_moves(std::vector<Move> &moves,
-                    const Bitboard &piece_mask,
-                    const Bitboard &allowed) const noexcept;
-
-    void queen_moves(std::vector<Move> &moves,
-                     const Bitboard &piece_mask,
-                     const Bitboard &allowed) const noexcept;
-
-    void king_moves(std::vector<Move> &moves,
-                    const Bitboard &piece_mask,
-                    const Bitboard &allowed) const noexcept;
 
     [[nodiscard]] std::size_t count_moves() const noexcept;
 

@@ -37,6 +37,7 @@ add_library(
     src/movegen.cpp
     src/perft.cpp
     src/pinned.cpp
+    src/predict_hash.cpp
     src/set_fen.cpp
     src/square_attacked.cpp
     src/squares_attacked.cpp
@@ -61,6 +62,7 @@ add_library(
     src/movegen.cpp
     src/perft.cpp
     src/pinned.cpp
+    src/predict_hash.cpp
     src/set_fen.cpp
     src/square_attacked.cpp
     src/squares_attacked.cpp

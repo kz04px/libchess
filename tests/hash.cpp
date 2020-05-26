@@ -67,3 +67,41 @@ TEST_CASE("Hash changes2") {
     }
 #endif
 }
+
+void test(libchess::Position &pos, const int depth) noexcept {
+    if (depth == 0) {
+        return;
+    }
+
+    const auto moves = pos.legal_moves();
+    for (const auto &move : moves) {
+        const auto prediction = pos.predict_hash(move);
+        pos.makemove(move);
+
+        REQUIRE(pos.hash() == prediction);
+
+        test(pos, depth - 1);
+        pos.undomove();
+    }
+}
+
+TEST_CASE("Predict hash") {
+#ifdef NO_HASH
+    return;
+#else
+    const std::string fens[] = {
+        "startpos",
+        "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1",
+        "4k3/8/K6r/3pP3/8/8/8/8 w - d6 0 1",
+        "k7/8/4r3/3pP3/8/8/8/4K3 w - d6 0 1",
+        "1k6/8/8/8/4Pp2/8/7B/4K3 b - e3 0 2",
+        "4k3/4r3/8/8/8/8/3p4/4K3 w - - 0 2",
+        "r3k2r/pppppppp/8/8/8/8/PPPPPPPP/R3K2R w KQkq - 0 1",
+    };
+
+    for (const auto& fen : fens) {
+        auto pos = libchess::Position{fen};
+        test(pos, 3);
+    }
+#endif
+}

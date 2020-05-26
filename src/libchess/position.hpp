@@ -191,6 +191,8 @@ class Position {
         return true;
     }
 
+    [[nodiscard]] std::uint64_t predict_hash(const Move &move) const noexcept;
+
     void makemove(const Move &move) noexcept;
 
     void undomove() noexcept;

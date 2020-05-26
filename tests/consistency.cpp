@@ -26,8 +26,12 @@ void valid(libchess::Position &pos, const int depth) noexcept {
 
         pos.makenull();
 
+#ifdef NO_HASH
+        REQUIRE(hash == 0);
+#else
         REQUIRE(hash != pos.calculate_hash());
         REQUIRE(pos.hash() == pos.calculate_hash());
+#endif
 
         valid(pos, depth - 1);
         pos.undonull();
@@ -44,9 +48,16 @@ void valid(libchess::Position &pos, const int depth) noexcept {
         const auto fullmoves = pos.fullmoves();
         const auto hash = pos.hash();
         const auto turn = pos.turn();
-        REQUIRE(pos.hash() == pos.calculate_hash());
 
         pos.makemove(move);
+
+#ifdef NO_HASH
+        REQUIRE(hash == 0);
+#else
+        REQUIRE(hash != pos.calculate_hash());
+        REQUIRE(pos.hash() == pos.calculate_hash());
+#endif
+
         valid(pos, depth - 1);
         pos.undomove();
 

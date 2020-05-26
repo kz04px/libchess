@@ -83,6 +83,7 @@ add_executable(
     tests/is_capture.cpp
     tests/is_legal.cpp
     tests/iterator.cpp
+    tests/legal_moves.cpp
     tests/movegen.cpp
     tests/passed_pawns.cpp
     tests/perft.cpp

@@ -139,6 +139,17 @@ class Move {
         return data_;
     }
 
+    [[nodiscard]] operator std::string() const noexcept {
+        std::string str;
+        str += static_cast<std::string>(from());
+        str += static_cast<std::string>(to());
+        if (promotion() != Piece::None) {
+            const char asd[] = {'n', 'b', 'r', 'q'};
+            str += asd[promotion() - 1];
+        }
+        return str;
+    }
+
     [[nodiscard]] constexpr bool operator==(const Move &rhs) const noexcept {
         return data_ == rhs.data_;
     }
@@ -162,11 +173,7 @@ class Move {
 };
 
 inline std::ostream &operator<<(std::ostream &os, const Move &move) noexcept {
-    os << move.from() << move.to();
-    if (move.promotion() != Piece::None) {
-        const char asd[] = {'n', 'b', 'r', 'q'};
-        os << asd[move.promotion() - 1];
-    }
+    os << static_cast<std::string>(move);
     return os;
 }
 

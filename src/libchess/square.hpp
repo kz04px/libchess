@@ -39,6 +39,13 @@ class Square {
         return data_;
     }
 
+    [[nodiscard]] explicit operator std::string() const noexcept {
+        std::string str;
+        str += static_cast<char>('a' + file());
+        str += static_cast<char>('1' + rank());
+        return str;
+    }
+
     [[nodiscard]] constexpr explicit operator unsigned int() const noexcept {
         return data_;
     }
@@ -84,8 +91,7 @@ class Square {
 };
 
 inline std::ostream &operator<<(std::ostream &os, const Square &sq) noexcept {
-    os << static_cast<char>('a' + sq.file())
-       << static_cast<char>('1' + sq.rank());
+    os << static_cast<std::string>(sq);
     return os;
 }
 

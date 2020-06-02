@@ -19,6 +19,9 @@ void Position::undomove() noexcept {
     // Halfmoves
     halfmove_clock_ = history_.back().halfmove_clock;
 
+    // Fullmoves
+    fullmove_clock_ -= us == Side::Black;
+
     // Castling
     castling_[0] = history_.back().castling[0];
     castling_[1] = history_.back().castling[1];

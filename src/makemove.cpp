@@ -29,6 +29,9 @@ void Position::makemove(const Move &move) noexcept {
     colours_[us] ^= move.to();
     pieces_[piece] ^= move.to();
 
+    // Fullmoves
+    fullmove_clock_ += us == Side::Black;
+
 #ifndef NO_HASH
     hash_ ^= zobrist::turn_key();
     hash_ ^= zobrist::piece_key(piece, us, move.from());
@@ -49,7 +52,9 @@ void Position::makemove(const Move &move) noexcept {
             assert(captured == Piece::None);
             assert(promo == Piece::None);
 
-            halfmove_clock_ += (piece == Piece::Pawn);
+            if (piece == Piece::Pawn) {
+                halfmove_clock_ = 0;
+            }
             break;
         case MoveType::Capture:
             assert(captured != Piece::None);

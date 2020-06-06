@@ -117,7 +117,7 @@ class Position {
     [[nodiscard]] Bitboard attackers(const Square sq, const Side s) const
         noexcept;
 
-    [[nodiscard]] constexpr bool in_check() const noexcept {
+    [[nodiscard]] bool in_check() const noexcept {
         return square_attacked(king_position(turn()), !turn());
     }
 

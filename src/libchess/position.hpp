@@ -87,19 +87,33 @@ class Position {
 
     [[nodiscard]] bool is_legal(const Move &m) const noexcept;
 
-    [[nodiscard]] constexpr bool threefold() const noexcept {
-        return true;
+    [[nodiscard]] bool threefold() const noexcept {
+        if (halfmove_clock_ < 8) {
+            return false;
+        }
+
+        int repeats = 0;
+        for (std::size_t i = 2; i <= history_.size() && i <= halfmoves();
+             i += 2) {
+            if (history_[history_.size() - i].hash == hash_) {
+                repeats++;
+                if (repeats >= 2) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     [[nodiscard]] constexpr bool fiftymoves() const noexcept {
         return halfmove_clock_ >= 100;
     }
 
-    [[nodiscard]] constexpr int halfmoves() const noexcept {
+    [[nodiscard]] constexpr std::size_t halfmoves() const noexcept {
         return halfmove_clock_;
     }
 
-    [[nodiscard]] constexpr int fullmoves() const noexcept {
+    [[nodiscard]] constexpr std::size_t fullmoves() const noexcept {
         return fullmove_clock_;
     }
 
@@ -409,14 +423,14 @@ class Position {
         std::uint64_t hash;
         Move move;
         int ep;
-        int halfmove_clock;
+        std::size_t halfmove_clock;
         bool castling[4];
     };
 
     Bitboard colours_[2];
     Bitboard pieces_[6];
-    int halfmove_clock_;
-    int fullmove_clock_;
+    std::size_t halfmove_clock_;
+    std::size_t fullmove_clock_;
     std::uint64_t hash_;
     bool castling_[4];
     Side to_move_;

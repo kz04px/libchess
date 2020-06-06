@@ -75,6 +75,7 @@ add_executable(
     tests/main.cpp
     tests/checkers.cpp
     tests/consistency.cpp
+    tests/draw.cpp
     tests/fen.cpp
     tests/hash.cpp
     tests/in_check.cpp

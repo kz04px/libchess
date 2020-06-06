@@ -17,230 +17,40 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
     [[maybe_unused]] const auto start_size = moves.size();
     const auto us = turn();
     const auto them = !us;
-    const auto ch = checkers();
     const auto ksq = king_position(us);
-    [[maybe_unused]] const auto kfile = bitboards::files[ksq.file()];
-    [[maybe_unused]] const auto krank = bitboards::ranks[ksq.rank()];
+    const auto checkers = this->checkers();
+    const auto in_check = !checkers.empty();
     const auto ep_bb = ep_ == 0xFF ? Bitboard{}
                                    : bitboards::files[ep_] &
                                          (us == Side::White ? bitboards::Rank6
                                                             : bitboards::Rank3);
-
-    // If we're in check multiple times, only the king can move
-    if (ch.count() > 1) {
-        for (const auto &fr : pieces(us, Piece::King)) {
-            const auto mask = movegen::king_moves(fr) & king_allowed();
-            for (const auto &to : occupancy(them) & mask) {
-                const auto cap = piece_on(to);
-                assert(cap != Piece::None);
-                assert(cap != Piece::King);
-                moves.emplace_back(MoveType::Capture, fr, to, Piece::King, cap);
-            }
-        }
-        return;
-    }
-
     auto allowed = occupancy(them);
 
-    // If we're in check by one piece, we can try capture it
-    if (ch.count() == 1) {
-        const auto sq = ch.lsbll();
-        assert(piece_on(sq) != Piece::None);
-        assert(piece_on(sq) != Piece::King);
-
-        allowed = Bitboard{sq};
-    }
-
-    const Bitboard bishop_rays = movegen::bishop_moves(ksq, occupied());
-    const Bitboard rook_rays = movegen::rook_moves(ksq, occupied());
-
-    Bitboard bishop_pinned;
-    Bitboard rook_pinned;
-
-    // Bishop pinned
-    {
-        for (const auto &sq : occupancy(us) & bishop_rays) {
-            const auto bb = Bitboard{sq};
-            const auto blockers = occupied() ^ bb;
-            const auto new_rays = movegen::bishop_moves(ksq, blockers);
-            const auto discovery = new_rays ^ bishop_rays;
-            const auto attackers = discovery & (pieces(them, Piece::Bishop) |
-                                                pieces(them, Piece::Queen));
-
-            if (attackers) {
-                bishop_pinned |= bb;
-                if (attackers & allowed) {
-                    const auto asq = attackers.lsbll();
-                    const auto cap = piece_on(asq);
-                    assert(cap == Piece::Bishop || cap == Piece::Queen);
-
-                    if (bb & pieces(us, Piece::Pawn)) {
-                        if (us == Side::White) {
-                            // We can capture the attacker
-                            if ((bb.north().east() & attackers) ||
-                                (bb.north().west() & attackers)) {
-                                // Capture with promotion
-                                if (attackers & bitboards::Rank8) {
-                                    moves.emplace_back(MoveType::promo_capture,
-                                                       sq,
-                                                       asq,
-                                                       Piece::Pawn,
-                                                       cap,
-                                                       Piece::Queen);
-                                    moves.emplace_back(MoveType::promo_capture,
-                                                       sq,
-                                                       asq,
-                                                       Piece::Pawn,
-                                                       cap,
-                                                       Piece::Rook);
-                                    moves.emplace_back(MoveType::promo_capture,
-                                                       sq,
-                                                       asq,
-                                                       Piece::Pawn,
-                                                       cap,
-                                                       Piece::Bishop);
-                                    moves.emplace_back(MoveType::promo_capture,
-                                                       sq,
-                                                       asq,
-                                                       Piece::Pawn,
-                                                       cap,
-                                                       Piece::Knight);
-                                }
-                                // Regular capture
-                                else {
-                                    moves.emplace_back(MoveType::Capture,
-                                                       sq,
-                                                       asq,
-                                                       Piece::Pawn,
-                                                       cap);
-                                }
-                            }
-                            // If we can't capture the pinner, en passant might
-                            // maintain the pin
-                            else if (ep_bb & squares_between(ksq, asq) &
-                                     bb.north().west()) {
-                                moves.emplace_back(MoveType::enpassant,
-                                                   sq,
-                                                   sq.north().west(),
-                                                   Piece::Pawn,
-                                                   Piece::Pawn);
-                            }
-                            // If we can't capture the pinner, en passant might
-                            // maintain the pin
-                            else if (ep_bb & squares_between(ksq, asq) &
-                                     bb.north().east()) {
-                                moves.emplace_back(MoveType::enpassant,
-                                                   sq,
-                                                   sq.north().east(),
-                                                   Piece::Pawn,
-                                                   Piece::Pawn);
-                            }
-                        } else {
-                            if ((bb.south().east() & attackers) ||
-                                (bb.south().west() & attackers)) {
-                                if (attackers & bitboards::Rank1) {
-                                    moves.emplace_back(MoveType::promo_capture,
-                                                       sq,
-                                                       asq,
-                                                       Piece::Pawn,
-                                                       cap,
-                                                       Piece::Queen);
-                                    moves.emplace_back(MoveType::promo_capture,
-                                                       sq,
-                                                       asq,
-                                                       Piece::Pawn,
-                                                       cap,
-                                                       Piece::Rook);
-                                    moves.emplace_back(MoveType::promo_capture,
-                                                       sq,
-                                                       asq,
-                                                       Piece::Pawn,
-                                                       cap,
-                                                       Piece::Bishop);
-                                    moves.emplace_back(MoveType::promo_capture,
-                                                       sq,
-                                                       asq,
-                                                       Piece::Pawn,
-                                                       cap,
-                                                       Piece::Knight);
-                                } else {
-                                    moves.emplace_back(MoveType::Capture,
-                                                       sq,
-                                                       asq,
-                                                       Piece::Pawn,
-                                                       cap);
-                                }
-                            }
-                            // If we can't capture the pinner, en passant might
-                            // maintain the pin
-                            else if (ep_bb & squares_between(ksq, asq) &
-                                     bb.south().west()) {
-                                moves.emplace_back(MoveType::enpassant,
-                                                   sq,
-                                                   sq.south().west(),
-                                                   Piece::Pawn,
-                                                   Piece::Pawn);
-                            }
-                            // If we can't capture the pinner, en passant might
-                            // maintain the pin
-                            else if (ep_bb & squares_between(ksq, asq) &
-                                     bb.south().east()) {
-                                moves.emplace_back(MoveType::enpassant,
-                                                   sq,
-                                                   sq.south().east(),
-                                                   Piece::Pawn,
-                                                   Piece::Pawn);
-                            }
-                        }
-                    } else if (bb & pieces(us, Piece::Bishop)) {
-                        moves.emplace_back(
-                            MoveType::Capture, sq, asq, Piece::Bishop, cap);
-                    } else if (bb & pieces(us, Piece::Queen)) {
-                        moves.emplace_back(
-                            MoveType::Capture, sq, asq, Piece::Queen, cap);
-                    }
-                }
-            }
+    if (checkers.count() > 1) {
+        const auto mask =
+            movegen::king_moves(ksq) & king_allowed() & occupancy(them);
+        for (const auto &to : mask) {
+            const auto cap = piece_on(to);
+            assert(cap != Piece::None);
+            assert(cap != Piece::King);
+            moves.emplace_back(MoveType::Capture, ksq, to, Piece::King, cap);
         }
+        return;
+    } else if (checkers.count() == 1) {
+        allowed = Bitboard{checkers.lsbll()};
     }
 
-    // Rook pinned
-    {
-        for (const auto &sq : occupancy(us) & rook_rays) {
-            const auto bb = Bitboard{sq};
-            const auto blockers = occupied() ^ bb;
-            const auto new_rays = movegen::rook_moves(ksq, blockers);
-            const auto discovery = new_rays ^ rook_rays;
-            const auto attackers = discovery & (pieces(them, Piece::Rook) |
-                                                pieces(them, Piece::Queen));
-
-            if (attackers) {
-                rook_pinned |= bb;
-                if (attackers & allowed) {
-                    const auto asq = attackers.lsbll();
-                    const auto apiece = piece_on(asq);
-
-                    if (bb & pieces(us, Piece::Rook)) {
-                        moves.emplace_back(
-                            MoveType::Capture, sq, asq, Piece::Rook, apiece);
-                    } else if (bb & pieces(us, Piece::Queen)) {
-                        moves.emplace_back(
-                            MoveType::Capture, sq, asq, Piece::Queen, apiece);
-                    }
-                }
-            }
-        }
-    }
-
-    const Bitboard pinned_pieces = rook_pinned | bishop_pinned;
-    const Bitboard nonpinned_pieces = occupancy(us) ^ pinned_pieces;
-
-    assert(pinned_pieces == pinned());
-    assert(rook_pinned == (rook_pinned & (kfile | krank)));
+    const auto kfile = bitboards::files[ksq.file()];
+    const auto krank = bitboards::ranks[ksq.rank()];
+    const auto pinned = this->pinned();
+    const auto pinned_horizontal = pinned & krank;
+    const auto pinned_vertical = pinned & kfile;
+    const auto pinned_rook = pinned_horizontal | pinned_vertical;
+    const auto pinned_bishop = pinned ^ pinned_rook;
 
     // Pawns
     if (us == Side::White) {
-        const auto pawns = pieces(us, Piece::Pawn) & nonpinned_pieces;
+        const auto pawns = pieces(us, Piece::Pawn) & ~pinned_rook;
         const auto promo = pawns & bitboards::Rank7;
         const auto nonpromo = pawns & ~bitboards::Rank7;
 
@@ -293,7 +103,7 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
                                Piece::Knight);
         }
 
-        // Captures -- left
+        // Promo Captures -- left
         for (const auto &sq : promo.north().west() & allowed) {
             const auto cap = piece_on(sq);
             assert(cap != Piece::None);
@@ -329,46 +139,25 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
             const auto file = bitboards::files[ep_];
             const auto bb = file & bitboards::Rank6;
             const auto ep_sq = bb.lsbll();
+            // const auto ep_bb = Bitboard{ep_sq};
 
-            if (pawns.north().west() & bb) {
-                const auto blockers =
-                    occupied() ^ bb.south() ^ bb.south().east();
-                const auto mask =
-                    movegen::rook_moves(ksq, blockers) & bitboards::Rank5;
-                const auto asd =
-                    pieces(them, Piece::Rook) | pieces(them, Piece::Queen);
-
-                // We just enabled a discovered check
-                if (mask & asd) {
-                } else {
-                    moves.emplace_back(MoveType::enpassant,
-                                       ep_sq.south().east(),
-                                       ep_sq,
-                                       Piece::Pawn,
-                                       Piece::Pawn);
-                }
+            if (pawns.north().west() & ep_bb) {
+                moves.emplace_back(MoveType::enpassant,
+                                   ep_sq.south().east(),
+                                   ep_sq,
+                                   Piece::Pawn,
+                                   Piece::Pawn);
             }
-            if (pawns.north().east() & bb) {
-                const auto blockers =
-                    occupied() ^ bb.south() ^ bb.south().west();
-                const auto mask =
-                    movegen::rook_moves(ksq, blockers) & bitboards::Rank5;
-                const auto asd =
-                    pieces(them, Piece::Rook) | pieces(them, Piece::Queen);
-
-                // We just enabled a discovered check
-                if (mask & asd) {
-                } else {
-                    moves.emplace_back(MoveType::enpassant,
-                                       ep_sq.south().west(),
-                                       ep_sq,
-                                       Piece::Pawn,
-                                       Piece::Pawn);
-                }
+            if (pawns.north().east() & ep_bb) {
+                moves.emplace_back(MoveType::enpassant,
+                                   ep_sq.south().west(),
+                                   ep_sq,
+                                   Piece::Pawn,
+                                   Piece::Pawn);
             }
         }
     } else {
-        const auto pawns = pieces(us, Piece::Pawn) & nonpinned_pieces;
+        const auto pawns = pieces(us, Piece::Pawn) & ~pinned_rook;
         const auto promo = pawns & bitboards::Rank2;
         const auto nonpromo = pawns & ~bitboards::Rank2;
 
@@ -390,7 +179,7 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
                 MoveType::Capture, sq.north().east(), sq, Piece::Pawn, cap);
         }
 
-        // Captures -- Right
+        // Promo Captures -- Right
         for (const auto &sq : promo.south().east() & allowed) {
             const auto cap = piece_on(sq);
             assert(cap != Piece::None);
@@ -421,7 +210,7 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
                                Piece::Knight);
         }
 
-        // Captures -- left
+        // Promo Captures -- left
         for (const auto &sq : promo.south().west() & allowed) {
             const auto cap = piece_on(sq);
             assert(cap != Piece::None);
@@ -457,48 +246,27 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
             const auto file = bitboards::files[ep_];
             const auto bb = file & bitboards::Rank3;
             const auto ep_sq = bb.lsbll();
+            // const auto ep_bb = Bitboard{ep_sq};
 
-            if (pawns.south().west() & bb) {
-                const auto blockers =
-                    occupied() ^ bb.north() ^ bb.north().east();
-                const auto mask =
-                    movegen::rook_moves(ksq, blockers) & bitboards::Rank4;
-                const auto asd = pieces(!turn(), Piece::Rook) |
-                                 pieces(!turn(), Piece::Queen);
-
-                // We just enabled a discovered check
-                if (mask & asd) {
-                } else {
-                    moves.emplace_back(MoveType::enpassant,
-                                       ep_sq.north().east(),
-                                       ep_sq,
-                                       Piece::Pawn,
-                                       Piece::Pawn);
-                }
+            if (pawns.south().west() & ep_bb) {
+                moves.emplace_back(MoveType::enpassant,
+                                   ep_sq.north().east(),
+                                   ep_sq,
+                                   Piece::Pawn,
+                                   Piece::Pawn);
             }
-            if (pawns.south().east() & bb) {
-                const auto blockers =
-                    occupied() ^ bb.north() ^ bb.north().west();
-                const auto mask =
-                    movegen::rook_moves(ksq, blockers) & bitboards::Rank4;
-                const auto asd = pieces(!turn(), Piece::Rook) |
-                                 pieces(!turn(), Piece::Queen);
-
-                // We just enabled a discovered check
-                if (mask & asd) {
-                } else {
-                    moves.emplace_back(MoveType::enpassant,
-                                       ep_sq.north().west(),
-                                       ep_sq,
-                                       Piece::Pawn,
-                                       Piece::Pawn);
-                }
+            if (pawns.south().east() & ep_bb) {
+                moves.emplace_back(MoveType::enpassant,
+                                   ep_sq.north().west(),
+                                   ep_sq,
+                                   Piece::Pawn,
+                                   Piece::Pawn);
             }
         }
     }
 
     // Knights
-    for (const auto &fr : pieces(us, Piece::Knight) & nonpinned_pieces) {
+    for (const auto &fr : pieces(us, Piece::Knight) & ~pinned) {
         const auto mask = movegen::knight_moves(fr) & allowed;
         for (const auto &to : mask) {
             const auto cap = piece_on(to);
@@ -509,7 +277,7 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
     }
 
     // Bishops
-    for (const auto &fr : pieces(us, Piece::Bishop) & nonpinned_pieces) {
+    for (const auto &fr : pieces(us, Piece::Bishop) & ~pinned_rook) {
         const auto mask = movegen::bishop_moves(fr, ~empty()) & allowed;
         for (const auto &to : mask) {
             const auto cap = piece_on(to);
@@ -520,7 +288,7 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
     }
 
     // Rooks
-    for (const auto &fr : pieces(us, Piece::Rook) & nonpinned_pieces) {
+    for (const auto &fr : pieces(us, Piece::Rook) & ~pinned_bishop) {
         const auto mask = movegen::rook_moves(fr, ~empty()) & allowed;
         for (const auto &to : mask) {
             const auto cap = piece_on(to);
@@ -531,7 +299,7 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
     }
 
     // Queens
-    for (const auto &fr : pieces(us, Piece::Queen) & nonpinned_pieces) {
+    for (const auto &fr : pieces(us, Piece::Queen)) {
         const auto mask = movegen::queen_moves(fr, ~empty()) & allowed;
         for (const auto &to : mask) {
             const auto cap = piece_on(to);
@@ -552,6 +320,65 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
             moves.emplace_back(MoveType::Capture, ksq, to, Piece::King, cap);
         }
     }
+
+    // Filter pseudolegal moves
+    const auto pawn_attackers = pieces(them, Piece::Pawn);
+    const auto knight_attackers = pieces(them, Piece::Knight);
+    const auto bishop_attackers =
+        pieces(them, Piece::Bishop) | pieces(them, Piece::Queen);
+    const auto rook_attackers =
+        pieces(them, Piece::Rook) | pieces(them, Piece::Queen);
+
+    const auto trash = us == Side::White ? ep_bb.south() : ep_bb.north();
+    // const auto pinned = in_check ? bitboards::AllSquares : this->pinned();
+
+    std::size_t back = start_size;
+    for (std::size_t i = start_size; i < moves.size(); ++i) {
+        const auto bb_from = Bitboard{moves[i].from()};
+        auto legal = true;
+
+        if (moves[i].piece() != Piece::Knight &&
+            ((bb_from & pinned) || moves[i].type() == MoveType::enpassant)) {
+            const auto nksq =
+                moves[i].piece() == Piece::King ? moves[i].to() : ksq;
+            auto blockers = Bitboard{moves[i].from()} ^ occupied() |
+                            Bitboard{moves[i].to()};
+            auto new_pawns = pawn_attackers & ~Bitboard{moves[i].to()};
+
+            if (moves[i].type() == MoveType::enpassant) {
+                blockers ^= trash;
+                new_pawns ^= trash;
+            }
+
+            const auto pawn_attacked =
+                Bitboard{nksq} &
+                (us == Side::White
+                     ? new_pawns.south().east() | new_pawns.south().west()
+                     : new_pawns.north().east() | new_pawns.north().west());
+
+            if (pawn_attacked) {
+                legal = false;
+            } else if (movegen::knight_moves(nksq) & knight_attackers &
+                       ~Bitboard{moves[i].to()}) {
+                legal = false;
+            } else if (movegen::bishop_moves(nksq, blockers) &
+                       bishop_attackers & ~Bitboard{moves[i].to()}) {
+                legal = false;
+            } else if (movegen::rook_moves(nksq, blockers) & rook_attackers &
+                       ~Bitboard{moves[i].to()}) {
+                legal = false;
+            }
+        }
+
+        if (legal) {
+            if (i > back) {
+                moves[back] = moves[i];
+            }
+            back++;
+        }
+    }
+
+    moves.resize(back);
 
 #ifndef NDEBUG
     for (std::size_t i = start_size; i < moves.size(); ++i) {

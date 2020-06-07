@@ -341,7 +341,7 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
             ((bb_from & pinned) || moves[i].type() == MoveType::enpassant)) {
             const auto nksq =
                 moves[i].piece() == Piece::King ? moves[i].to() : ksq;
-            auto blockers = Bitboard{moves[i].from()} ^ occupied() |
+            auto blockers = (Bitboard{moves[i].from()} ^ occupied()) |
                             Bitboard{moves[i].to()};
             auto new_pawns = pawn_attackers & ~Bitboard{moves[i].to()};
 

@@ -17,6 +17,11 @@ class Square {
         assert(n < 64);
     }
 
+    constexpr Square(const int f, const int r)
+        : data_{static_cast<std::uint8_t>(8 * r + f)} {
+        assert(data_);
+    }
+
     Square(const std::string &str) : data_{} {
         const int file = str[0] - 'a';
         const int rank = str[1] - '1';

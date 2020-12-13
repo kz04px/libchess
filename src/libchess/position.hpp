@@ -207,7 +207,23 @@ class Position {
 
     [[nodiscard]] std::uint64_t predict_hash(const Move &move) const noexcept;
 
+    [[nodiscard]] Move parse_move(const std::string &str) const {
+        const auto moves = legal_moves();
+        for (const auto &move : moves) {
+            if (static_cast<std::string>(move) == str) {
+                return move;
+            }
+        }
+
+        throw "illegal move string";
+    }
+
     void makemove(const Move &move) noexcept;
+
+    void makemove(const std::string &str) {
+        const auto move = parse_move(str);
+        makemove(move);
+    }
 
     void undomove() noexcept;
 

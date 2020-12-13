@@ -1,5 +1,4 @@
 #include <cassert>
-#include <iostream>
 #include "libchess/bitboard.hpp"
 #include "libchess/movegen.hpp"
 #include "libchess/position.hpp"

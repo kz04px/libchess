@@ -291,6 +291,10 @@ class Position {
         return hash;
     }
 
+    [[nodiscard]] auto &history() const noexcept {
+        return history_;
+    }
+
     void clear() noexcept {
         colours_[0].clear();
         colours_[1].clear();

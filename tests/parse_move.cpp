@@ -39,8 +39,7 @@ TEST_CASE("Position::parse_move() success") {
         "d4d5",
         "g1f3",
     };
-    auto pos = libchess::Position{
-        "rnbqk2r/pppp1ppp/4pn2/8/1bPP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4"};
+    auto pos = libchess::Position{"rnbqk2r/pppp1ppp/4pn2/8/1bPP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4"};
 
     for (const auto &movestring : strings) {
         REQUIRE_NOTHROW(pos.parse_move(movestring));
@@ -57,8 +56,7 @@ TEST_CASE("Position::parse_move() exceptions") {
         "h1g1",
         "a1a1",
     };
-    auto pos = libchess::Position{
-        "rnbqk2r/pppp1ppp/4pn2/8/1bPP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4"};
+    auto pos = libchess::Position{"rnbqk2r/pppp1ppp/4pn2/8/1bPP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4"};
 
     for (const auto &movestring : strings) {
         REQUIRE_THROWS(pos.parse_move(movestring));

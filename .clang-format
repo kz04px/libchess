@@ -12,3 +12,4 @@ IncludeBlocks: Merge
 BreakBeforeBraces: Custom
 BraceWrapping:
     AfterEnum: true
+ColumnLimit: 120

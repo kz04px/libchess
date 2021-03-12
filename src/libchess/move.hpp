@@ -159,9 +159,7 @@ class Move {
     }
 
     [[nodiscard]] constexpr bool is_capturing() const noexcept {
-        return type() == MoveType::Capture ||
-               type() == MoveType::promo_capture ||
-               type() == MoveType::enpassant;
+        return type() == MoveType::Capture || type() == MoveType::promo_capture || type() == MoveType::enpassant;
     }
 
     [[nodiscard]] constexpr bool is_promoting() const noexcept {

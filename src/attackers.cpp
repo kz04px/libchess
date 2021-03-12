@@ -3,8 +3,7 @@
 
 namespace libchess {
 
-[[nodiscard]] Bitboard Position::attackers(const Square sq, const Side s) const
-    noexcept {
+[[nodiscard]] Bitboard Position::attackers(const Square sq, const Side s) const noexcept {
     Bitboard mask;
     const auto bb = Bitboard{sq};
 
@@ -20,11 +19,9 @@ namespace libchess {
 
     mask |= movegen::knight_moves(sq) & pieces(s, Piece::Knight);
 
-    mask |= movegen::bishop_moves(sq, ~empty()) &
-            (pieces(s, Piece::Bishop) | pieces(s, Piece::Queen));
+    mask |= movegen::bishop_moves(sq, ~empty()) & (pieces(s, Piece::Bishop) | pieces(s, Piece::Queen));
 
-    mask |= movegen::rook_moves(sq, ~empty()) &
-            (pieces(s, Piece::Rook) | pieces(s, Piece::Queen));
+    mask |= movegen::rook_moves(sq, ~empty()) & (pieces(s, Piece::Rook) | pieces(s, Piece::Queen));
 
     mask |= movegen::king_moves(sq) & pieces(s, Piece::King);
 

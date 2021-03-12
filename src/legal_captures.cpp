@@ -20,15 +20,12 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
     const auto ksq = king_position(us);
     const auto checkers = this->checkers();
     const auto in_check = !checkers.empty();
-    const auto ep_bb = ep_ == 0xFF ? Bitboard{}
-                                   : bitboards::files[ep_] &
-                                         (us == Side::White ? bitboards::Rank6
-                                                            : bitboards::Rank3);
+    const auto ep_bb =
+        ep_ == 0xFF ? Bitboard{} : bitboards::files[ep_] & (us == Side::White ? bitboards::Rank6 : bitboards::Rank3);
     auto allowed = occupancy(them);
 
     if (checkers.count() > 1) {
-        const auto mask =
-            movegen::king_moves(ksq) & king_allowed() & occupancy(them);
+        const auto mask = movegen::king_moves(ksq) & king_allowed() & occupancy(them);
         for (const auto &to : mask) {
             const auto cap = piece_on(to);
             assert(cap != Piece::None);
@@ -59,8 +56,7 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
             const auto cap = piece_on(sq);
             assert(cap != Piece::None);
             assert(cap != Piece::King);
-            moves.emplace_back(
-                MoveType::Capture, sq.south().west(), sq, Piece::Pawn, cap);
+            moves.emplace_back(MoveType::Capture, sq.south().west(), sq, Piece::Pawn, cap);
         }
 
         // Captures -- left
@@ -68,8 +64,7 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
             const auto cap = piece_on(sq);
             assert(cap != Piece::None);
             assert(cap != Piece::King);
-            moves.emplace_back(
-                MoveType::Capture, sq.south().east(), sq, Piece::Pawn, cap);
+            moves.emplace_back(MoveType::Capture, sq.south().east(), sq, Piece::Pawn, cap);
         }
 
         // Promo Captures -- Right
@@ -77,30 +72,10 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
             const auto cap = piece_on(sq);
             assert(cap != Piece::None);
             assert(cap != Piece::King);
-            moves.emplace_back(MoveType::promo_capture,
-                               sq.south().west(),
-                               sq,
-                               Piece::Pawn,
-                               cap,
-                               Piece::Queen);
-            moves.emplace_back(MoveType::promo_capture,
-                               sq.south().west(),
-                               sq,
-                               Piece::Pawn,
-                               cap,
-                               Piece::Rook);
-            moves.emplace_back(MoveType::promo_capture,
-                               sq.south().west(),
-                               sq,
-                               Piece::Pawn,
-                               cap,
-                               Piece::Bishop);
-            moves.emplace_back(MoveType::promo_capture,
-                               sq.south().west(),
-                               sq,
-                               Piece::Pawn,
-                               cap,
-                               Piece::Knight);
+            moves.emplace_back(MoveType::promo_capture, sq.south().west(), sq, Piece::Pawn, cap, Piece::Queen);
+            moves.emplace_back(MoveType::promo_capture, sq.south().west(), sq, Piece::Pawn, cap, Piece::Rook);
+            moves.emplace_back(MoveType::promo_capture, sq.south().west(), sq, Piece::Pawn, cap, Piece::Bishop);
+            moves.emplace_back(MoveType::promo_capture, sq.south().west(), sq, Piece::Pawn, cap, Piece::Knight);
         }
 
         // Promo Captures -- left
@@ -108,30 +83,10 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
             const auto cap = piece_on(sq);
             assert(cap != Piece::None);
             assert(cap != Piece::King);
-            moves.emplace_back(MoveType::promo_capture,
-                               sq.south().east(),
-                               sq,
-                               Piece::Pawn,
-                               cap,
-                               Piece::Queen);
-            moves.emplace_back(MoveType::promo_capture,
-                               sq.south().east(),
-                               sq,
-                               Piece::Pawn,
-                               cap,
-                               Piece::Rook);
-            moves.emplace_back(MoveType::promo_capture,
-                               sq.south().east(),
-                               sq,
-                               Piece::Pawn,
-                               cap,
-                               Piece::Bishop);
-            moves.emplace_back(MoveType::promo_capture,
-                               sq.south().east(),
-                               sq,
-                               Piece::Pawn,
-                               cap,
-                               Piece::Knight);
+            moves.emplace_back(MoveType::promo_capture, sq.south().east(), sq, Piece::Pawn, cap, Piece::Queen);
+            moves.emplace_back(MoveType::promo_capture, sq.south().east(), sq, Piece::Pawn, cap, Piece::Rook);
+            moves.emplace_back(MoveType::promo_capture, sq.south().east(), sq, Piece::Pawn, cap, Piece::Bishop);
+            moves.emplace_back(MoveType::promo_capture, sq.south().east(), sq, Piece::Pawn, cap, Piece::Knight);
         }
 
         // En passant
@@ -142,18 +97,10 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
             // const auto ep_bb = Bitboard{ep_sq};
 
             if (pawns.north().west() & ep_bb) {
-                moves.emplace_back(MoveType::enpassant,
-                                   ep_sq.south().east(),
-                                   ep_sq,
-                                   Piece::Pawn,
-                                   Piece::Pawn);
+                moves.emplace_back(MoveType::enpassant, ep_sq.south().east(), ep_sq, Piece::Pawn, Piece::Pawn);
             }
             if (pawns.north().east() & ep_bb) {
-                moves.emplace_back(MoveType::enpassant,
-                                   ep_sq.south().west(),
-                                   ep_sq,
-                                   Piece::Pawn,
-                                   Piece::Pawn);
+                moves.emplace_back(MoveType::enpassant, ep_sq.south().west(), ep_sq, Piece::Pawn, Piece::Pawn);
             }
         }
     } else {
@@ -166,8 +113,7 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
             const auto cap = piece_on(sq);
             assert(cap != Piece::None);
             assert(cap != Piece::King);
-            moves.emplace_back(
-                MoveType::Capture, sq.north().west(), sq, Piece::Pawn, cap);
+            moves.emplace_back(MoveType::Capture, sq.north().west(), sq, Piece::Pawn, cap);
         }
 
         // Captures -- left
@@ -175,8 +121,7 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
             const auto cap = piece_on(sq);
             assert(cap != Piece::None);
             assert(cap != Piece::King);
-            moves.emplace_back(
-                MoveType::Capture, sq.north().east(), sq, Piece::Pawn, cap);
+            moves.emplace_back(MoveType::Capture, sq.north().east(), sq, Piece::Pawn, cap);
         }
 
         // Promo Captures -- Right
@@ -184,30 +129,10 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
             const auto cap = piece_on(sq);
             assert(cap != Piece::None);
             assert(cap != Piece::King);
-            moves.emplace_back(MoveType::promo_capture,
-                               sq.north().west(),
-                               sq,
-                               Piece::Pawn,
-                               cap,
-                               Piece::Queen);
-            moves.emplace_back(MoveType::promo_capture,
-                               sq.north().west(),
-                               sq,
-                               Piece::Pawn,
-                               cap,
-                               Piece::Rook);
-            moves.emplace_back(MoveType::promo_capture,
-                               sq.north().west(),
-                               sq,
-                               Piece::Pawn,
-                               cap,
-                               Piece::Bishop);
-            moves.emplace_back(MoveType::promo_capture,
-                               sq.north().west(),
-                               sq,
-                               Piece::Pawn,
-                               cap,
-                               Piece::Knight);
+            moves.emplace_back(MoveType::promo_capture, sq.north().west(), sq, Piece::Pawn, cap, Piece::Queen);
+            moves.emplace_back(MoveType::promo_capture, sq.north().west(), sq, Piece::Pawn, cap, Piece::Rook);
+            moves.emplace_back(MoveType::promo_capture, sq.north().west(), sq, Piece::Pawn, cap, Piece::Bishop);
+            moves.emplace_back(MoveType::promo_capture, sq.north().west(), sq, Piece::Pawn, cap, Piece::Knight);
         }
 
         // Promo Captures -- left
@@ -215,30 +140,10 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
             const auto cap = piece_on(sq);
             assert(cap != Piece::None);
             assert(cap != Piece::King);
-            moves.emplace_back(MoveType::promo_capture,
-                               sq.north().east(),
-                               sq,
-                               Piece::Pawn,
-                               cap,
-                               Piece::Queen);
-            moves.emplace_back(MoveType::promo_capture,
-                               sq.north().east(),
-                               sq,
-                               Piece::Pawn,
-                               cap,
-                               Piece::Rook);
-            moves.emplace_back(MoveType::promo_capture,
-                               sq.north().east(),
-                               sq,
-                               Piece::Pawn,
-                               cap,
-                               Piece::Bishop);
-            moves.emplace_back(MoveType::promo_capture,
-                               sq.north().east(),
-                               sq,
-                               Piece::Pawn,
-                               cap,
-                               Piece::Knight);
+            moves.emplace_back(MoveType::promo_capture, sq.north().east(), sq, Piece::Pawn, cap, Piece::Queen);
+            moves.emplace_back(MoveType::promo_capture, sq.north().east(), sq, Piece::Pawn, cap, Piece::Rook);
+            moves.emplace_back(MoveType::promo_capture, sq.north().east(), sq, Piece::Pawn, cap, Piece::Bishop);
+            moves.emplace_back(MoveType::promo_capture, sq.north().east(), sq, Piece::Pawn, cap, Piece::Knight);
         }
 
         // En passant
@@ -249,18 +154,10 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
             // const auto ep_bb = Bitboard{ep_sq};
 
             if (pawns.south().west() & ep_bb) {
-                moves.emplace_back(MoveType::enpassant,
-                                   ep_sq.north().east(),
-                                   ep_sq,
-                                   Piece::Pawn,
-                                   Piece::Pawn);
+                moves.emplace_back(MoveType::enpassant, ep_sq.north().east(), ep_sq, Piece::Pawn, Piece::Pawn);
             }
             if (pawns.south().east() & ep_bb) {
-                moves.emplace_back(MoveType::enpassant,
-                                   ep_sq.north().west(),
-                                   ep_sq,
-                                   Piece::Pawn,
-                                   Piece::Pawn);
+                moves.emplace_back(MoveType::enpassant, ep_sq.north().west(), ep_sq, Piece::Pawn, Piece::Pawn);
             }
         }
     }
@@ -311,8 +208,7 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
 
     // King
     {
-        const auto mask =
-            movegen::king_moves(ksq) & king_allowed() & occupancy(them);
+        const auto mask = movegen::king_moves(ksq) & king_allowed() & occupancy(them);
         for (const auto &to : mask) {
             const auto cap = piece_on(to);
             assert(cap != Piece::None);
@@ -324,10 +220,8 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
     // Filter pseudolegal moves
     const auto pawn_attackers = pieces(them, Piece::Pawn);
     const auto knight_attackers = pieces(them, Piece::Knight);
-    const auto bishop_attackers =
-        pieces(them, Piece::Bishop) | pieces(them, Piece::Queen);
-    const auto rook_attackers =
-        pieces(them, Piece::Rook) | pieces(them, Piece::Queen);
+    const auto bishop_attackers = pieces(them, Piece::Bishop) | pieces(them, Piece::Queen);
+    const auto rook_attackers = pieces(them, Piece::Rook) | pieces(them, Piece::Queen);
 
     const auto trash = us == Side::White ? ep_bb.south() : ep_bb.north();
     // const auto pinned = in_check ? bitboards::AllSquares : this->pinned();
@@ -337,12 +231,9 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
         const auto bb_from = Bitboard{moves[i].from()};
         auto legal = true;
 
-        if (moves[i].piece() != Piece::Knight &&
-            ((bb_from & pinned) || moves[i].type() == MoveType::enpassant)) {
-            const auto nksq =
-                moves[i].piece() == Piece::King ? moves[i].to() : ksq;
-            auto blockers = (Bitboard{moves[i].from()} ^ occupied()) |
-                            Bitboard{moves[i].to()};
+        if (moves[i].piece() != Piece::Knight && ((bb_from & pinned) || moves[i].type() == MoveType::enpassant)) {
+            const auto nksq = moves[i].piece() == Piece::King ? moves[i].to() : ksq;
+            auto blockers = (Bitboard{moves[i].from()} ^ occupied()) | Bitboard{moves[i].to()};
             auto new_pawns = pawn_attackers & ~Bitboard{moves[i].to()};
 
             if (moves[i].type() == MoveType::enpassant) {
@@ -351,21 +242,16 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
             }
 
             const auto pawn_attacked =
-                Bitboard{nksq} &
-                (us == Side::White
-                     ? new_pawns.south().east() | new_pawns.south().west()
-                     : new_pawns.north().east() | new_pawns.north().west());
+                Bitboard{nksq} & (us == Side::White ? new_pawns.south().east() | new_pawns.south().west()
+                                                    : new_pawns.north().east() | new_pawns.north().west());
 
             if (pawn_attacked) {
                 legal = false;
-            } else if (movegen::knight_moves(nksq) & knight_attackers &
-                       ~Bitboard{moves[i].to()}) {
+            } else if (movegen::knight_moves(nksq) & knight_attackers & ~Bitboard{moves[i].to()}) {
                 legal = false;
-            } else if (movegen::bishop_moves(nksq, blockers) &
-                       bishop_attackers & ~Bitboard{moves[i].to()}) {
+            } else if (movegen::bishop_moves(nksq, blockers) & bishop_attackers & ~Bitboard{moves[i].to()}) {
                 legal = false;
-            } else if (movegen::rook_moves(nksq, blockers) & rook_attackers &
-                       ~Bitboard{moves[i].to()}) {
+            } else if (movegen::rook_moves(nksq, blockers) & rook_attackers & ~Bitboard{moves[i].to()}) {
                 legal = false;
             }
         }

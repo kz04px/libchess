@@ -32,23 +32,11 @@ constexpr const Square qsc_rook_to[] = {squares::D1, squares::D8};
 class Position {
    public:
     Position()
-        : ep_{},
-          colours_{},
-          pieces_{},
-          halfmove_clock_{0},
-          fullmove_clock_{0},
-          to_move_{Side::White},
-          history_{} {
+        : ep_{}, colours_{}, pieces_{}, halfmove_clock_{0}, fullmove_clock_{0}, to_move_{Side::White}, history_{} {
     }
 
     Position(const std::string &fen)
-        : ep_{},
-          colours_{},
-          pieces_{},
-          halfmove_clock_{0},
-          fullmove_clock_{0},
-          to_move_{Side::White},
-          history_{} {
+        : ep_{}, colours_{}, pieces_{}, halfmove_clock_{0}, fullmove_clock_{0}, to_move_{Side::White}, history_{} {
         set_fen(fen);
     }
 
@@ -64,8 +52,7 @@ class Position {
         return pieces_[p];
     }
 
-    [[nodiscard]] constexpr Bitboard pieces(const Side s, const Piece p) const
-        noexcept {
+    [[nodiscard]] constexpr Bitboard pieces(const Side s, const Piece p) const noexcept {
         return occupancy(s) & occupancy(p);
     }
 
@@ -93,8 +80,7 @@ class Position {
         }
 
         int repeats = 0;
-        for (std::size_t i = 2; i <= history_.size() && i <= halfmoves();
-             i += 2) {
+        for (std::size_t i = 2; i <= history_.size() && i <= halfmoves(); i += 2) {
             if (history_[history_.size() - i].hash == hash_) {
                 repeats++;
                 if (repeats >= 2) {
@@ -121,15 +107,13 @@ class Position {
         return pieces(s, Piece::King).lsbll();
     }
 
-    [[nodiscard]] bool square_attacked(const Square sq, const Side s) const
-        noexcept;
+    [[nodiscard]] bool square_attacked(const Square sq, const Side s) const noexcept;
 
     [[nodiscard]] Bitboard squares_attacked(const Side s) const noexcept;
 
     [[nodiscard]] Bitboard checkers() const noexcept;
 
-    [[nodiscard]] Bitboard attackers(const Square sq, const Side s) const
-        noexcept;
+    [[nodiscard]] Bitboard attackers(const Square sq, const Side s) const noexcept;
 
     [[nodiscard]] bool in_check() const noexcept {
         return square_attacked(king_position(turn()), !turn());
@@ -187,8 +171,7 @@ class Position {
 
     [[nodiscard]] std::uint64_t perft(const int depth) noexcept;
 
-    [[nodiscard]] constexpr bool can_castle(const Side s,
-                                            const MoveType mt) const noexcept {
+    [[nodiscard]] constexpr bool can_castle(const Side s, const MoveType mt) const noexcept {
         if (s == Side::White) {
             if (mt == MoveType::ksc) {
                 return castling_[0];
@@ -386,8 +369,7 @@ class Position {
         }
 
         if ((colours_[0] | colours_[1]) !=
-            (pieces_[0] | pieces_[1] | pieces_[2] | pieces_[3] | pieces_[4] |
-             pieces_[5])) {
+            (pieces_[0] | pieces_[1] | pieces_[2] | pieces_[3] | pieces_[4] | pieces_[5])) {
             return false;
         }
 
@@ -453,8 +435,7 @@ class Position {
     std::vector<meh> history_;
 };
 
-inline std::ostream &operator<<(std::ostream &os,
-                                const Position &pos) noexcept {
+inline std::ostream &operator<<(std::ostream &os, const Position &pos) noexcept {
     int i = 56;
     while (i >= 0) {
         const auto sq = Square(i);

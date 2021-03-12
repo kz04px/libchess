@@ -32,8 +32,7 @@ int main(int argc, char **argv) {
         const auto t0 = std::chrono::high_resolution_clock::now();
         const auto nodes = pos.perft(i);
         const auto t1 = std::chrono::high_resolution_clock::now();
-        const auto dt =
-            std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0);
+        const auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0);
 
         std::cout << "depth " << i;
         std::cout << " time " << dt.count();

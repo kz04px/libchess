@@ -58,24 +58,20 @@ void Position::legal_noncaptures(std::vector<Move> &moves) const noexcept {
             const auto blockers = occupied() ^ bb;
             const auto new_rays = movegen::bishop_moves(ksq, blockers);
             const auto discovery = new_rays ^ bishop_rays;
-            const auto attackers = discovery & (pieces(them, Piece::Bishop) |
-                                                pieces(them, Piece::Queen));
+            const auto attackers = discovery & (pieces(them, Piece::Bishop) | pieces(them, Piece::Queen));
 
             if (attackers) {
                 bishop_pinned |= bb;
                 const auto asq = attackers.lsbll();
-                const auto move_mask =
-                    (squares_between(ksq, asq) ^ bb) & allowed;
+                const auto move_mask = (squares_between(ksq, asq) ^ bb) & allowed;
 
                 if (bb & pieces(us, Piece::Bishop)) {
                     for (const auto &to : move_mask) {
-                        moves.emplace_back(
-                            MoveType::Normal, sq, to, Piece::Bishop);
+                        moves.emplace_back(MoveType::Normal, sq, to, Piece::Bishop);
                     }
                 } else if (bb & pieces(us, Piece::Queen)) {
                     for (const auto &to : move_mask) {
-                        moves.emplace_back(
-                            MoveType::Normal, sq, to, Piece::Queen);
+                        moves.emplace_back(MoveType::Normal, sq, to, Piece::Queen);
                     }
                 }
             }
@@ -89,24 +85,20 @@ void Position::legal_noncaptures(std::vector<Move> &moves) const noexcept {
             const auto blockers = occupied() ^ bb;
             const auto new_rays = movegen::rook_moves(ksq, blockers);
             const auto discovery = new_rays ^ rook_rays;
-            const auto attackers = discovery & (pieces(them, Piece::Rook) |
-                                                pieces(them, Piece::Queen));
+            const auto attackers = discovery & (pieces(them, Piece::Rook) | pieces(them, Piece::Queen));
 
             if (attackers) {
                 rook_pinned |= bb;
                 const auto asq = attackers.lsbll();
-                const auto move_mask =
-                    (squares_between(ksq, asq) ^ bb) & allowed;
+                const auto move_mask = (squares_between(ksq, asq) ^ bb) & allowed;
 
                 if (bb & pieces(us, Piece::Rook)) {
                     for (const auto &to : move_mask) {
-                        moves.emplace_back(
-                            MoveType::Normal, sq, to, Piece::Rook);
+                        moves.emplace_back(MoveType::Normal, sq, to, Piece::Rook);
                     }
                 } else if (bb & pieces(us, Piece::Queen)) {
                     for (const auto &to : move_mask) {
-                        moves.emplace_back(
-                            MoveType::Normal, sq, to, Piece::Queen);
+                        moves.emplace_back(MoveType::Normal, sq, to, Piece::Queen);
                     }
                 }
             }
@@ -122,8 +114,7 @@ void Position::legal_noncaptures(std::vector<Move> &moves) const noexcept {
 
     // Pawns
     if (us == Side::White) {
-        const auto pawns =
-            pieces(us, Piece::Pawn) & ~(horizontal_pinned | bishop_pinned);
+        const auto pawns = pieces(us, Piece::Pawn) & ~(horizontal_pinned | bishop_pinned);
         const auto promo = pawns & bitboards::Rank7;
         const auto nonpromo = pawns & ~bitboards::Rank7;
 
@@ -134,42 +125,19 @@ void Position::legal_noncaptures(std::vector<Move> &moves) const noexcept {
 
         // Singles -- Promo
         for (const auto &sq : promo.north() & allowed) {
-            moves.emplace_back(MoveType::promo,
-                               sq.south(),
-                               sq,
-                               Piece::Pawn,
-                               Piece::None,
-                               Piece::Queen);
-            moves.emplace_back(MoveType::promo,
-                               sq.south(),
-                               sq,
-                               Piece::Pawn,
-                               Piece::None,
-                               Piece::Rook);
-            moves.emplace_back(MoveType::promo,
-                               sq.south(),
-                               sq,
-                               Piece::Pawn,
-                               Piece::None,
-                               Piece::Bishop);
-            moves.emplace_back(MoveType::promo,
-                               sq.south(),
-                               sq,
-                               Piece::Pawn,
-                               Piece::None,
-                               Piece::Knight);
+            moves.emplace_back(MoveType::promo, sq.south(), sq, Piece::Pawn, Piece::None, Piece::Queen);
+            moves.emplace_back(MoveType::promo, sq.south(), sq, Piece::Pawn, Piece::None, Piece::Rook);
+            moves.emplace_back(MoveType::promo, sq.south(), sq, Piece::Pawn, Piece::None, Piece::Bishop);
+            moves.emplace_back(MoveType::promo, sq.south(), sq, Piece::Pawn, Piece::None, Piece::Knight);
         }
 
         // Doubles
-        const auto doubles =
-            (empty() & pawns.north()).north() & bitboards::Rank4 & allowed;
+        const auto doubles = (empty() & pawns.north()).north() & bitboards::Rank4 & allowed;
         for (const auto &sq : doubles) {
-            moves.emplace_back(
-                MoveType::Double, sq.south().south(), sq, Piece::Pawn);
+            moves.emplace_back(MoveType::Double, sq.south().south(), sq, Piece::Pawn);
         }
     } else {
-        const auto pawns =
-            pieces(us, Piece::Pawn) & ~(horizontal_pinned | bishop_pinned);
+        const auto pawns = pieces(us, Piece::Pawn) & ~(horizontal_pinned | bishop_pinned);
         const auto promo = pawns & bitboards::Rank2;
         const auto nonpromo = pawns & ~bitboards::Rank2;
 
@@ -180,38 +148,16 @@ void Position::legal_noncaptures(std::vector<Move> &moves) const noexcept {
 
         // Singles -- Promo
         for (const auto &sq : promo.south() & allowed) {
-            moves.emplace_back(MoveType::promo,
-                               sq.north(),
-                               sq,
-                               Piece::Pawn,
-                               Piece::None,
-                               Piece::Queen);
-            moves.emplace_back(MoveType::promo,
-                               sq.north(),
-                               sq,
-                               Piece::Pawn,
-                               Piece::None,
-                               Piece::Rook);
-            moves.emplace_back(MoveType::promo,
-                               sq.north(),
-                               sq,
-                               Piece::Pawn,
-                               Piece::None,
-                               Piece::Bishop);
-            moves.emplace_back(MoveType::promo,
-                               sq.north(),
-                               sq,
-                               Piece::Pawn,
-                               Piece::None,
-                               Piece::Knight);
+            moves.emplace_back(MoveType::promo, sq.north(), sq, Piece::Pawn, Piece::None, Piece::Queen);
+            moves.emplace_back(MoveType::promo, sq.north(), sq, Piece::Pawn, Piece::None, Piece::Rook);
+            moves.emplace_back(MoveType::promo, sq.north(), sq, Piece::Pawn, Piece::None, Piece::Bishop);
+            moves.emplace_back(MoveType::promo, sq.north(), sq, Piece::Pawn, Piece::None, Piece::Knight);
         }
 
         // Doubles
-        const auto doubles =
-            (empty() & pawns.south()).south() & bitboards::Rank5 & allowed;
+        const auto doubles = (empty() & pawns.south()).south() & bitboards::Rank5 & allowed;
         for (const auto &sq : doubles) {
-            moves.emplace_back(
-                MoveType::Double, sq.north().north(), sq, Piece::Pawn);
+            moves.emplace_back(MoveType::Double, sq.north().north(), sq, Piece::Pawn);
         }
     }
 
@@ -258,40 +204,26 @@ void Position::legal_noncaptures(std::vector<Move> &moves) const noexcept {
     // Castling
     if (!checked) {
         if (us == Side::White) {
-            if (can_castle(Side::White, MoveType::ksc) &&
-                piece_on(squares::F1) == Piece::None &&
-                piece_on(squares::G1) == Piece::None &&
-                !square_attacked(squares::F1, them) &&
+            if (can_castle(Side::White, MoveType::ksc) && piece_on(squares::F1) == Piece::None &&
+                piece_on(squares::G1) == Piece::None && !square_attacked(squares::F1, them) &&
                 !square_attacked(squares::G1, them)) {
-                moves.emplace_back(
-                    MoveType::ksc, squares::E1, squares::G1, Piece::King);
+                moves.emplace_back(MoveType::ksc, squares::E1, squares::G1, Piece::King);
             }
-            if (can_castle(Side::White, MoveType::qsc) &&
-                piece_on(squares::D1) == Piece::None &&
-                piece_on(squares::C1) == Piece::None &&
-                piece_on(squares::B1) == Piece::None &&
-                !square_attacked(squares::D1, them) &&
-                !square_attacked(squares::C1, them)) {
-                moves.emplace_back(
-                    MoveType::qsc, squares::E1, squares::C1, Piece::King);
+            if (can_castle(Side::White, MoveType::qsc) && piece_on(squares::D1) == Piece::None &&
+                piece_on(squares::C1) == Piece::None && piece_on(squares::B1) == Piece::None &&
+                !square_attacked(squares::D1, them) && !square_attacked(squares::C1, them)) {
+                moves.emplace_back(MoveType::qsc, squares::E1, squares::C1, Piece::King);
             }
         } else {
-            if (can_castle(Side::Black, MoveType::ksc) &&
-                piece_on(squares::F8) == Piece::None &&
-                piece_on(squares::G8) == Piece::None &&
-                !square_attacked(squares::F8, them) &&
+            if (can_castle(Side::Black, MoveType::ksc) && piece_on(squares::F8) == Piece::None &&
+                piece_on(squares::G8) == Piece::None && !square_attacked(squares::F8, them) &&
                 !square_attacked(squares::G8, them)) {
-                moves.emplace_back(
-                    MoveType::ksc, squares::E8, squares::G8, Piece::King);
+                moves.emplace_back(MoveType::ksc, squares::E8, squares::G8, Piece::King);
             }
-            if (can_castle(Side::Black, MoveType::qsc) &&
-                piece_on(squares::D8) == Piece::None &&
-                piece_on(squares::C8) == Piece::None &&
-                piece_on(squares::B8) == Piece::None &&
-                !square_attacked(squares::D8, them) &&
-                !square_attacked(squares::C8, them)) {
-                moves.emplace_back(
-                    MoveType::qsc, squares::E8, squares::C8, Piece::King);
+            if (can_castle(Side::Black, MoveType::qsc) && piece_on(squares::D8) == Piece::None &&
+                piece_on(squares::C8) == Piece::None && piece_on(squares::B8) == Piece::None &&
+                !square_attacked(squares::D8, them) && !square_attacked(squares::C8, them)) {
+                moves.emplace_back(MoveType::qsc, squares::E8, squares::C8, Piece::King);
             }
         }
     }

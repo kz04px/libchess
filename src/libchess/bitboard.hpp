@@ -23,8 +23,7 @@ class BitboardIterator {
         return *this;
     }
 
-    [[nodiscard]] constexpr bool operator!=(const BitboardIterator &rhs) const
-        noexcept {
+    [[nodiscard]] constexpr bool operator!=(const BitboardIterator &rhs) const noexcept {
         return data_ != rhs.data_;
     }
 
@@ -56,8 +55,7 @@ class Bitboard {
     }
 
     [[nodiscard]] constexpr Bitboard adjacent() const noexcept {
-        return north() | south() | east() | west() | north().east() |
-               north().west() | south().east() | south().west();
+        return north() | south() | east() | west() | north().east() | north().west() | south().east() | south().west();
     }
 
     constexpr void clear() noexcept {
@@ -76,28 +74,23 @@ class Bitboard {
         return mask_;
     }
 
-    [[nodiscard]] constexpr bool operator==(const Bitboard &rhs) const
-        noexcept {
+    [[nodiscard]] constexpr bool operator==(const Bitboard &rhs) const noexcept {
         return mask_ == rhs.mask_;
     }
 
-    [[nodiscard]] constexpr bool operator!=(const Bitboard &rhs) const
-        noexcept {
+    [[nodiscard]] constexpr bool operator!=(const Bitboard &rhs) const noexcept {
         return mask_ != rhs.mask_;
     }
 
-    [[nodiscard]] constexpr Bitboard operator&(const Bitboard &rhs) const
-        noexcept {
+    [[nodiscard]] constexpr Bitboard operator&(const Bitboard &rhs) const noexcept {
         return mask_ & rhs.mask_;
     }
 
-    [[nodiscard]] constexpr Bitboard operator|(const Bitboard &rhs) const
-        noexcept {
+    [[nodiscard]] constexpr Bitboard operator|(const Bitboard &rhs) const noexcept {
         return mask_ | rhs.mask_;
     }
 
-    [[nodiscard]] constexpr Bitboard operator^(const Bitboard &rhs) const
-        noexcept {
+    [[nodiscard]] constexpr Bitboard operator^(const Bitboard &rhs) const noexcept {
         return mask_ ^ rhs.mask_;
     }
 
@@ -220,8 +213,7 @@ constexpr std::array<std::array<Bitboard, 64>, 64> calculate_squares_between() {
 
 constexpr auto lut_squares_between = calculate_squares_between();
 
-[[nodiscard]] constexpr Bitboard squares_between(const Square sq1,
-                                                 const Square sq2) {
+[[nodiscard]] constexpr Bitboard squares_between(const Square sq1, const Square sq2) {
     return lut_squares_between[static_cast<int>(sq1)][static_cast<int>(sq2)];
 }
 
@@ -245,18 +237,10 @@ constexpr Bitboard Rank6 = {0x0000ff0000000000};
 constexpr Bitboard Rank7 = {0x00ff000000000000};
 constexpr Bitboard Rank8 = {0xff00000000000000};
 
-constexpr Bitboard files[] =
-    {FileA, FileB, FileC, FileD, FileE, FileF, FileG, FileH};
-constexpr Bitboard ranks[] =
-    {Rank1, Rank2, Rank3, Rank4, Rank5, Rank6, Rank7, Rank8};
-constexpr Bitboard adjacent_files[] = {FileB,
-                                       FileA | FileC,
-                                       FileB | FileD,
-                                       FileC | FileE,
-                                       FileD | FileF,
-                                       FileE | FileG,
-                                       FileF | FileH,
-                                       FileG};
+constexpr Bitboard files[] = {FileA, FileB, FileC, FileD, FileE, FileF, FileG, FileH};
+constexpr Bitboard ranks[] = {Rank1, Rank2, Rank3, Rank4, Rank5, Rank6, Rank7, Rank8};
+constexpr Bitboard adjacent_files[] =
+    {FileB, FileA | FileC, FileB | FileD, FileC | FileE, FileD | FileF, FileE | FileG, FileF | FileH, FileG};
 
 constexpr Bitboard LightSquares = {0x55aa55aa55aa55aa};
 constexpr Bitboard DarkSquares = {0xaa55aa55aa55aa55};

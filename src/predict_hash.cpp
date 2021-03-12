@@ -2,8 +2,7 @@
 
 namespace libchess {
 
-[[nodiscard]] std::uint64_t Position::predict_hash(const Move &move) const
-    noexcept {
+[[nodiscard]] std::uint64_t Position::predict_hash(const Move &move) const noexcept {
 #ifdef NO_HASH
     return 0;
 #else
@@ -41,11 +40,9 @@ namespace libchess {
             new_hash ^= zobrist::piece_key(piece, us, move.from());
             new_hash ^= zobrist::piece_key(piece, us, move.to());
             if (turn() == Side::White) {
-                new_hash ^=
-                    zobrist::piece_key(Piece::Pawn, them, move.to().south());
+                new_hash ^= zobrist::piece_key(Piece::Pawn, them, move.to().south());
             } else {
-                new_hash ^=
-                    zobrist::piece_key(Piece::Pawn, them, move.to().north());
+                new_hash ^= zobrist::piece_key(Piece::Pawn, them, move.to().north());
             }
             break;
         case MoveType::ksc:
@@ -73,23 +70,19 @@ namespace libchess {
             abort();
     }
 
-    if (can_castle(Side::White, MoveType::ksc) &&
-        (to == squares::H1 || from == squares::E1 || from == squares::H1)) {
+    if (can_castle(Side::White, MoveType::ksc) && (to == squares::H1 || from == squares::E1 || from == squares::H1)) {
         new_hash ^= zobrist::castling_key(usKSC);
     }
 
-    if (can_castle(Side::White, MoveType::qsc) &&
-        (to == squares::A1 || from == squares::E1 || from == squares::A1)) {
+    if (can_castle(Side::White, MoveType::qsc) && (to == squares::A1 || from == squares::E1 || from == squares::A1)) {
         new_hash ^= zobrist::castling_key(usQSC);
     }
 
-    if (can_castle(Side::Black, MoveType::ksc) &&
-        (to == squares::H8 || from == squares::E8 || from == squares::H8)) {
+    if (can_castle(Side::Black, MoveType::ksc) && (to == squares::H8 || from == squares::E8 || from == squares::H8)) {
         new_hash ^= zobrist::castling_key(themKSC);
     }
 
-    if (can_castle(Side::Black, MoveType::qsc) &&
-        (to == squares::A8 || from == squares::E8 || from == squares::A8)) {
+    if (can_castle(Side::Black, MoveType::qsc) && (to == squares::A8 || from == squares::E8 || from == squares::A8)) {
         new_hash ^= zobrist::castling_key(themQSC);
     }
 

@@ -46,8 +46,7 @@ int main(int argc, char **argv) {
         idx++;
     }
     const auto t1 = std::chrono::high_resolution_clock::now();
-    const auto dt =
-        std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0);
+    const auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0);
 
     std::cout << "\n";
     std::cout << "Time " << dt.count() << "ms\n";

@@ -9,9 +9,7 @@ struct TTEntry {
     std::uint8_t depth;
 };
 
-[[nodiscard]] std::uint64_t ttperft(TT<TTEntry> &tt,
-                                    libchess::Position &pos,
-                                    const std::uint8_t depth) {
+[[nodiscard]] std::uint64_t ttperft(TT<TTEntry> &tt, libchess::Position &pos, const std::uint8_t depth) {
     if (depth == 0) {
         return 1;
     } else if (depth == 1) {
@@ -70,8 +68,7 @@ int main(int argc, char **argv) {
         const auto t0 = std::chrono::high_resolution_clock::now();
         const auto nodes = ttperft(tt, pos, i);
         const auto t1 = std::chrono::high_resolution_clock::now();
-        const auto dt =
-            std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0);
+        const auto dt = std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0);
 
         std::cout << "depth " << i;
         std::cout << " time " << dt.count();

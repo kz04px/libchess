@@ -20,8 +20,7 @@ TEST_CASE("Position::threefold() static") {
 
 TEST_CASE("Position::threefold() positive sequence") {
     const std::pair<std::string, std::vector<std::string>> tests[] = {
-        {"startpos",
-         {"g1f3", "g8f6", "f3g1", "f6g8", "g1f3", "g8f6", "f3g1", "f6g8"}},
+        {"startpos", {"g1f3", "g8f6", "f3g1", "f6g8", "g1f3", "g8f6", "f3g1", "f6g8"}},
         {"r2q1rk1/pp1bppbp/2np1np1/8/2BNP3/2N1BP2/PPPQ2PP/R3K2R w KQ - 5 10",
          {"c3a4", "c6a5", "a4c3", "a5c6", "c3a4", "c6a5", "a4c3", "a5c6"}},
     };
@@ -40,17 +39,7 @@ TEST_CASE("Position::threefold() positive sequence") {
 TEST_CASE("Position::threefold() negative sequence") {
     const std::pair<std::string, std::vector<std::string>> tests[] = {
         {"startpos", {"g1f3", "g8f6", "f3g1", "f6g8", "g1f3", "g8f6", "f3g1"}},
-        {"startpos",
-         {"g1f3",
-          "g8f6",
-          "f3g1",
-          "f6g8",
-          "e2e3",
-          "e7e6",
-          "g1f3",
-          "g8f6",
-          "f3g1",
-          "f6g8"}},
+        {"startpos", {"g1f3", "g8f6", "f3g1", "f6g8", "e2e3", "e7e6", "g1f3", "g8f6", "f3g1", "f6g8"}},
         // Make sure castling permissions are considered
         {"r2q1rk1/pp1bppbp/2np1np1/8/2BNP3/2N1BP2/PPPQ2PP/R3K2R w KQ - 5 10",
          {"c3a4",

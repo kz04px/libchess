@@ -8,7 +8,7 @@ template <class T>
 class TT {
    public:
     TT(unsigned int mb) : filled_{0} {
-        if (mb < 0) {
+        if (mb < 1) {
             mb = 1;
         }
         max_entries_ = (mb * 1024 * 1024) / sizeof(T);

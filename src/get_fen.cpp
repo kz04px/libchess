@@ -3,7 +3,7 @@
 namespace libchess {
 
 [[nodiscard]] std::string Position::get_fen() const noexcept {
-    std::string fen = "";
+    std::string fen;
 
     // Part 1 -- Piece locations
     int empty = 0;
@@ -95,7 +95,7 @@ namespace libchess {
     }
 
     // Part 3 -- Castling permissions
-    std::string part = "";
+    std::string part;
     if (castling_[usKSC] == true) {
         part += "K";
     }
@@ -108,7 +108,7 @@ namespace libchess {
     if (castling_[themQSC] == true) {
         part += "q";
     }
-    if (part == "") {
+    if (part.empty()) {
         part = "-";
     }
     fen += " " + part;

@@ -42,6 +42,7 @@ add_library(
     src/square_attacked.cpp
     src/squares_attacked.cpp
     src/undomove.cpp
+    src/zobrist.cpp
 )
 
 # Add the shared library
@@ -67,6 +68,7 @@ add_library(
     src/square_attacked.cpp
     src/squares_attacked.cpp
     src/undomove.cpp
+    src/zobrist.cpp
 )
 
 # Add the test executable

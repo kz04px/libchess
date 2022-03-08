@@ -10,18 +10,18 @@ namespace libchess {
 
 class Square {
    public:
-    constexpr Square() : data_{0xff} {
+    [[nodiscard]] constexpr Square() : data_{0xff} {
     }
 
-    constexpr Square(const int n) : data_{static_cast<std::uint8_t>(n)} {
+    [[nodiscard]] constexpr Square(const int n) : data_{static_cast<std::uint8_t>(n)} {
         assert(n < 64);
     }
 
-    constexpr Square(const int f, const int r) : data_{static_cast<std::uint8_t>(8 * r + f)} {
+    [[nodiscard]] constexpr Square(const int f, const int r) : data_{static_cast<std::uint8_t>(8 * r + f)} {
         assert(data_);
     }
 
-    Square(const std::string &str) : data_{} {
+    [[nodiscard]] Square(const std::string &str) : data_{} {
         const int file = str[0] - 'a';
         const int rank = str[1] - '1';
         data_ = static_cast<std::uint8_t>(rank * 8 + file);

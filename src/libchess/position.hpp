@@ -31,11 +31,11 @@ constexpr const Square qsc_rook_to[] = {squares::D1, squares::D8};
 
 class Position {
    public:
-    Position()
+    [[nodiscard]] Position()
         : ep_{}, colours_{}, pieces_{}, halfmove_clock_{0}, fullmove_clock_{0}, to_move_{Side::White}, history_{} {
     }
 
-    Position(const std::string &fen)
+    [[nodiscard]] Position(const std::string &fen)
         : ep_{}, colours_{}, pieces_{}, halfmove_clock_{0}, fullmove_clock_{0}, to_move_{Side::White}, history_{} {
         set_fen(fen);
     }

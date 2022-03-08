@@ -11,7 +11,7 @@ namespace libchess {
 
 class BitboardIterator {
    public:
-    constexpr BitboardIterator(const std::uint64_t &data) : data_{data} {
+    [[nodiscard]] constexpr BitboardIterator(const std::uint64_t &data) : data_{data} {
     }
 
     [[nodiscard]] constexpr Square operator*() const noexcept {
@@ -33,13 +33,13 @@ class BitboardIterator {
 
 class Bitboard {
    public:
-    constexpr Bitboard() : mask_{0} {
+    [[nodiscard]] constexpr Bitboard() : mask_{0} {
     }
 
-    constexpr Bitboard(const std::uint64_t mask) : mask_{mask} {
+    [[nodiscard]] constexpr Bitboard(const std::uint64_t mask) : mask_{mask} {
     }
 
-    constexpr Bitboard(const Square sq) : mask_{1ULL << static_cast<int>(sq)} {
+    [[nodiscard]] constexpr Bitboard(const Square sq) : mask_{1ULL << static_cast<int>(sq)} {
     }
 
     [[nodiscard]] constexpr bool get(const Square sq) const noexcept {

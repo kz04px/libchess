@@ -32,15 +32,15 @@ enum MoveType : int
 
 class Move {
    public:
-    Move() : data_{0} {
+    [[nodiscard]] Move() : data_{0} {
     }
 
-    Move(const MoveType _t,
-         const Square _fr,
-         const Square _to,
-         const Piece _piece,
-         const Piece _cap = Piece::None,
-         const Piece _promotion = Piece::None)
+    [[nodiscard]] Move(const MoveType _t,
+                       const Square _fr,
+                       const Square _to,
+                       const Piece _piece,
+                       const Piece _cap = Piece::None,
+                       const Piece _promotion = Piece::None)
         : data_{} {
         data_ = static_cast<unsigned int>(_fr);
         data_ |= static_cast<unsigned int>(_to) << 6;

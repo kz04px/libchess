@@ -73,6 +73,7 @@ add_library(
 add_executable(
     libchess-test
     tests/main.cpp
+    tests/bitboard.cpp
     tests/checkers.cpp
     tests/consistency.cpp
     tests/draw.cpp
@@ -81,7 +82,6 @@ add_executable(
     tests/in_check.cpp
     tests/is_capture.cpp
     tests/is_legal.cpp
-    tests/iterator.cpp
     tests/legal_moves.cpp
     tests/movegen.cpp
     tests/parse_move.cpp

@@ -19,7 +19,6 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
     const auto them = !us;
     const auto ksq = king_position(us);
     const auto checkers = this->checkers();
-    const auto in_check = !checkers.empty();
     const auto ep_bb =
         ep_ == 0xFF ? Bitboard{} : bitboards::files[ep_] & (us == Side::White ? bitboards::Rank6 : bitboards::Rank3);
     auto allowed = occupancy(them);

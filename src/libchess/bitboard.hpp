@@ -316,6 +316,10 @@ static_assert(Bitboard{squares::H1}.adjacent() == Bitboard{0xc040});
 static_assert(Bitboard{squares::A8}.adjacent() == Bitboard{0x203000000000000});
 static_assert(Bitboard{squares::H8}.adjacent() == Bitboard{0x40c0000000000000});
 static_assert(Bitboard{squares::D4}.adjacent() == Bitboard{0x1c141c0000});
+static_assert(Bitboard{squares::A4}.lsbll() == squares::A4);
+static_assert(Bitboard{squares::D4}.lsbll() == squares::D4);
+static_assert(Bitboard{squares::H8}.lsbll() == squares::H8);
+static_assert(Bitboard{0x1c141c0000}.lsbll() == squares::C3);
 
 }  // namespace bitboards
 

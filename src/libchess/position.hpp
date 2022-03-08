@@ -492,7 +492,11 @@ inline std::ostream &operator<<(std::ostream &os, const Position &pos) noexcept 
     os << (pos.can_castle(Side::Black, MoveType::ksc) ? "k" : "");
     os << (pos.can_castle(Side::Black, MoveType::qsc) ? "q" : "");
     os << '\n';
-    os << "EP: " << pos.ep() << '\n';
+    if (pos.ep() == squares::OffSq) {
+        os << "EP: -\n";
+    } else {
+        os << "EP: " << pos.ep() << '\n';
+    }
     os << "Turn: " << (pos.turn() == Side::White ? 'w' : 'b');
 
     return os;

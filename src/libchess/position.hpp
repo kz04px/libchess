@@ -102,7 +102,7 @@ class Position {
     }
 
     [[nodiscard]] constexpr Square king_position(const Side s) const noexcept {
-        return pieces(s, Piece::King).lsbll();
+        return pieces(s, Piece::King).lsb();
     }
 
     [[nodiscard]] bool square_attacked(const Square sq, const Side s) const noexcept;

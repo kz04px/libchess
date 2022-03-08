@@ -34,7 +34,7 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
         }
         return;
     } else if (checkers.count() == 1) {
-        allowed = Bitboard{checkers.lsbll()};
+        allowed = Bitboard{checkers.lsb()};
     }
 
     const auto kfile = bitboards::files[ksq.file()];
@@ -93,7 +93,7 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
         if (ep_ != 0xFF) {
             const auto file = bitboards::files[ep_];
             const auto bb = file & bitboards::Rank6;
-            const auto ep_sq = bb.lsbll();
+            const auto ep_sq = bb.lsb();
             // const auto ep_bb = Bitboard{ep_sq};
 
             if (pawns.north().west() & ep_bb) {
@@ -150,7 +150,7 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
         if (ep_ != 0xFF) {
             const auto file = bitboards::files[ep_];
             const auto bb = file & bitboards::Rank3;
-            const auto ep_sq = bb.lsbll();
+            const auto ep_sq = bb.lsb();
             // const auto ep_bb = Bitboard{ep_sq};
 
             if (pawns.south().west() & ep_bb) {

@@ -38,7 +38,7 @@ void Position::legal_noncaptures(std::vector<Move> &moves) const noexcept {
 
     // If we're in check by one piece, we can try block or move the king
     if (ch.count() == 1) {
-        const auto sq = ch.lsbll();
+        const auto sq = ch.lsb();
         assert(piece_on(sq) != Piece::None);
         assert(piece_on(sq) != Piece::King);
 
@@ -62,7 +62,7 @@ void Position::legal_noncaptures(std::vector<Move> &moves) const noexcept {
 
             if (attackers) {
                 bishop_pinned |= bb;
-                const auto asq = attackers.lsbll();
+                const auto asq = attackers.lsb();
                 const auto move_mask = (squares_between(ksq, asq) ^ bb) & allowed;
 
                 if (bb & pieces(us, Piece::Bishop)) {
@@ -89,7 +89,7 @@ void Position::legal_noncaptures(std::vector<Move> &moves) const noexcept {
 
             if (attackers) {
                 rook_pinned |= bb;
-                const auto asq = attackers.lsbll();
+                const auto asq = attackers.lsb();
                 const auto move_mask = (squares_between(ksq, asq) ^ bb) & allowed;
 
                 if (bb & pieces(us, Piece::Rook)) {

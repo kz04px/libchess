@@ -119,11 +119,11 @@ namespace libchess {
     } else {
         if (turn() == Side::White) {
             const auto bb = bitboards::Rank6 & bitboards::files[ep_];
-            const auto sq = bb.lsbll();
+            const auto sq = bb.lsb();
             fen += " " + square_strings[static_cast<int>(sq)];
         } else {
             const auto bb = bitboards::Rank3 & bitboards::files[ep_];
-            const auto sq = bb.lsbll();
+            const auto sq = bb.lsb();
             fen += " " + square_strings[static_cast<int>(sq)];
         }
     }

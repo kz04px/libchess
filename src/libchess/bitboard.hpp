@@ -121,7 +121,7 @@ class Bitboard {
         return mask_ >> n;
     }
 
-    [[nodiscard]] constexpr Square lsbll() const noexcept {
+    [[nodiscard]] constexpr Square lsb() const noexcept {
         assert(mask_);
         return std::countr_zero(mask_);
     }
@@ -316,10 +316,10 @@ static_assert(Bitboard{squares::H1}.adjacent() == Bitboard{0xc040});
 static_assert(Bitboard{squares::A8}.adjacent() == Bitboard{0x203000000000000});
 static_assert(Bitboard{squares::H8}.adjacent() == Bitboard{0x40c0000000000000});
 static_assert(Bitboard{squares::D4}.adjacent() == Bitboard{0x1c141c0000});
-static_assert(Bitboard{squares::A4}.lsbll() == squares::A4);
-static_assert(Bitboard{squares::D4}.lsbll() == squares::D4);
-static_assert(Bitboard{squares::H8}.lsbll() == squares::H8);
-static_assert(Bitboard{0x1c141c0000}.lsbll() == squares::C3);
+static_assert(Bitboard{squares::A4}.lsb() == squares::A4);
+static_assert(Bitboard{squares::D4}.lsb() == squares::D4);
+static_assert(Bitboard{squares::H8}.lsb() == squares::H8);
+static_assert(Bitboard{0x1c141c0000}.lsb() == squares::C3);
 
 }  // namespace bitboards
 

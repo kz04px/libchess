@@ -70,13 +70,10 @@ namespace libchess {
 }
 
 [[nodiscard]] std::string fen_enpassant(const Position &pos) noexcept {
-    if (pos.ep_ == 0xFF) {
+    if (pos.ep() == squares::OffSq) {
         return "-";
     } else {
-        const auto rank = pos.turn() == Side::White ? bitboards::Rank6 : bitboards::Rank3;
-        const auto bb = rank & bitboards::files[pos.ep_];
-        const auto sq = bb.lsb();
-        return square_strings[static_cast<int>(sq)];
+        return square_strings[static_cast<int>(pos.ep())];
     }
 }
 

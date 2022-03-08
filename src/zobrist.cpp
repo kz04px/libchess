@@ -191,8 +191,8 @@ namespace libchess::zobrist {
     return key_piece[64 * 2 * static_cast<int>(p) + 64 * static_cast<int>(s) + static_cast<int>(sq)];
 }
 
-[[nodiscard]] std::uint64_t ep_key(const int p) {
-    return key_ep[p];
+[[nodiscard]] std::uint64_t ep_key(const Square sq) {
+    return key_ep[sq.file()];
 }
 
 }  // namespace libchess::zobrist

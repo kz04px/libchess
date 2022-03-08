@@ -14,7 +14,7 @@ namespace libchess::zobrist {
 
 [[nodiscard]] std::uint64_t piece_key(const Piece p, const Side s, const Square sq);
 
-[[nodiscard]] std::uint64_t ep_key(const int p);
+[[nodiscard]] std::uint64_t ep_key(const Square sq);
 
 }  // namespace libchess::zobrist
 

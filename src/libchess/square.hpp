@@ -164,6 +164,8 @@ constexpr Square F8 = {61};
 constexpr Square G8 = {62};
 constexpr Square H8 = {63};
 
+constexpr Square OffSq;
+
 static_assert(A1.dark());
 static_assert(!A1.light());
 static_assert(!H1.dark());

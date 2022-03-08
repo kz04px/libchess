@@ -218,14 +218,14 @@ class Position {
         });
 
 #ifndef NO_HASH
-        if (ep_ != 0xFF) {
+        if (ep_ != squares::OffSq) {
             hash_ ^= zobrist::ep_key(ep_);
         }
         hash_ ^= zobrist::turn_key();
 #endif
 
         to_move_ = !to_move_;
-        ep_ = 0xFF;
+        ep_ = squares::OffSq;
         halfmove_clock_ = 0;
     }
 
@@ -282,7 +282,7 @@ class Position {
         }
 
         // EP
-        if (ep_ != 0xFF) {
+        if (ep_ != squares::OffSq) {
             hash ^= zobrist::ep_key(ep_);
         }
 
@@ -302,6 +302,10 @@ class Position {
         return Piece::None;
     }
 
+    [[nodiscard]] constexpr Square ep() const noexcept {
+        return ep_;
+    }
+
     void clear() noexcept {
         colours_[0].clear();
         colours_[1].clear();
@@ -313,7 +317,7 @@ class Position {
         pieces_[5].clear();
         halfmove_clock_ = 0;
         fullmove_clock_ = 0;
-        ep_ = 0xFF;
+        ep_ = squares::OffSq;
         hash_ = 0x0;
         castling_[0] = false;
         castling_[1] = false;
@@ -322,8 +326,6 @@ class Position {
         to_move_ = Side::White;
         history_.clear();
     }
-
-    int ep_ = 0xFF;
 
    private:
     void set(const Square sq, const Side s, const Piece p) noexcept {
@@ -342,8 +344,13 @@ class Position {
         }
 #endif
 
-        if (ep_ != 0xFF && ep_ > 7) {
-            return false;
+        if (ep() != squares::OffSq) {
+            if (turn() == Side::White && ep().rank() != 5) {
+                return false;
+            }
+            if (turn() == Side::Black && ep().rank() != 2) {
+                return false;
+            }
         }
 
         if (pieces(Side::White, Piece::King).count() != 1) {
@@ -422,7 +429,7 @@ class Position {
     struct meh {
         std::uint64_t hash = 0;
         Move move;
-        int ep = 0;
+        Square ep = 0;
         std::size_t halfmove_clock = 0;
         bool castling[4] = {};
     };
@@ -431,6 +438,7 @@ class Position {
     Bitboard pieces_[6] = {};
     std::size_t halfmove_clock_ = 0;
     std::size_t fullmove_clock_ = 0;
+    Square ep_ = squares::OffSq;
     std::uint64_t hash_ = 0;
     bool castling_[4] = {};
     Side to_move_ = Side::White;
@@ -484,7 +492,7 @@ inline std::ostream &operator<<(std::ostream &os, const Position &pos) noexcept 
     os << (pos.can_castle(Side::Black, MoveType::ksc) ? "k" : "");
     os << (pos.can_castle(Side::Black, MoveType::qsc) ? "q" : "");
     os << '\n';
-    os << "EP: " << pos.ep_ << '\n';
+    os << "EP: " << pos.ep() << '\n';
     os << "Turn: " << (pos.turn() == Side::White ? 'w' : 'b');
 
     return os;

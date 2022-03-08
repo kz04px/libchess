@@ -2,6 +2,7 @@
 #define LIBCHESS_POSITION_HPP
 
 #include <ostream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 #include "bitboard.hpp"
@@ -195,7 +196,7 @@ class Position {
             }
         }
 
-        throw "illegal move string";
+        throw std::invalid_argument("Illegal move string");
     }
 
     void makemove(const Move &move) noexcept;

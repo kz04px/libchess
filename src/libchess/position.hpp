@@ -327,12 +327,6 @@ class Position {
         history_.clear();
     }
 
-   private:
-    void set(const Square sq, const Side s, const Piece p) noexcept {
-        colours_[s] |= sq;
-        pieces_[p] |= sq;
-    }
-
     [[nodiscard]] bool valid() const noexcept {
 #ifdef NO_HASH
         if (hash_ != 0) {
@@ -424,6 +418,12 @@ class Position {
         }
 
         return true;
+    }
+
+   private:
+    void set(const Square sq, const Side s, const Piece p) noexcept {
+        colours_[s] |= sq;
+        pieces_[p] |= sq;
     }
 
     struct meh {

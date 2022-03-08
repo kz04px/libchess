@@ -4,11 +4,13 @@
 #include "catch.hpp"
 
 void valid(libchess::Position &pos, const int depth) noexcept {
+    REQUIRE(pos.valid());
+
     if (depth == 0) {
         return;
     }
 
-    {
+    if (!pos.in_check()) {
         const auto halfmoves = pos.halfmoves();
         const auto fullmoves = pos.fullmoves();
         const auto hash = pos.hash();

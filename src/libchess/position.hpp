@@ -293,6 +293,15 @@ class Position {
         return history_;
     }
 
+    [[nodiscard]] constexpr Piece piece_on(const Square sq) const noexcept {
+        for (int i = 0; i < 6; ++i) {
+            if (pieces_[i] & Bitboard{sq}) {
+                return Piece(i);
+            }
+        }
+        return Piece::None;
+    }
+
     void clear() noexcept {
         colours_[0].clear();
         colours_[1].clear();
@@ -320,15 +329,6 @@ class Position {
     void set(const Square sq, const Side s, const Piece p) noexcept {
         colours_[s] |= sq;
         pieces_[p] |= sq;
-    }
-
-    [[nodiscard]] constexpr Piece piece_on(const Square sq) const noexcept {
-        for (int i = 0; i < 6; ++i) {
-            if (pieces_[i] & Bitboard{sq}) {
-                return Piece(i);
-            }
-        }
-        return Piece::None;
     }
 
     [[nodiscard]] bool valid() const noexcept {

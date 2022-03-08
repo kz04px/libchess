@@ -10,8 +10,7 @@ namespace libchess {
 
 class Square {
    public:
-    [[nodiscard]] constexpr Square() : data_{0xff} {
-    }
+    [[nodiscard]] constexpr Square() = default;
 
     [[nodiscard]] constexpr Square(const int n) : data_{static_cast<std::uint8_t>(n)} {
         assert(n < 64);
@@ -91,7 +90,7 @@ class Square {
     }
 
    private:
-    std::uint8_t data_;
+    std::uint8_t data_ = 0xFF;
 };
 
 inline std::ostream &operator<<(std::ostream &os, const Square &sq) noexcept {

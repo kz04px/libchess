@@ -31,12 +31,9 @@ constexpr const Square qsc_rook_to[] = {squares::D1, squares::D8};
 
 class Position {
    public:
-    [[nodiscard]] Position()
-        : ep_{}, colours_{}, pieces_{}, halfmove_clock_{0}, fullmove_clock_{0}, to_move_{Side::White}, history_{} {
-    }
+    [[nodiscard]] Position() = default;
 
-    [[nodiscard]] Position(const std::string &fen)
-        : ep_{}, colours_{}, pieces_{}, halfmove_clock_{0}, fullmove_clock_{0}, to_move_{Side::White}, history_{} {
+    [[nodiscard]] Position(const std::string &fen) {
         set_fen(fen);
     }
 
@@ -316,7 +313,7 @@ class Position {
         history_.clear();
     }
 
-    int ep_;
+    int ep_ = 0xFF;
 
    private:
     void set(const Square sq, const Side s, const Piece p) noexcept {
@@ -422,20 +419,20 @@ class Position {
     }
 
     struct meh {
-        std::uint64_t hash;
+        std::uint64_t hash = 0;
         Move move;
-        int ep;
-        std::size_t halfmove_clock;
-        bool castling[4];
+        int ep = 0;
+        std::size_t halfmove_clock = 0;
+        bool castling[4] = {};
     };
 
-    Bitboard colours_[2];
-    Bitboard pieces_[6];
-    std::size_t halfmove_clock_;
-    std::size_t fullmove_clock_;
-    std::uint64_t hash_;
-    bool castling_[4];
-    Side to_move_;
+    Bitboard colours_[2] = {};
+    Bitboard pieces_[6] = {};
+    std::size_t halfmove_clock_ = 0;
+    std::size_t fullmove_clock_ = 0;
+    std::uint64_t hash_ = 0;
+    bool castling_[4] = {};
+    Side to_move_ = Side::White;
     std::vector<meh> history_;
 };
 

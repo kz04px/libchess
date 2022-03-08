@@ -32,16 +32,14 @@ enum MoveType : int
 
 class Move {
    public:
-    [[nodiscard]] Move() : data_{0} {
-    }
+    [[nodiscard]] Move() = default;
 
     [[nodiscard]] Move(const MoveType _t,
                        const Square _fr,
                        const Square _to,
                        const Piece _piece,
                        const Piece _cap = Piece::None,
-                       const Piece _promotion = Piece::None)
-        : data_{} {
+                       const Piece _promotion = Piece::None) {
         data_ = static_cast<unsigned int>(_fr);
         data_ |= static_cast<unsigned int>(_to) << 6;
         data_ |= static_cast<unsigned int>(_t) << 12;
@@ -167,7 +165,7 @@ class Move {
     }
 
    private:
-    std::uint32_t data_;
+    std::uint32_t data_ = 0;
 };
 
 inline std::ostream &operator<<(std::ostream &os, const Move &move) noexcept {

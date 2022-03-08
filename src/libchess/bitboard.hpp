@@ -28,13 +28,12 @@ class BitboardIterator {
     }
 
    private:
-    std::uint64_t data_;
+    std::uint64_t data_ = 0;
 };
 
 class Bitboard {
    public:
-    [[nodiscard]] constexpr Bitboard() : mask_{0} {
-    }
+    [[nodiscard]] constexpr Bitboard() = default;
 
     [[nodiscard]] constexpr Bitboard(const std::uint64_t mask) : mask_{mask} {
     }
@@ -151,7 +150,7 @@ class Bitboard {
     }
 
    private:
-    std::uint64_t mask_;
+    std::uint64_t mask_ = 0;
 };
 
 inline std::ostream &operator<<(std::ostream &os, const Bitboard &bb) noexcept {

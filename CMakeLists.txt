@@ -42,6 +42,7 @@ add_library(
     src/square_attacked.cpp
     src/squares_attacked.cpp
     src/undomove.cpp
+    src/valid.cpp
     src/zobrist.cpp
 )
 
@@ -68,6 +69,7 @@ add_library(
     src/square_attacked.cpp
     src/squares_attacked.cpp
     src/undomove.cpp
+    src/valid.cpp
     src/zobrist.cpp
 )
 

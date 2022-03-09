@@ -1,11 +1,12 @@
 #include <array>
+#include <cstdint>
 #include <libchess/bitboard.hpp>
 #include <libchess/position.hpp>
 #include <string>
 #include "catch.hpp"
 
 TEST_CASE("Position::squares_attacked()") {
-    using pair_type = std::pair<std::string, libchess::Bitboard>;
+    using pair_type = std::pair<std::string, std::uint64_t>;
 
     const std::array<pair_type, 10> positions = {{
         {"startpos", 0xffff7e},
@@ -23,6 +24,6 @@ TEST_CASE("Position::squares_attacked()") {
     for (const auto &[fen, attacked] : positions) {
         INFO(fen);
         const libchess::Position pos{fen};
-        REQUIRE(pos.squares_attacked(pos.turn()) == attacked);
+        REQUIRE(pos.squares_attacked(pos.turn()) == libchess::Bitboard(attacked));
     }
 }

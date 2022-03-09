@@ -34,7 +34,7 @@ class Position {
    public:
     [[nodiscard]] Position() = default;
 
-    [[nodiscard]] Position(const std::string &fen) {
+    [[nodiscard]] explicit Position(const std::string &fen) {
         set_fen(fen);
     }
 
@@ -338,7 +338,7 @@ class Position {
     struct meh {
         std::uint64_t hash = 0;
         Move move;
-        Square ep = 0;
+        Square ep;
         std::size_t halfmove_clock = 0;
         bool castling[4] = {};
     };

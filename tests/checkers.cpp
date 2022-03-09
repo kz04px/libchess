@@ -1,10 +1,11 @@
 #include <array>
+#include <cstdint>
 #include <libchess/position.hpp>
 #include <string>
 #include "catch.hpp"
 
 TEST_CASE("Position::checkers()") {
-    using pair_type = std::pair<std::string, libchess::Bitboard>;
+    using pair_type = std::pair<std::string, std::uint64_t>;
 
     const std::array<pair_type, 2> positions = {{
         {"startpos", 0x0},
@@ -14,6 +15,6 @@ TEST_CASE("Position::checkers()") {
     for (const auto &[fen, checkers] : positions) {
         INFO(fen);
         const libchess::Position pos{fen};
-        REQUIRE(pos.checkers() == checkers);
+        REQUIRE(pos.checkers() == libchess::Bitboard(checkers));
     }
 }

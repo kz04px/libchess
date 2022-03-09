@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <libchess/bitboard.hpp>
 #include <libchess/movegen.hpp>
 #include <libchess/square.hpp>
@@ -5,7 +6,7 @@
 #include "catch.hpp"
 
 TEST_CASE("Movegen knights") {
-    using pair_type = std::pair<libchess::Square, libchess::Bitboard>;
+    using pair_type = std::pair<libchess::Square, std::uint64_t>;
 
     const std::array<pair_type, 3> positions = {{
         {libchess::squares::A1, 0x20400},
@@ -15,12 +16,12 @@ TEST_CASE("Movegen knights") {
 
     for (const auto &[sq, moves] : positions) {
         INFO(sq);
-        REQUIRE(libchess::movegen::knight_moves(sq) == moves);
+        REQUIRE(libchess::movegen::knight_moves(sq) == libchess::Bitboard(moves));
     }
 }
 
 TEST_CASE("Movegen bishops") {
-    using tuple_type = std::tuple<libchess::Square, libchess::Bitboard, libchess::Bitboard>;
+    using tuple_type = std::tuple<libchess::Square, std::uint64_t, std::uint64_t>;
 
     const std::array<tuple_type, 3> positions = {{
         {libchess::squares::A1, 0x0, 0x8040201008040200},
@@ -30,12 +31,12 @@ TEST_CASE("Movegen bishops") {
 
     for (const auto &[sq, blockers, moves] : positions) {
         INFO(sq);
-        REQUIRE(libchess::movegen::bishop_moves(sq, blockers) == moves);
+        REQUIRE(libchess::movegen::bishop_moves(sq, libchess::Bitboard(blockers)) == libchess::Bitboard(moves));
     }
 }
 
 TEST_CASE("Movegen rooks") {
-    using tuple_type = std::tuple<libchess::Square, libchess::Bitboard, libchess::Bitboard>;
+    using tuple_type = std::tuple<libchess::Square, std::uint64_t, std::uint64_t>;
 
     const std::array<tuple_type, 3> positions = {{
         {libchess::squares::A1, 0x0, 0x1010101010101fe},
@@ -45,12 +46,12 @@ TEST_CASE("Movegen rooks") {
 
     for (const auto &[sq, blockers, moves] : positions) {
         INFO(sq);
-        REQUIRE(libchess::movegen::rook_moves(sq, blockers) == moves);
+        REQUIRE(libchess::movegen::rook_moves(sq, libchess::Bitboard(blockers)) == libchess::Bitboard(moves));
     }
 }
 
 TEST_CASE("Movegen queens") {
-    using pair_type = std::pair<libchess::Square, libchess::Bitboard>;
+    using pair_type = std::pair<libchess::Square, std::uint64_t>;
 
     const std::array<pair_type, 2> positions = {{
         {libchess::squares::A1, 0x0},
@@ -59,15 +60,15 @@ TEST_CASE("Movegen queens") {
 
     for (const auto &[sq, blockers] : positions) {
         INFO(sq);
-        const auto bishop = libchess::movegen::bishop_moves(sq, blockers);
-        const auto rook = libchess::movegen::rook_moves(sq, blockers);
-        const auto queen = libchess::movegen::queen_moves(sq, blockers);
+        const auto bishop = libchess::movegen::bishop_moves(sq, libchess::Bitboard(blockers));
+        const auto rook = libchess::movegen::rook_moves(sq, libchess::Bitboard(blockers));
+        const auto queen = libchess::movegen::queen_moves(sq, libchess::Bitboard(blockers));
         REQUIRE((bishop | rook) == queen);
     }
 }
 
 TEST_CASE("Movegen king") {
-    using pair_type = std::pair<libchess::Square, libchess::Bitboard>;
+    using pair_type = std::pair<libchess::Square, std::uint64_t>;
 
     const std::array<pair_type, 3> positions = {{
         {libchess::squares::A1, 0x302},
@@ -77,6 +78,6 @@ TEST_CASE("Movegen king") {
 
     for (const auto &[sq, moves] : positions) {
         INFO(sq);
-        REQUIRE(libchess::movegen::king_moves(sq) == moves);
+        REQUIRE(libchess::movegen::king_moves(sq) == libchess::Bitboard(moves));
     }
 }

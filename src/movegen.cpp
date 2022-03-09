@@ -275,7 +275,7 @@ std::array<std::uint64_t, 88772> generate_magic_moves() {
         const auto sq = Square{i};
 
         // Bishops
-        perm = 0;
+        perm.clear();
         do {
             std::uint64_t *index =
                 (std::uint64_t *)(result.data() + bishop_stuff[i].second +
@@ -284,7 +284,7 @@ std::array<std::uint64_t, 88772> generate_magic_moves() {
         } while ((perm = permute(bishop_masks[i], perm)));
 
         // Rooks
-        perm = 0;
+        perm.clear();
         do {
             std::uint64_t *index = (std::uint64_t *)(result.data() + rook_stuff[i].second +
                                                      (((perm & rook_masks[i]).value() * rook_stuff[i].first) >> 52));
@@ -303,14 +303,14 @@ Bitboard knight_moves(const Square sq) {
 
 Bitboard bishop_moves(const Square sq, const Bitboard &occ) {
     const int idx = static_cast<int>(sq);
-    return *(magic_moves.data() + bishop_stuff[idx].second +
-             (((occ & bishop_masks[idx]).value() * bishop_stuff[idx].first) >> 55));
+    return Bitboard(*(magic_moves.data() + bishop_stuff[idx].second +
+                      (((occ & bishop_masks[idx]).value() * bishop_stuff[idx].first) >> 55)));
 }
 
 Bitboard rook_moves(const Square sq, const Bitboard &occ) {
     const int idx = static_cast<int>(sq);
-    return *(magic_moves.data() + rook_stuff[idx].second +
-             (((occ & rook_masks[idx]).value() * rook_stuff[idx].first) >> 52));
+    return Bitboard(*(magic_moves.data() + rook_stuff[idx].second +
+                      (((occ & rook_masks[idx]).value() * rook_stuff[idx].first) >> 52)));
 }
 
 Bitboard queen_moves(const Square sq, const Bitboard &occ) {

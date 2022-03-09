@@ -36,10 +36,10 @@ class Bitboard {
    public:
     [[nodiscard]] constexpr Bitboard() = default;
 
-    [[nodiscard]] constexpr Bitboard(const std::uint64_t mask) : mask_{mask} {
+    [[nodiscard]] constexpr explicit Bitboard(const std::uint64_t mask) : mask_{mask} {
     }
 
-    [[nodiscard]] constexpr Bitboard(const Square sq) : mask_{1ULL << static_cast<int>(sq)} {
+    [[nodiscard]] constexpr explicit Bitboard(const Square sq) : mask_{1ULL << static_cast<int>(sq)} {
     }
 
     [[nodiscard]] constexpr bool get(const Square sq) const noexcept {
@@ -82,20 +82,32 @@ class Bitboard {
         return mask_ != rhs.mask_;
     }
 
+    [[nodiscard]] constexpr Bitboard operator~() const noexcept {
+        return Bitboard(~mask_);
+    }
+
     [[nodiscard]] constexpr Bitboard operator&(const Bitboard &rhs) const noexcept {
-        return mask_ & rhs.mask_;
+        return Bitboard(mask_ & rhs.mask_);
     }
 
     [[nodiscard]] constexpr Bitboard operator|(const Bitboard &rhs) const noexcept {
-        return mask_ | rhs.mask_;
+        return Bitboard(mask_ | rhs.mask_);
     }
 
     [[nodiscard]] constexpr Bitboard operator^(const Bitboard &rhs) const noexcept {
-        return mask_ ^ rhs.mask_;
+        return Bitboard(mask_ ^ rhs.mask_);
     }
 
-    [[nodiscard]] constexpr Bitboard operator~() const noexcept {
-        return ~mask_;
+    [[nodiscard]] constexpr Bitboard operator&(const Square &rhs) const noexcept {
+        return Bitboard(mask_ & (1ULL << static_cast<int>(rhs)));
+    }
+
+    [[nodiscard]] constexpr Bitboard operator|(const Square &rhs) const noexcept {
+        return Bitboard(mask_ | (1ULL << static_cast<int>(rhs)));
+    }
+
+    [[nodiscard]] constexpr Bitboard operator^(const Square &rhs) const noexcept {
+        return Bitboard(mask_ ^ (1ULL << static_cast<int>(rhs)));
     }
 
     Bitboard constexpr operator&=(const Bitboard &rhs) noexcept {
@@ -113,17 +125,32 @@ class Bitboard {
         return *this;
     }
 
+    Bitboard constexpr operator&=(const Square &rhs) noexcept {
+        mask_ &= 1ULL << static_cast<int>(rhs);
+        return *this;
+    }
+
+    Bitboard constexpr operator|=(const Square &rhs) noexcept {
+        mask_ |= 1ULL << static_cast<int>(rhs);
+        return *this;
+    }
+
+    Bitboard constexpr operator^=(const Square &rhs) noexcept {
+        mask_ ^= 1ULL << static_cast<int>(rhs);
+        return *this;
+    }
+
     [[nodiscard]] constexpr Bitboard operator<<(const int n) const noexcept {
-        return mask_ << n;
+        return Bitboard(mask_ << n);
     }
 
     [[nodiscard]] constexpr Bitboard operator>>(const int n) const noexcept {
-        return mask_ >> n;
+        return Bitboard(mask_ >> n);
     }
 
     [[nodiscard]] constexpr Square lsb() const noexcept {
         assert(mask_);
-        return std::countr_zero(mask_);
+        return Square(std::countr_zero(mask_));
     }
 
     [[nodiscard]] constexpr std::uint64_t value() const noexcept {
@@ -135,19 +162,19 @@ class Bitboard {
     }
 
     [[nodiscard]] constexpr Bitboard north() const noexcept {
-        return mask_ << 8;
+        return Bitboard(mask_ << 8);
     }
 
     [[nodiscard]] constexpr Bitboard south() const noexcept {
-        return mask_ >> 8;
+        return Bitboard(mask_ >> 8);
     }
 
     [[nodiscard]] constexpr Bitboard east() const noexcept {
-        return (mask_ << 1) & ~0x0101010101010101ULL;
+        return Bitboard((mask_ << 1) & ~0x0101010101010101ULL);
     }
 
     [[nodiscard]] constexpr Bitboard west() const noexcept {
-        return (mask_ >> 1) & ~0x8080808080808080ULL;
+        return Bitboard((mask_ >> 1) & ~0x8080808080808080ULL);
     }
 
    private:
@@ -219,34 +246,34 @@ constexpr auto lut_squares_between = calculate_squares_between();
 
 namespace bitboards {
 
-constexpr Bitboard FileA = {0x0101010101010101};
-constexpr Bitboard FileB = {0x0202020202020202};
-constexpr Bitboard FileC = {0x0404040404040404};
-constexpr Bitboard FileD = {0x0808080808080808};
-constexpr Bitboard FileE = {0x1010101010101010};
-constexpr Bitboard FileF = {0x2020202020202020};
-constexpr Bitboard FileG = {0x4040404040404040};
-constexpr Bitboard FileH = {0x8080808080808080};
+constexpr auto FileA = Bitboard(0x0101010101010101);
+constexpr auto FileB = Bitboard(0x0202020202020202);
+constexpr auto FileC = Bitboard(0x0404040404040404);
+constexpr auto FileD = Bitboard(0x0808080808080808);
+constexpr auto FileE = Bitboard(0x1010101010101010);
+constexpr auto FileF = Bitboard(0x2020202020202020);
+constexpr auto FileG = Bitboard(0x4040404040404040);
+constexpr auto FileH = Bitboard(0x8080808080808080);
 
-constexpr Bitboard Rank1 = {0x00000000000000ff};
-constexpr Bitboard Rank2 = {0x000000000000ff00};
-constexpr Bitboard Rank3 = {0x0000000000ff0000};
-constexpr Bitboard Rank4 = {0x00000000ff000000};
-constexpr Bitboard Rank5 = {0x000000ff00000000};
-constexpr Bitboard Rank6 = {0x0000ff0000000000};
-constexpr Bitboard Rank7 = {0x00ff000000000000};
-constexpr Bitboard Rank8 = {0xff00000000000000};
+constexpr auto Rank1 = Bitboard(0x00000000000000ff);
+constexpr auto Rank2 = Bitboard(0x000000000000ff00);
+constexpr auto Rank3 = Bitboard(0x0000000000ff0000);
+constexpr auto Rank4 = Bitboard(0x00000000ff000000);
+constexpr auto Rank5 = Bitboard(0x000000ff00000000);
+constexpr auto Rank6 = Bitboard(0x0000ff0000000000);
+constexpr auto Rank7 = Bitboard(0x00ff000000000000);
+constexpr auto Rank8 = Bitboard(0xff00000000000000);
 
 constexpr Bitboard files[] = {FileA, FileB, FileC, FileD, FileE, FileF, FileG, FileH};
 constexpr Bitboard ranks[] = {Rank1, Rank2, Rank3, Rank4, Rank5, Rank6, Rank7, Rank8};
 constexpr Bitboard adjacent_files[] =
     {FileB, FileA | FileC, FileB | FileD, FileC | FileE, FileD | FileF, FileE | FileG, FileF | FileH, FileG};
 
-constexpr Bitboard LightSquares = {0x55aa55aa55aa55aa};
-constexpr Bitboard DarkSquares = {0xaa55aa55aa55aa55};
-constexpr Bitboard Empty = {0x0000000000000000};
-constexpr Bitboard AllSquares = {0xffffffffffffffff};
-constexpr Bitboard Edge = {0xff818181818181ff};
+constexpr auto LightSquares = Bitboard(0x55aa55aa55aa55aa);
+constexpr auto DarkSquares = Bitboard(0xaa55aa55aa55aa55);
+constexpr auto Empty = Bitboard(0x0000000000000000);
+constexpr auto AllSquares = Bitboard(0xffffffffffffffff);
+constexpr auto Edge = Bitboard(0xff818181818181ff);
 
 static_assert(Empty.count() == 0);
 static_assert(Empty.empty());
@@ -325,26 +352,26 @@ static_assert(Bitboard{0x1c141c0000}.lsb() == squares::C3);
 
 static_assert(sizeof(Bitboard) == sizeof(std::uint64_t));
 // Same file
-static_assert(squares_between(squares::A1, squares::A4) == 0x10100);
-static_assert(squares_between(squares::A4, squares::A1) == 0x10100);
+static_assert(squares_between(squares::A1, squares::A4) == Bitboard(0x10100));
+static_assert(squares_between(squares::A4, squares::A1) == Bitboard(0x10100));
 // Same Rank
-static_assert(squares_between(squares::A1, squares::D1) == 0x6);
-static_assert(squares_between(squares::D1, squares::A1) == 0x6);
+static_assert(squares_between(squares::A1, squares::D1) == Bitboard(0x6));
+static_assert(squares_between(squares::D1, squares::A1) == Bitboard(0x6));
 // Same diagonal a1-h8
-static_assert(squares_between(squares::A1, squares::D4) == 0x40200);
-static_assert(squares_between(squares::D4, squares::A1) == 0x40200);
+static_assert(squares_between(squares::A1, squares::D4) == Bitboard(0x40200));
+static_assert(squares_between(squares::D4, squares::A1) == Bitboard(0x40200));
 // Same diagonal a8-h1
-static_assert(squares_between(squares::A4, squares::D1) == 0x20400);
-static_assert(squares_between(squares::D1, squares::A4) == 0x20400);
+static_assert(squares_between(squares::A4, squares::D1) == Bitboard(0x20400));
+static_assert(squares_between(squares::D1, squares::A4) == Bitboard(0x20400));
 // Hmm
-static_assert(squares_between(squares::A1, squares::A1) == 0x0);
-static_assert(squares_between(squares::A1, squares::B1) == 0x0);
-static_assert(squares_between(squares::A1, squares::B2) == 0x0);
-static_assert(squares_between(squares::A1, squares::A2) == 0x0);
-static_assert(squares_between(squares::A1, squares::B3) == 0x0);
-static_assert(squares_between(squares::A1, squares::C2) == 0x0);
-static_assert(squares_between(squares::B3, squares::A1) == 0x0);
-static_assert(squares_between(squares::B3, squares::A1) == 0x0);
+static_assert(squares_between(squares::A1, squares::A1).empty());
+static_assert(squares_between(squares::A1, squares::B1).empty());
+static_assert(squares_between(squares::A1, squares::B2).empty());
+static_assert(squares_between(squares::A1, squares::A2).empty());
+static_assert(squares_between(squares::A1, squares::B3).empty());
+static_assert(squares_between(squares::A1, squares::C2).empty());
+static_assert(squares_between(squares::B3, squares::A1).empty());
+static_assert(squares_between(squares::B3, squares::A1).empty());
 
 }  // namespace libchess
 

@@ -10,18 +10,17 @@ namespace libchess {
 
 class Square {
    public:
-    constexpr Square() : data_{0xff} {
-    }
+    [[nodiscard]] constexpr Square() = default;
 
-    constexpr Square(const int n) : data_{static_cast<std::uint8_t>(n)} {
+    [[nodiscard]] constexpr explicit Square(const int n) : data_{static_cast<std::uint8_t>(n)} {
         assert(n < 64);
     }
 
-    constexpr Square(const int f, const int r) : data_{static_cast<std::uint8_t>(8 * r + f)} {
+    [[nodiscard]] constexpr Square(const int f, const int r) : data_{static_cast<std::uint8_t>(8 * r + f)} {
         assert(data_);
     }
 
-    Square(const std::string &str) : data_{} {
+    [[nodiscard]] Square(const std::string &str) : data_{} {
         const int file = str[0] - 'a';
         const int rank = str[1] - '1';
         data_ = static_cast<std::uint8_t>(rank * 8 + file);
@@ -91,7 +90,7 @@ class Square {
     }
 
    private:
-    std::uint8_t data_;
+    std::uint8_t data_ = 0xFF;
 };
 
 inline std::ostream &operator<<(std::ostream &os, const Square &sq) noexcept {
@@ -114,56 +113,58 @@ const std::string square_strings[] = {
 
 namespace squares {
 
-constexpr Square A1 = {0};
-constexpr Square B1 = {1};
-constexpr Square C1 = {2};
-constexpr Square D1 = {3};
-constexpr Square E1 = {4};
-constexpr Square F1 = {5};
-constexpr Square G1 = {6};
-constexpr Square H1 = {7};
+constexpr auto A1 = Square(0);
+constexpr auto B1 = Square(1);
+constexpr auto C1 = Square(2);
+constexpr auto D1 = Square(3);
+constexpr auto E1 = Square(4);
+constexpr auto F1 = Square(5);
+constexpr auto G1 = Square(6);
+constexpr auto H1 = Square(7);
 
-constexpr Square A2 = {8};
-constexpr Square B2 = {9};
-constexpr Square C2 = {10};
-constexpr Square D2 = {11};
+constexpr auto A2 = Square(8);
+constexpr auto B2 = Square(9);
+constexpr auto C2 = Square(10);
+constexpr auto D2 = Square(11);
 
-constexpr Square A3 = {16};
-constexpr Square B3 = {17};
-constexpr Square C3 = {18};
-constexpr Square D3 = {19};
-constexpr Square E3 = {20};
-constexpr Square F3 = {21};
-constexpr Square G3 = {22};
-constexpr Square H3 = {23};
+constexpr auto A3 = Square(16);
+constexpr auto B3 = Square(17);
+constexpr auto C3 = Square(18);
+constexpr auto D3 = Square(19);
+constexpr auto E3 = Square(20);
+constexpr auto F3 = Square(21);
+constexpr auto G3 = Square(22);
+constexpr auto H3 = Square(23);
 
-constexpr Square A4 = {24};
-constexpr Square D4 = {27};
+constexpr auto A4 = Square(24);
+constexpr auto D4 = Square(27);
 
-constexpr Square A5 = {32};
-constexpr Square B5 = {33};
-constexpr Square C5 = {34};
-constexpr Square D5 = {35};
-constexpr Square E5 = {36};
-constexpr Square F5 = {37};
-constexpr Square G5 = {38};
+constexpr auto A5 = Square(32);
+constexpr auto B5 = Square(33);
+constexpr auto C5 = Square(34);
+constexpr auto D5 = Square(35);
+constexpr auto E5 = Square(36);
+constexpr auto F5 = Square(37);
+constexpr auto G5 = Square(38);
 
-constexpr Square A6 = {40};
-constexpr Square H6 = {47};
+constexpr auto A6 = Square(40);
+constexpr auto H6 = Square(47);
 
-constexpr Square A7 = {48};
-constexpr Square B7 = {49};
-constexpr Square F7 = {53};
-constexpr Square G7 = {54};
+constexpr auto A7 = Square(48);
+constexpr auto B7 = Square(49);
+constexpr auto F7 = Square(53);
+constexpr auto G7 = Square(54);
 
-constexpr Square A8 = {56};
-constexpr Square B8 = {57};
-constexpr Square C8 = {58};
-constexpr Square D8 = {59};
-constexpr Square E8 = {60};
-constexpr Square F8 = {61};
-constexpr Square G8 = {62};
-constexpr Square H8 = {63};
+constexpr auto A8 = Square(56);
+constexpr auto B8 = Square(57);
+constexpr auto C8 = Square(58);
+constexpr auto D8 = Square(59);
+constexpr auto E8 = Square(60);
+constexpr auto F8 = Square(61);
+constexpr auto G8 = Square(62);
+constexpr auto H8 = Square(63);
+
+constexpr Square OffSq;
 
 static_assert(A1.dark());
 static_assert(!A1.light());
@@ -173,6 +174,7 @@ static_assert(A1.flip() == A8);
 static_assert(A8.flip() == A1);
 static_assert(H1.flip() == H8);
 static_assert(H8.flip() == H1);
+static_assert(OffSq == Square());
 // static_assert(Square("a1") == A1);
 
 }  // namespace squares

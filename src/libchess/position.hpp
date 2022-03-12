@@ -2,6 +2,7 @@
 #define LIBCHESS_POSITION_HPP
 
 #include <ostream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 #include "bitboard.hpp"
@@ -31,12 +32,9 @@ constexpr const Square qsc_rook_to[] = {squares::D1, squares::D8};
 
 class Position {
    public:
-    Position()
-        : ep_{}, colours_{}, pieces_{}, halfmove_clock_{0}, fullmove_clock_{0}, to_move_{Side::White}, history_{} {
-    }
+    [[nodiscard]] Position() = default;
 
-    Position(const std::string &fen)
-        : ep_{}, colours_{}, pieces_{}, halfmove_clock_{0}, fullmove_clock_{0}, to_move_{Side::White}, history_{} {
+    [[nodiscard]] explicit Position(const std::string &fen) {
         set_fen(fen);
     }
 
@@ -116,7 +114,7 @@ class Position {
     }
 
     [[nodiscard]] constexpr Square king_position(const Side s) const noexcept {
-        return pieces(s, Piece::King).lsbll();
+        return pieces(s, Piece::King).lsb();
     }
 
     [[nodiscard]] bool square_attacked(const Square sq, const Side s) const noexcept;
@@ -210,7 +208,7 @@ class Position {
             }
         }
 
-        throw "illegal move string";
+        throw std::invalid_argument("Illegal move string");
     }
 
     void makemove(const Move &move) noexcept;
@@ -232,14 +230,14 @@ class Position {
         });
 
 #ifndef NO_HASH
-        if (ep_ != 0xFF) {
+        if (ep_ != squares::OffSq) {
             hash_ ^= zobrist::ep_key(ep_);
         }
         hash_ ^= zobrist::turn_key();
 #endif
 
         to_move_ = !to_move_;
-        ep_ = 0xFF;
+        ep_ = squares::OffSq;
         halfmove_clock_ = 0;
     }
 
@@ -296,7 +294,7 @@ class Position {
         }
 
         // EP
-        if (ep_ != 0xFF) {
+        if (ep_ != squares::OffSq) {
             hash ^= zobrist::ep_key(ep_);
         }
 
@@ -305,6 +303,19 @@ class Position {
 
     [[nodiscard]] auto &history() const noexcept {
         return history_;
+    }
+
+    [[nodiscard]] constexpr Piece piece_on(const Square sq) const noexcept {
+        for (int i = 0; i < 6; ++i) {
+            if (pieces_[i] & Bitboard{sq}) {
+                return Piece(i);
+            }
+        }
+        return Piece::None;
+    }
+
+    [[nodiscard]] constexpr Square ep() const noexcept {
+        return ep_;
     }
 
     void clear() noexcept {
@@ -318,7 +329,7 @@ class Position {
         pieces_[5].clear();
         halfmove_clock_ = 0;
         fullmove_clock_ = 0;
-        ep_ = 0xFF;
+        ep_ = squares::OffSq;
         hash_ = 0x0;
         castling_[0] = false;
         castling_[1] = false;
@@ -328,7 +339,7 @@ class Position {
         history_.clear();
     }
 
-    int ep_;
+    [[nodiscard]] bool valid() const noexcept;
 
    private:
     void set(const Square sq, const Side s, const Piece p) noexcept {
@@ -336,118 +347,22 @@ class Position {
         pieces_[p] |= sq;
     }
 
-    [[nodiscard]] constexpr Piece piece_on(const Square sq) const noexcept {
-        for (int i = 0; i < 6; ++i) {
-            if (pieces_[i] & Bitboard{sq}) {
-                return Piece(i);
-            }
-        }
-        return Piece::None;
-    }
-
-    [[nodiscard]] bool valid() const noexcept {
-#ifdef NO_HASH
-        if (hash_ != 0) {
-            return false;
-        }
-#else
-        if (hash_ != calculate_hash()) {
-            return false;
-        }
-#endif
-
-        if (ep_ != 0xFF && ep_ > 7) {
-            return false;
-        }
-
-        if (pieces(Side::White, Piece::King).count() != 1) {
-            return false;
-        }
-
-        if (pieces(Side::Black, Piece::King).count() != 1) {
-            return false;
-        }
-
-        if (colours_[0] & colours_[1]) {
-            return false;
-        }
-
-        if (occupancy(Piece::Pawn) & (bitboards::Rank1 | bitboards::Rank8)) {
-            return false;
-        }
-
-        for (int i = 0; i < 5; ++i) {
-            for (int j = i + 1; j < 6; ++j) {
-                if (pieces_[i] & pieces_[j]) {
-                    return false;
-                }
-            }
-        }
-
-        if ((colours_[0] | colours_[1]) !=
-            (pieces_[0] | pieces_[1] | pieces_[2] | pieces_[3] | pieces_[4] | pieces_[5])) {
-            return false;
-        }
-
-        // Better not be able to capture the king
-        if (square_attacked(king_position(!turn()), turn())) {
-            return false;
-        }
-
-        if (can_castle(Side::White, MoveType::ksc)) {
-            if (piece_on(squares::E1) != Piece::King) {
-                return false;
-            }
-            if (piece_on(squares::H1) != Piece::Rook) {
-                return false;
-            }
-        }
-
-        if (can_castle(Side::White, MoveType::qsc)) {
-            if (piece_on(squares::E1) != Piece::King) {
-                return false;
-            }
-            if (piece_on(squares::A1) != Piece::Rook) {
-                return false;
-            }
-        }
-
-        if (can_castle(Side::Black, MoveType::ksc)) {
-            if (piece_on(squares::E8) != Piece::King) {
-                return false;
-            }
-            if (piece_on(squares::H8) != Piece::Rook) {
-                return false;
-            }
-        }
-
-        if (can_castle(Side::Black, MoveType::qsc)) {
-            if (piece_on(squares::E8) != Piece::King) {
-                return false;
-            }
-            if (piece_on(squares::A8) != Piece::Rook) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     struct meh {
-        std::uint64_t hash;
+        std::uint64_t hash = 0;
         Move move;
-        int ep;
-        std::size_t halfmove_clock;
-        bool castling[4];
+        Square ep;
+        std::size_t halfmove_clock = 0;
+        bool castling[4] = {};
     };
 
-    Bitboard colours_[2];
-    Bitboard pieces_[6];
-    std::size_t halfmove_clock_;
-    std::size_t fullmove_clock_;
-    std::uint64_t hash_;
-    bool castling_[4];
-    Side to_move_;
+    Bitboard colours_[2] = {};
+    Bitboard pieces_[6] = {};
+    std::size_t halfmove_clock_ = 0;
+    std::size_t fullmove_clock_ = 0;
+    Square ep_ = squares::OffSq;
+    std::uint64_t hash_ = 0;
+    bool castling_[4] = {};
+    Side to_move_ = Side::White;
     std::vector<meh> history_;
 };
 
@@ -498,7 +413,11 @@ inline std::ostream &operator<<(std::ostream &os, const Position &pos) noexcept 
     os << (pos.can_castle(Side::Black, MoveType::ksc) ? "k" : "");
     os << (pos.can_castle(Side::Black, MoveType::qsc) ? "q" : "");
     os << '\n';
-    os << "EP: " << pos.ep_ << '\n';
+    if (pos.ep() == squares::OffSq) {
+        os << "EP: -\n";
+    } else {
+        os << "EP: " << pos.ep() << '\n';
+    }
     os << "Turn: " << (pos.turn() == Side::White ? 'w' : 'b');
 
     return os;

@@ -19,9 +19,7 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
     const auto them = !us;
     const auto ksq = king_position(us);
     const auto checkers = this->checkers();
-    const auto in_check = !checkers.empty();
-    const auto ep_bb =
-        ep_ == 0xFF ? Bitboard{} : bitboards::files[ep_] & (us == Side::White ? bitboards::Rank6 : bitboards::Rank3);
+    const auto ep_bb = ep_ == squares::OffSq ? Bitboard{} : Bitboard{ep_};
     auto allowed = occupancy(them);
 
     if (checkers.count() > 1) {
@@ -34,7 +32,7 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
         }
         return;
     } else if (checkers.count() == 1) {
-        allowed = Bitboard{checkers.lsbll()};
+        allowed = Bitboard{checkers.lsb()};
     }
 
     const auto kfile = bitboards::files[ksq.file()];
@@ -90,17 +88,12 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
         }
 
         // En passant
-        if (ep_ != 0xFF) {
-            const auto file = bitboards::files[ep_];
-            const auto bb = file & bitboards::Rank6;
-            const auto ep_sq = bb.lsbll();
-            // const auto ep_bb = Bitboard{ep_sq};
-
+        if (ep_ != squares::OffSq) {
             if (pawns.north().west() & ep_bb) {
-                moves.emplace_back(MoveType::enpassant, ep_sq.south().east(), ep_sq, Piece::Pawn, Piece::Pawn);
+                moves.emplace_back(MoveType::enpassant, ep_.south().east(), ep_, Piece::Pawn, Piece::Pawn);
             }
             if (pawns.north().east() & ep_bb) {
-                moves.emplace_back(MoveType::enpassant, ep_sq.south().west(), ep_sq, Piece::Pawn, Piece::Pawn);
+                moves.emplace_back(MoveType::enpassant, ep_.south().west(), ep_, Piece::Pawn, Piece::Pawn);
             }
         }
     } else {
@@ -147,17 +140,12 @@ void Position::legal_captures(std::vector<Move> &moves) const noexcept {
         }
 
         // En passant
-        if (ep_ != 0xFF) {
-            const auto file = bitboards::files[ep_];
-            const auto bb = file & bitboards::Rank3;
-            const auto ep_sq = bb.lsbll();
-            // const auto ep_bb = Bitboard{ep_sq};
-
+        if (ep_ != squares::OffSq) {
             if (pawns.south().west() & ep_bb) {
-                moves.emplace_back(MoveType::enpassant, ep_sq.north().east(), ep_sq, Piece::Pawn, Piece::Pawn);
+                moves.emplace_back(MoveType::enpassant, ep_.north().east(), ep_, Piece::Pawn, Piece::Pawn);
             }
             if (pawns.south().east() & ep_bb) {
-                moves.emplace_back(MoveType::enpassant, ep_sq.north().west(), ep_sq, Piece::Pawn, Piece::Pawn);
+                moves.emplace_back(MoveType::enpassant, ep_.north().west(), ep_, Piece::Pawn, Piece::Pawn);
             }
         }
     }

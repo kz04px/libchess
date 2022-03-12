@@ -17,7 +17,7 @@ namespace libchess {
     const auto promo = move.promotion();
 
     new_hash ^= zobrist::turn_key();
-    if (ep_ != 0xFF) {
+    if (ep_ != squares::OffSq) {
         new_hash ^= zobrist::ep_key(ep_);
     }
 
@@ -34,7 +34,7 @@ namespace libchess {
         case MoveType::Double:
             new_hash ^= zobrist::piece_key(piece, us, move.from());
             new_hash ^= zobrist::piece_key(piece, us, move.to());
-            new_hash ^= zobrist::ep_key(to.file());
+            new_hash ^= zobrist::ep_key(to);
             break;
         case MoveType::enpassant:
             new_hash ^= zobrist::piece_key(piece, us, move.from());

@@ -110,8 +110,7 @@ void Position::set_fen(const std::string &fen) noexcept {
     // En passant
     ss >> word;
     if (word != "-") {
-        const auto sq = Square(word);
-        ep_ = sq.file();
+        ep_ = Square(word);
     }
 
     // Halfmove clock

@@ -32,16 +32,14 @@ enum MoveType : int
 
 class Move {
    public:
-    Move() : data_{0} {
-    }
+    [[nodiscard]] constexpr Move() = default;
 
-    Move(const MoveType _t,
-         const Square _fr,
-         const Square _to,
-         const Piece _piece,
-         const Piece _cap = Piece::None,
-         const Piece _promotion = Piece::None)
-        : data_{} {
+    [[nodiscard]] constexpr Move(const MoveType _t,
+                                 const Square _fr,
+                                 const Square _to,
+                                 const Piece _piece,
+                                 const Piece _cap = Piece::None,
+                                 const Piece _promotion = Piece::None) {
         data_ = static_cast<unsigned int>(_fr);
         data_ |= static_cast<unsigned int>(_to) << 6;
         data_ |= static_cast<unsigned int>(_t) << 12;
@@ -167,7 +165,7 @@ class Move {
     }
 
    private:
-    std::uint32_t data_;
+    std::uint32_t data_ = 0;
 };
 
 inline std::ostream &operator<<(std::ostream &os, const Move &move) noexcept {
@@ -176,6 +174,10 @@ inline std::ostream &operator<<(std::ostream &os, const Move &move) noexcept {
 }
 
 static_assert(sizeof(Move) == sizeof(std::uint32_t));
+static_assert(!Move(MoveType::Normal, squares::A2, squares::A3, Piece::Pawn).is_promoting());
+static_assert(!Move(MoveType::Normal, squares::A2, squares::A3, Piece::Pawn).is_capturing());
+static_assert(Move(MoveType::promo, squares::A7, squares::A8, Piece::Pawn, Piece::None, Piece::Queen).is_promoting());
+static_assert(!Move(MoveType::promo, squares::A7, squares::A8, Piece::Pawn, Piece::None, Piece::Queen).is_capturing());
 
 }  // namespace libchess
 

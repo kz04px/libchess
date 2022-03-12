@@ -36,13 +36,13 @@ void Position::makemove(const Move &move) noexcept {
     hash_ ^= zobrist::turn_key();
     hash_ ^= zobrist::piece_key(piece, us, move.from());
     hash_ ^= zobrist::piece_key(piece, us, move.to());
-    if (ep_ != 0xFF) {
+    if (ep_ != squares::OffSq) {
         hash_ ^= zobrist::ep_key(ep_);
     }
 #endif
 
     // Remove ep
-    ep_ = 0xFF;
+    ep_ = squares::OffSq;
 
     // Increment halfmove clock
     halfmove_clock_++;
@@ -79,7 +79,7 @@ void Position::makemove(const Move &move) noexcept {
             assert((us == Side::White && move.from().rank() == 1) || (us == Side::Black && move.from().rank() == 6));
 
             halfmove_clock_ = 0;
-            ep_ = to.file();
+            ep_ = us == Side::White ? to.south() : to.north();
 
 #ifndef NO_HASH
             hash_ ^= zobrist::ep_key(ep_);

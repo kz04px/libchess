@@ -4,7 +4,7 @@
 
 int main(int argc, char **argv) {
     int depth = 1;
-    std::string fen = "";
+    std::string fen;
 
     if (argc > 1) {
         depth = std::stoi(std::string(argv[1]));
@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 
     if (argc > 2) {
         for (int i = 2; i < argc; ++i) {
-            if (fen == "") {
+            if (fen.empty()) {
                 fen = std::string(argv[i]);
             } else {
                 fen += " " + std::string(argv[i]);

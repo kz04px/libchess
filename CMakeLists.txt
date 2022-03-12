@@ -8,7 +8,7 @@ include_directories(.)
 include_directories(./src/)
 
 # Flags
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "-Wall -pedantic -pedantic-errors -Wextra -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wdisabled-optimization -Wfloat-equal -Wformat -Wformat=2 -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wimport -Winit-self -Winline -Winvalid-pch -Wmissing-braces -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wodr -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wshadow -Wsign-compare -Wstack-protector -Wstrict-aliasing -Wstrict-aliasing=2 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunused -Wunused-function -Wunused-label -Wunused-parameter -Wunused-value -Wunused-variable -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -DNDEBUG")
@@ -42,6 +42,8 @@ add_library(
     src/square_attacked.cpp
     src/squares_attacked.cpp
     src/undomove.cpp
+    src/valid.cpp
+    src/zobrist.cpp
 )
 
 # Add the shared library
@@ -67,12 +69,15 @@ add_library(
     src/square_attacked.cpp
     src/squares_attacked.cpp
     src/undomove.cpp
+    src/valid.cpp
+    src/zobrist.cpp
 )
 
 # Add the test executable
 add_executable(
     libchess-test
     tests/main.cpp
+    tests/bitboard.cpp
     tests/checkers.cpp
     tests/consistency.cpp
     tests/draw.cpp
@@ -81,7 +86,6 @@ add_executable(
     tests/in_check.cpp
     tests/is_capture.cpp
     tests/is_legal.cpp
-    tests/iterator.cpp
     tests/legal_moves.cpp
     tests/movegen.cpp
     tests/parse_move.cpp

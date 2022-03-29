@@ -89,7 +89,7 @@ void Position::makemove(const Move &move) noexcept {
             assert(piece == Piece::Pawn);
             assert(captured == Piece::Pawn);
             assert(promo == Piece::None);
-            assert(to.file() == ep_old);
+            assert(to.file() == ep_old.file());
             assert((us == Side::White && move.to().rank() == 5) || (us == Side::Black && move.to().rank() == 2));
             assert((us == Side::White && move.from().rank() == 4) || (us == Side::Black && move.from().rank() == 3));
             assert(to.file() - from.file() == 1 || from.file() - to.file() == 1);

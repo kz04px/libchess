@@ -17,7 +17,7 @@ class Square {
     }
 
     [[nodiscard]] constexpr Square(const int f, const int r) : data_{static_cast<std::uint8_t>(8 * r + f)} {
-        assert(data_);
+        assert(data_ < 64);
     }
 
     [[nodiscard]] Square(const std::string &str) : data_{} {

@@ -184,7 +184,7 @@ namespace libchess::zobrist {
 }
 
 [[nodiscard]] std::uint64_t castling_key(const int t) {
-    return key_castling[static_cast<int>(t)];
+    return key_castling[t];
 }
 
 [[nodiscard]] std::uint64_t piece_key(const Piece p, const Side s, const Square sq) {

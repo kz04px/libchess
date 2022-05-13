@@ -85,7 +85,9 @@ add_executable(
     tests/hash.cpp
     tests/in_check.cpp
     tests/is_capture.cpp
+    tests/is_checkmate.cpp
     tests/is_legal.cpp
+    tests/is_stalemate.cpp
     tests/legal_moves.cpp
     tests/movegen.cpp
     tests/parse_move.cpp

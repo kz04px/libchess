@@ -136,10 +136,11 @@ TEST_CASE("Position::is_draw()"){
     for (const auto &[fen, moves, ans] : teststhreefold) {
         auto pos = libchess::Position(fen);
         for (const auto &movestr : moves) {
-            REQUIRE(!pos.threefold());
+            REQUIRE(!pos.is_draw());
             pos.makemove(movestr);
         }
         // Terminal position threefold
-        REQUIRE(pos.threefold() == ans);
+        REQUIRE(pos.is_draw() == ans);
+        REQUIRE(pos.is_terminal() == ans);
     }
 }

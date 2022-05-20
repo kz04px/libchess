@@ -93,7 +93,7 @@ TEST_CASE("Position::fiftymoves()") {
     }
 }
 
-TEST_CASE("Position::is_draw()") {
+TEST_CASE("Position::is_draw() fiftymoves") {
     const std::array<std::pair<std::string, bool>, 5> tests50 = {{
         {"startpos", false},
         {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 99 1", false},
@@ -107,7 +107,12 @@ TEST_CASE("Position::is_draw()") {
         auto pos = libchess::Position{fen};
         REQUIRE(pos.is_draw() == ans);
     }
-    const std::array<std::tuple<std::string, std::vector<std::string>, bool>, 5> teststhreefold = {{
+}
+
+TEST_CASE("Position::is_draw() threefold") {
+    using test_type = std::tuple<std::string, std::vector<std::string>, bool>;
+
+    const std::array<test_type, 5> teststhreefold = {{
         {"startpos", {"g1f3", "g8f6", "f3g1", "f6g8", "g1f3", "g8f6", "f3g1", "f6g8"}, true},
         {"r2q1rk1/pp1bppbp/2np1np1/8/2BNP3/2N1BP2/PPPQ2PP/R3K2R w KQ - 5 10",
          {"c3a4", "c6a5", "a4c3", "a5c6", "c3a4", "c6a5", "a4c3", "a5c6"},

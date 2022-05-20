@@ -1,7 +1,6 @@
 #include <array>
 #include <libchess/position.hpp>
 #include <string>
-#include <vector>
 #include "catch.hpp"
 
 TEST_CASE("Position::is_stalemate() true") {

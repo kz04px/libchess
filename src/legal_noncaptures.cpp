@@ -202,7 +202,7 @@ void Position::legal_noncaptures(std::vector<Move> &moves) const noexcept {
     }
 
     // Castling
-    if (!checked) {
+    /*if (!checked) {
         if (us == Side::White) {
             if (can_castle(Side::White, MoveType::ksc) && piece_on(squares::F1) == Piece::None &&
                 piece_on(squares::G1) == Piece::None && !square_attacked(squares::F1, them) &&
@@ -224,6 +224,62 @@ void Position::legal_noncaptures(std::vector<Move> &moves) const noexcept {
                 piece_on(squares::C8) == Piece::None && piece_on(squares::B8) == Piece::None &&
                 !square_attacked(squares::D8, them) && !square_attacked(squares::C8, them)) {
                 moves.emplace_back(MoveType::qsc, squares::E8, squares::C8, Piece::King);
+            }
+        }
+    }*/
+    // adapted from
+    // https://github.com/kz04px/swizzles/blob/d77585055922e64ed4f5ff3acd1a9a28c80ae399/src/chess/movegen.cpp#L236
+    if (us == Side::White) {
+        if (!checked && can_castle(Side::White, MoveType::ksc)) {
+            const auto blockers = occupied() ^ Bitboard(ksq) ^ Bitboard(castle_rooks_from_[0]);
+
+            const auto king_path = (squares_between(ksq, squares::G1) | Bitboard(squares::G1)) & ~Bitboard(ksq);
+            const auto king_path_clear = (king_path & blockers).empty();
+
+            const auto rook_path = squares_between(squares::F1, castle_rooks_from_[0]) | Bitboard(squares::F1);
+            const auto rook_path_clear = (rook_path & blockers).empty() && !(rook_pinned &  castle_rooks_from_[0]);
+
+            if (king_path_clear && rook_path_clear && !(squares_attacked(Side::Black) & king_path)) {
+                moves.emplace_back(MoveType::ksc, ksq, castle_rooks_from_[0], Piece::King);
+            }
+        }
+        if (!checked && can_castle(Side::White, MoveType::qsc)) {
+            const auto blockers = occupied() ^ Bitboard(ksq) ^ Bitboard(castle_rooks_from_[1]);
+
+            const auto king_path = (squares_between(ksq, squares::C1) | Bitboard(squares::C1)) & ~Bitboard(ksq);
+            const auto king_path_clear = (king_path & blockers).empty();
+
+            const auto rook_path = squares_between(squares::D1, castle_rooks_from_[1]) | Bitboard(squares::D1);
+            const auto rook_path_clear = (rook_path & blockers).empty()&& !(rook_pinned & castle_rooks_from_[1]);
+
+            if (king_path_clear && rook_path_clear && !(squares_attacked(Side::Black) & king_path)) {
+                moves.emplace_back(MoveType::qsc, ksq, castle_rooks_from_[1], Piece::King);
+            }
+        }
+    } else {
+        if (!checked && can_castle(Side::Black, MoveType::ksc)) {
+            const auto blockers = occupied() ^ Bitboard(ksq) ^ Bitboard(castle_rooks_from_[2]);
+
+            const auto king_path = (squares_between(ksq, squares::G8) | Bitboard(squares::G8)) & ~Bitboard(ksq);
+            const auto king_path_clear = (king_path & blockers).empty();
+
+            const auto rook_path = squares_between(squares::F8, castle_rooks_from_[2]) | Bitboard(squares::F8);
+            const auto rook_path_clear = (rook_path & blockers).empty()&& !(rook_pinned & castle_rooks_from_[2]);
+
+            if (king_path_clear && rook_path_clear && !(squares_attacked(Side::White) & king_path)) {
+                moves.emplace_back(MoveType::ksc, ksq, castle_rooks_from_[2], Piece::King);
+            }
+        }
+        if (!checked && can_castle(Side::Black, MoveType::qsc)) {
+            const auto blockers = occupied() ^ Bitboard(ksq) ^ Bitboard(castle_rooks_from_[3]);
+
+            const auto king_path = (squares_between(ksq, squares::C8) | Bitboard(squares::C8)) & ~Bitboard(ksq);
+            const auto king_path_clear = (king_path & blockers).empty();
+            const auto rook_path = squares_between(squares::D8, castle_rooks_from_[3]) | Bitboard(squares::D8);
+            const auto rook_path_clear = (rook_path & blockers).empty()&& !(rook_pinned & castle_rooks_from_[3]);
+            
+            if (king_path_clear && rook_path_clear && !(squares_attacked(Side::White) & king_path)) {
+                moves.emplace_back(MoveType::qsc, ksq, castle_rooks_from_[3], Piece::King);
             }
         }
     }

@@ -60,17 +60,29 @@ void Position::undomove() noexcept {
             }
             break;
         case MoveType::ksc:
-            // Remove the rook
-            colours_[us] ^= ksc_rook_fr[us];
-            pieces_[Piece::Rook] ^= ksc_rook_fr[us];
+            // Remove the king that was added instead of removed
+            colours_[us] ^= move.to();
+            pieces_[piece] ^= move.to();
+            // Remove the king from its castled to square
+            colours_[us] ^= castle_king_to[us * 2];
+            pieces_[piece] ^= castle_king_to[us * 2];
             // Add the rook
+            colours_[us] ^= move.to();
+            pieces_[Piece::Rook] ^= move.to();
+            // Remove the rook from its after castling square
             colours_[us] ^= ksc_rook_to[us];
             pieces_[Piece::Rook] ^= ksc_rook_to[us];
             break;
         case MoveType::qsc:
+            // Remove the king that was added instead of removed
+            colours_[us] ^= move.to();
+            pieces_[piece] ^= move.to();
+            // Remove the king from its castled to square
+            colours_[us] ^= castle_king_to[us * 2 + 1];
+            pieces_[piece] ^= castle_king_to[us * 2 + 1];
             // Remove the rook
-            colours_[us] ^= qsc_rook_fr[us];
-            pieces_[Piece::Rook] ^= qsc_rook_fr[us];
+            colours_[us] ^= castle_rooks_from_[us * 2 + 1];
+            pieces_[Piece::Rook] ^= castle_rooks_from_[us * 2 + 1];
             // Add the rook
             colours_[us] ^= qsc_rook_to[us];
             pieces_[Piece::Rook] ^= qsc_rook_to[us];

@@ -1,5 +1,6 @@
 #include <cassert>
 #include <sstream>
+#include <iostream>
 #include "libchess/position.hpp"
 
 namespace libchess {
@@ -94,17 +95,70 @@ void Position::set_fen(const std::string &fen) noexcept {
     }
 
     // Castling perms
+    // chess960 addition adapted from
+    // https://github.com/kz04px/swizzles/blob/d77585055922e64ed4f5ff3acd1a9a28c80ae399/src/chess/set_fen.cpp#L140
     ss >> word;
-    for (const auto &c : word) {
-        if (c == 'K') {
-            castling_[0] = true;
-        } else if (c == 'Q') {
-            castling_[1] = true;
-        } else if (c == 'k') {
-            castling_[2] = true;
-        } else if (c == 'q') {
-            castling_[3] = true;
+    {
+        auto get_square = [](const char &c) noexcept -> Square {
+            if (c == 'K') {
+                return squares::H1;
+            } else if (c == 'Q') {
+                return squares::A1;
+            } else if (c == 'k') {
+                return squares::H8;
+            } else if (c == 'q') {
+                return squares::A8;
+            } else if ('A' <= c && c <= 'H') {
+                return Square(c - 'A');
+            } else if ('a' <= c && c <= 'h') {
+                return Square(56 + c - 'a');
+            } else {
+                return squares::OffSq;
+            }
+        };
+
+        auto is_uppercase = [](const char &c) noexcept -> bool {
+            return 'A' <= c && c <= 'Z';
+        };
+        const auto wksq = king_position(Side::White);
+        const auto bksq = king_position(Side::Black);
+        for (const auto &c : word) {
+            const auto perm_square = get_square(c);
+            if (perm_square == squares::OffSq) {
+                break;
+            }
+            
+            const auto is_white = is_uppercase(c);
+            const auto rooks = pieces(is_white ? Side::White : Side::Black, libchess::Rook) & bitboards::ranks[perm_square.rank()];
+            const auto ksq = is_white ? wksq : bksq;
+            const auto is_ksc = perm_square.file() > ksq.file();
+            const auto rook_found = rooks.get(perm_square);
+            const auto rook_east = rook_found ? perm_square : rooks.hsb();
+            const auto rook_west = rook_found ? perm_square : rooks.lsb();
+
+            if (is_white) {
+                if (is_ksc) {
+                    castling_[0] = true;
+                    castle_rooks_from_[0] = rook_east;
+                } else {
+                    castling_[1] = true;
+                    castle_rooks_from_[1] = rook_west;
+                }
+            } else {
+                if (is_ksc) {
+                    castling_[2] = true;
+                    castle_rooks_from_[2] = rook_east;
+                } else {
+                    castling_[3] = true;
+                    castle_rooks_from_[3] = rook_west;
+                }
+            }
         }
+        /*std::cout << "castling_ = ";
+        for (int j=0; j<4; ++j){
+            std::cout << castling_[j] << ", ";
+        }
+        std::cout << std::endl;*/
     }
 
     // En passant

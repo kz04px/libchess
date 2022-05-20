@@ -1,6 +1,6 @@
 #include <cassert>
-#include <sstream>
 #include <iostream>
+#include <sstream>
 #include "libchess/position.hpp"
 
 namespace libchess {
@@ -95,8 +95,6 @@ void Position::set_fen(const std::string &fen) noexcept {
     }
 
     // Castling perms
-    // chess960 addition adapted from
-    // https://github.com/kz04px/swizzles/blob/d77585055922e64ed4f5ff3acd1a9a28c80ae399/src/chess/set_fen.cpp#L140
     ss >> word;
     {
         auto get_square = [](const char &c) noexcept -> Square {
@@ -127,9 +125,10 @@ void Position::set_fen(const std::string &fen) noexcept {
             if (perm_square == squares::OffSq) {
                 break;
             }
-            
+
             const auto is_white = is_uppercase(c);
-            const auto rooks = pieces(is_white ? Side::White : Side::Black, libchess::Rook) & bitboards::ranks[perm_square.rank()];
+            const auto rooks =
+                pieces(is_white ? Side::White : Side::Black, libchess::Rook) & bitboards::ranks[perm_square.rank()];
             const auto ksq = is_white ? wksq : bksq;
             const auto is_ksc = perm_square.file() > ksq.file();
             const auto rook_found = rooks.get(perm_square);
@@ -154,11 +153,6 @@ void Position::set_fen(const std::string &fen) noexcept {
                 }
             }
         }
-        /*std::cout << "castling_ = ";
-        for (int j=0; j<4; ++j){
-            std::cout << castling_[j] << ", ";
-        }
-        std::cout << std::endl;*/
     }
 
     // En passant

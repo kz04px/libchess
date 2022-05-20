@@ -72,6 +72,22 @@ class Position {
 
     [[nodiscard]] bool is_legal(const Move &m) const noexcept;
 
+    [[nodiscard]] bool is_terminal() const noexcept {
+        return legal_moves().empty() || is_draw();
+    }
+
+    [[nodiscard]] bool is_checkmate() const noexcept {
+        return legal_moves().empty() && in_check();
+    }
+
+    [[nodiscard]] bool is_stalemate() const noexcept {
+        return legal_moves().empty() && !in_check();
+    }
+    
+    [[nodiscard]] bool is_draw() const noexcept {
+        return (threefold() || fiftymoves()) && !is_checkmate();
+    }
+    
     [[nodiscard]] bool threefold() const noexcept {
         if (halfmove_clock_ < 8) {
             return false;

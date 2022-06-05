@@ -2,33 +2,6 @@
 
 namespace libchess {
 
-void Position::update_board(const Square &from, const Square &to, const Side &us, const Piece &piece) {
-    // Remove piece
-    colours_[us] ^= from;
-    pieces_[piece] ^= from;
-
-    // Add piece
-    colours_[us] ^= to;
-    pieces_[piece] ^= to;
-
-    // Fullmoves
-    fullmove_clock_ += us == Side::Black;
-
-#ifndef NO_HASH
-    hash_ ^= zobrist::turn_key();
-    hash_ ^= zobrist::piece_key(piece, us, from);
-    hash_ ^= zobrist::piece_key(piece, us, to);
-    if (ep_ != squares::OffSq) {
-        hash_ ^= zobrist::ep_key(ep_);
-    }
-#endif
-    // Remove ep
-    ep_ = squares::OffSq;
-
-    // Increment halfmove clock
-    halfmove_clock_++;
-}
-
 void Position::makemove(const Move &move) noexcept {
     const auto us = turn();
     const auto them = !turn();
@@ -49,35 +22,27 @@ void Position::makemove(const Move &move) noexcept {
     assert(promo != Piece::King);
     assert(piece_on(move.from()) == piece);
 
-    /*// Remove piece
-    colours_[us] ^= move.from();
-    pieces_[piece] ^= move.from();
-
-    // Add piece
-    colours_[us] ^= move.to();
-    pieces_[piece] ^= move.to();
-
     // Fullmoves
     fullmove_clock_ += us == Side::Black;
-
-#ifndef NO_HASH
-    hash_ ^= zobrist::turn_key();
-    hash_ ^= zobrist::piece_key(piece, us, move.from());
-    hash_ ^= zobrist::piece_key(piece, us, move.to());
-    if (ep_ != squares::OffSq) {
-        hash_ ^= zobrist::ep_key(ep_);
-    }
-#endif
 
     // Remove ep
     ep_ = squares::OffSq;
 
     // Increment halfmove clock
     halfmove_clock_++;
-*/
+
     switch (type) {
         case MoveType::Normal:
-            update_board(move.from(), move.to(), us, piece);
+            colours_[us] ^= Bitboard(move.from()) ^ Bitboard(move.to());
+            pieces_[piece] ^= Bitboard(move.from()) ^ Bitboard(move.to());
+#ifndef NO_HASH
+            hash_ ^= zobrist::turn_key();
+            hash_ ^= zobrist::piece_key(piece, us, move.from());
+            hash_ ^= zobrist::piece_key(piece, us, move.to());
+            if (ep_ != squares::OffSq) {
+                hash_ ^= zobrist::ep_key(ep_);
+            }
+#endif
             assert(captured == Piece::None);
             assert(promo == Piece::None);
 
@@ -86,7 +51,16 @@ void Position::makemove(const Move &move) noexcept {
             }
             break;
         case MoveType::Capture:
-            update_board(move.from(), move.to(), us, piece);
+            colours_[us] ^= Bitboard(move.from()) ^ Bitboard(move.to());
+            pieces_[piece] ^= Bitboard(move.from()) ^ Bitboard(move.to());
+#ifndef NO_HASH
+            hash_ ^= zobrist::turn_key();
+            hash_ ^= zobrist::piece_key(piece, us, move.from());
+            hash_ ^= zobrist::piece_key(piece, us, move.to());
+            if (ep_ != squares::OffSq) {
+                hash_ ^= zobrist::ep_key(ep_);
+            }
+#endif
             assert(captured != Piece::None);
             assert(promo == Piece::None);
 
@@ -101,7 +75,16 @@ void Position::makemove(const Move &move) noexcept {
             colours_[them] ^= move.to();
             break;
         case MoveType::Double:
-            update_board(move.from(), move.to(), us, piece);
+            colours_[us] ^= Bitboard(move.from()) ^ Bitboard(move.to());
+            pieces_[piece] ^= Bitboard(move.from()) ^ Bitboard(move.to());
+#ifndef NO_HASH
+            hash_ ^= zobrist::turn_key();
+            hash_ ^= zobrist::piece_key(piece, us, move.from());
+            hash_ ^= zobrist::piece_key(piece, us, move.to());
+            if (ep_ != squares::OffSq) {
+                hash_ ^= zobrist::ep_key(ep_);
+            }
+#endif
             assert(piece == Piece::Pawn);
             assert(captured == Piece::None);
             assert(promo == Piece::None);
@@ -117,7 +100,16 @@ void Position::makemove(const Move &move) noexcept {
 #endif
             break;
         case MoveType::enpassant:
-            update_board(move.from(), move.to(), us, piece);
+            colours_[us] ^= Bitboard(move.from()) ^ Bitboard(move.to());
+            pieces_[piece] ^= Bitboard(move.from()) ^ Bitboard(move.to());
+#ifndef NO_HASH
+            hash_ ^= zobrist::turn_key();
+            hash_ ^= zobrist::piece_key(piece, us, move.from());
+            hash_ ^= zobrist::piece_key(piece, us, move.to());
+            if (ep_ != squares::OffSq) {
+                hash_ ^= zobrist::ep_key(ep_);
+            }
+#endif
             assert(piece == Piece::Pawn);
             assert(captured == Piece::Pawn);
             assert(promo == Piece::None);
@@ -144,8 +136,16 @@ void Position::makemove(const Move &move) noexcept {
             }
             break;
         case MoveType::ksc:
-            update_board(move.from(), castle_king_to[us * 2], us, piece);
-
+            colours_[us] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2]);
+            pieces_[piece] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2]);
+#ifndef NO_HASH
+            hash_ ^= zobrist::turn_key();
+            hash_ ^= zobrist::piece_key(piece, us, move.from());
+            hash_ ^= zobrist::piece_key(piece, us, move.to());
+            if (ep_ != squares::OffSq) {
+                hash_ ^= zobrist::ep_key(ep_);
+            }
+#endif
             // Remove the rook
             colours_[us] ^= castle_rooks_from_[us * 2];
             pieces_[Piece::Rook] ^= castle_rooks_from_[us * 2];
@@ -188,7 +188,16 @@ void Position::makemove(const Move &move) noexcept {
 
             break;
         case MoveType::qsc:
-            update_board(move.from(), castle_king_to[us * 2 + 1], us, piece);
+            colours_[us] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2 + 1]);
+            pieces_[piece] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2 + 1]);
+#ifndef NO_HASH
+            hash_ ^= zobrist::turn_key();
+            hash_ ^= zobrist::piece_key(piece, us, move.from());
+            hash_ ^= zobrist::piece_key(piece, us, move.to());
+            if (ep_ != squares::OffSq) {
+                hash_ ^= zobrist::ep_key(ep_);
+            }
+#endif
             // Remove the rook
             colours_[us] ^= castle_rooks_from_[us * 2 + 1];
             pieces_[Piece::Rook] ^= castle_rooks_from_[us * 2 + 1];
@@ -230,7 +239,16 @@ void Position::makemove(const Move &move) noexcept {
 
             break;
         case MoveType::promo:
-            update_board(move.from(), move.to(), us, Piece::Pawn);
+            colours_[us] ^= Bitboard(move.from()) ^ Bitboard(move.to());
+            pieces_[Piece::Pawn] ^= Bitboard(move.from());
+#ifndef NO_HASH
+            hash_ ^= zobrist::turn_key();
+            hash_ ^= zobrist::piece_key(piece, us, move.from());
+            hash_ ^= zobrist::piece_key(piece, us, move.to());
+            if (ep_ != squares::OffSq) {
+                hash_ ^= zobrist::ep_key(ep_);
+            }
+#endif
             assert(piece == Piece::Pawn);
             assert(captured == Piece::None);
             assert(promo != Piece::None);
@@ -246,11 +264,19 @@ void Position::makemove(const Move &move) noexcept {
 #endif
 
             // Replace pawn with piece
-            pieces_[Piece::Pawn] ^= move.to();
             pieces_[promo] ^= move.to();
             break;
         case MoveType::promo_capture:
-            update_board(move.from(), move.to(), us, Piece::Pawn);
+            colours_[us] ^= Bitboard(move.from()) ^ Bitboard(move.to());
+            pieces_[Piece::Pawn] ^= Bitboard(move.from());
+#ifndef NO_HASH
+            hash_ ^= zobrist::turn_key();
+            hash_ ^= zobrist::piece_key(piece, us, move.from());
+            hash_ ^= zobrist::piece_key(piece, us, move.to());
+            if (ep_ != squares::OffSq) {
+                hash_ ^= zobrist::ep_key(ep_);
+            }
+#endif
             assert(piece == Piece::Pawn);
             assert(captured != Piece::None);
             assert(promo != Piece::None);
@@ -267,7 +293,6 @@ void Position::makemove(const Move &move) noexcept {
 #endif
 
             // Replace pawn with piece
-            pieces_[Piece::Pawn] ^= move.to();
             pieces_[promo] ^= move.to();
             // Remove the captured piece
             pieces_[captured] ^= move.to();

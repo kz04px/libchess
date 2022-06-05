@@ -223,8 +223,6 @@ class Position {
 
     void undomove() noexcept;
 
-    void update_board(const Square &from, const Square &to, const Side &us, const Piece &piece);
-
     void makenull() noexcept {
         history_.push_back(meh{
             hash(),

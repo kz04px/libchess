@@ -34,10 +34,6 @@ class Square {
         return data_ != rhs.data_;
     }
 
-    [[nodiscard]] constexpr bool operator<(const Square &rhs) const noexcept {
-        return data_ < rhs.data_;
-    }
-
     [[nodiscard]] constexpr explicit operator bool() const noexcept {
         return data_ != 0xFF;
     }

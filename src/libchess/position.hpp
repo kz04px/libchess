@@ -23,9 +23,6 @@ enum Castling : int
     themQSC
 };
 
-// superseded by position member castle_rooks_to_
-// constexpr const Square ksc_rook_fr[] = {squares::H1, squares::H8};
-// constexpr const Square qsc_rook_fr[] = {squares::A1, squares::A8};
 constexpr const Square ksc_rook_to[] = {squares::F1, squares::F8};
 constexpr const Square qsc_rook_to[] = {squares::D1, squares::D8};
 constexpr const Square castle_king_to[] = {squares::G1, squares::C1, squares::G8, squares::C8};

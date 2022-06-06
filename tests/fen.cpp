@@ -63,27 +63,27 @@ TEST_CASE("Counters") {
     }
 }
 
-TEST_CASE("FEN - 960"){
+TEST_CASE("FEN - 960") {
     using pair_type = std::pair<std::string, std::string>;
 
-        const std::array<pair_type, 5> tests = {{
-            {"bbqnnrkr/pppppppp/8/8/8/8/PPPPPPPP/BBQNNRKR w KQkq - 0 1",
-             "bbqnnrkr/pppppppp/8/8/8/8/PPPPPPPP/BBQNNRKR w HFhf - 0 1"},
-            {"bnnbrqkr/pppppppp/8/8/8/8/PPPPPPPP/BNNBRQKR w KQkq - 0 1",
-             "bnnbrqkr/pppppppp/8/8/8/8/PPPPPPPP/BNNBRQKR w HEhe - 0 1"},
-            {"bqrknbnr/pppppppp/8/8/8/8/PPPPPPPP/BQRKNBNR w KQkq - 0 1",
-             "bqrknbnr/pppppppp/8/8/8/8/PPPPPPPP/BQRKNBNR w HChc - 0 1"},
-            {"rknbbrqn/pppppppp/8/8/8/8/PPPPPPPP/RKNBBRQN w KQkq - 0 1",
-             "rknbbrqn/pppppppp/8/8/8/8/PPPPPPPP/RKNBBRQN w FAfa - 0 1"},
-            {"rkbrnbnq/pppppppp/8/8/8/8/PPPPPPPP/RKBRNBNQ w KQkq - 0 1",
-             "rkbrnbnq/pppppppp/8/8/8/8/PPPPPPPP/RKBRNBNQ w DAda - 0 1"},
-        }};
+    const std::array<pair_type, 5> tests = {{
+        {"bbqnnrkr/pppppppp/8/8/8/8/PPPPPPPP/BBQNNRKR w KQkq - 0 1",
+         "bbqnnrkr/pppppppp/8/8/8/8/PPPPPPPP/BBQNNRKR w HFhf - 0 1"},
+        {"bnnbrqkr/pppppppp/8/8/8/8/PPPPPPPP/BNNBRQKR w KQkq - 0 1",
+         "bnnbrqkr/pppppppp/8/8/8/8/PPPPPPPP/BNNBRQKR w HEhe - 0 1"},
+        {"bqrknbnr/pppppppp/8/8/8/8/PPPPPPPP/BQRKNBNR w KQkq - 0 1",
+         "bqrknbnr/pppppppp/8/8/8/8/PPPPPPPP/BQRKNBNR w HChc - 0 1"},
+        {"rknbbrqn/pppppppp/8/8/8/8/PPPPPPPP/RKNBBRQN w KQkq - 0 1",
+         "rknbbrqn/pppppppp/8/8/8/8/PPPPPPPP/RKNBBRQN w FAfa - 0 1"},
+        {"rkbrnbnq/pppppppp/8/8/8/8/PPPPPPPP/RKBRNBNQ w KQkq - 0 1",
+         "rkbrnbnq/pppppppp/8/8/8/8/PPPPPPPP/RKBRNBNQ w DAda - 0 1"},
+    }};
 
-        for (const auto &[fen_out, fen_in] : tests) {
-            INFO(fen_in);
-            auto pos = libchess::Position{fen_in};
-            CHECK(pos.get_fen() == fen_out);
-            pos.set_fen(fen_in);
-            CHECK(pos.get_fen() == fen_out);
-        }
+    for (const auto &[fen_out, fen_in] : tests) {
+        INFO(fen_in);
+        auto pos = libchess::Position{fen_in};
+        CHECK(pos.get_fen() == fen_out);
+        pos.set_fen(fen_in);
+        CHECK(pos.get_fen() == fen_out);
+    }
 }

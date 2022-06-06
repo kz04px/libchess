@@ -973,7 +973,7 @@ int main() {
     for (int i = 0; i < 6; ++i) {
         int j = 1;
         int jmax = suite.size();
-        for (const auto& [fen, nodes] : suite) {
+        for (const auto &[fen, nodes] : suite) {
             if (i >= nodes.size()) {
                 continue;
             }

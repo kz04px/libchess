@@ -25,6 +25,13 @@ void Position::makemove(const Move &move) noexcept {
     // Fullmoves
     fullmove_clock_ += us == Side::Black;
 
+#ifndef NO_HASH
+    hash_ ^= zobrist::turn_key();
+    if (ep_ != squares::OffSq) {
+        hash_ ^= zobrist::ep_key(ep_);
+    }
+#endif
+
     // Remove ep
     ep_ = squares::OffSq;
 
@@ -36,12 +43,8 @@ void Position::makemove(const Move &move) noexcept {
             colours_[us] ^= Bitboard(move.from()) ^ Bitboard(move.to());
             pieces_[piece] ^= Bitboard(move.from()) ^ Bitboard(move.to());
 #ifndef NO_HASH
-            hash_ ^= zobrist::turn_key();
             hash_ ^= zobrist::piece_key(piece, us, move.from());
             hash_ ^= zobrist::piece_key(piece, us, move.to());
-            if (ep_ != squares::OffSq) {
-                hash_ ^= zobrist::ep_key(ep_);
-            }
 #endif
             assert(captured == Piece::None);
             assert(promo == Piece::None);
@@ -54,12 +57,8 @@ void Position::makemove(const Move &move) noexcept {
             colours_[us] ^= Bitboard(move.from()) ^ Bitboard(move.to());
             pieces_[piece] ^= Bitboard(move.from()) ^ Bitboard(move.to());
 #ifndef NO_HASH
-            hash_ ^= zobrist::turn_key();
             hash_ ^= zobrist::piece_key(piece, us, move.from());
             hash_ ^= zobrist::piece_key(piece, us, move.to());
-            if (ep_ != squares::OffSq) {
-                hash_ ^= zobrist::ep_key(ep_);
-            }
 #endif
             assert(captured != Piece::None);
             assert(promo == Piece::None);
@@ -78,12 +77,8 @@ void Position::makemove(const Move &move) noexcept {
             colours_[us] ^= Bitboard(move.from()) ^ Bitboard(move.to());
             pieces_[piece] ^= Bitboard(move.from()) ^ Bitboard(move.to());
 #ifndef NO_HASH
-            hash_ ^= zobrist::turn_key();
             hash_ ^= zobrist::piece_key(piece, us, move.from());
             hash_ ^= zobrist::piece_key(piece, us, move.to());
-            if (ep_ != squares::OffSq) {
-                hash_ ^= zobrist::ep_key(ep_);
-            }
 #endif
             assert(piece == Piece::Pawn);
             assert(captured == Piece::None);
@@ -103,12 +98,8 @@ void Position::makemove(const Move &move) noexcept {
             colours_[us] ^= Bitboard(move.from()) ^ Bitboard(move.to());
             pieces_[piece] ^= Bitboard(move.from()) ^ Bitboard(move.to());
 #ifndef NO_HASH
-            hash_ ^= zobrist::turn_key();
             hash_ ^= zobrist::piece_key(piece, us, move.from());
             hash_ ^= zobrist::piece_key(piece, us, move.to());
-            if (ep_ != squares::OffSq) {
-                hash_ ^= zobrist::ep_key(ep_);
-            }
 #endif
             assert(piece == Piece::Pawn);
             assert(captured == Piece::Pawn);
@@ -139,12 +130,8 @@ void Position::makemove(const Move &move) noexcept {
             colours_[us] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2]);
             pieces_[piece] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2]);
 #ifndef NO_HASH
-            hash_ ^= zobrist::turn_key();
             hash_ ^= zobrist::piece_key(piece, us, move.from());
-            hash_ ^= zobrist::piece_key(piece, us, move.to());
-            if (ep_ != squares::OffSq) {
-                hash_ ^= zobrist::ep_key(ep_);
-            }
+            hash_ ^= zobrist::piece_key(piece, us, castle_king_to[us * 2]);
 #endif
             // Remove the rook
             colours_[us] ^= castle_rooks_from_[us * 2];
@@ -191,12 +178,8 @@ void Position::makemove(const Move &move) noexcept {
             colours_[us] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2 + 1]);
             pieces_[piece] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2 + 1]);
 #ifndef NO_HASH
-            hash_ ^= zobrist::turn_key();
             hash_ ^= zobrist::piece_key(piece, us, move.from());
-            hash_ ^= zobrist::piece_key(piece, us, move.to());
-            if (ep_ != squares::OffSq) {
-                hash_ ^= zobrist::ep_key(ep_);
-            }
+            hash_ ^= zobrist::piece_key(piece, us, castle_king_to[us * 2 + 1]);
 #endif
             // Remove the rook
             colours_[us] ^= castle_rooks_from_[us * 2 + 1];
@@ -242,12 +225,8 @@ void Position::makemove(const Move &move) noexcept {
             colours_[us] ^= Bitboard(move.from()) ^ Bitboard(move.to());
             pieces_[Piece::Pawn] ^= Bitboard(move.from());
 #ifndef NO_HASH
-            hash_ ^= zobrist::turn_key();
             hash_ ^= zobrist::piece_key(piece, us, move.from());
             hash_ ^= zobrist::piece_key(piece, us, move.to());
-            if (ep_ != squares::OffSq) {
-                hash_ ^= zobrist::ep_key(ep_);
-            }
 #endif
             assert(piece == Piece::Pawn);
             assert(captured == Piece::None);
@@ -270,12 +249,8 @@ void Position::makemove(const Move &move) noexcept {
             colours_[us] ^= Bitboard(move.from()) ^ Bitboard(move.to());
             pieces_[Piece::Pawn] ^= Bitboard(move.from());
 #ifndef NO_HASH
-            hash_ ^= zobrist::turn_key();
             hash_ ^= zobrist::piece_key(piece, us, move.from());
             hash_ ^= zobrist::piece_key(piece, us, move.to());
-            if (ep_ != squares::OffSq) {
-                hash_ ^= zobrist::ep_key(ep_);
-            }
 #endif
             assert(piece == Piece::Pawn);
             assert(captured != Piece::None);

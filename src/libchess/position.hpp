@@ -205,8 +205,14 @@ class Position {
 
     [[nodiscard]] Move parse_move(const std::string &str) const {
         const auto moves = legal_moves();
+        const auto wksc = str == "e1g1" && piece_on(squares::E1) == Piece::King;
+        const auto wqsc = str == "e1c1" && piece_on(squares::E1) == Piece::King;
+        const auto bksc = str == "e8g8" && piece_on(squares::E8) == Piece::King;
+        const auto bqsc = str == "e8c8" && piece_on(squares::E8) == Piece::King;
+        const auto ksc = wksc | bksc;
+        const auto qsc = wqsc | bqsc;
         for (const auto &move : moves) {
-            if (static_cast<std::string>(move) == str) {
+            if ((ksc && move.type() == MoveType::ksc) || (qsc && move.type() == MoveType::qsc) || static_cast<std::string>(move) == str) {
                 return move;
             }
         }

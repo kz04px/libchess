@@ -131,10 +131,14 @@ void Position::makemove(const Move &move) noexcept {
             assert(piece_on(move.to()) == Piece::Rook);
             colours_[us] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2]);
             pieces_[piece] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2]);
+
 #ifndef NO_HASH
             hash_ ^= zobrist::piece_key(piece, us, move.from());
             hash_ ^= zobrist::piece_key(piece, us, castle_king_to[us * 2]);
+            hash_ ^= zobrist::piece_key(Piece::Rook, us, castle_rooks_from_[us * 2]);
+            hash_ ^= zobrist::piece_key(Piece::Rook, us, ksc_rook_to[us]);
 #endif
+
             // Remove the rook
             colours_[us] ^= castle_rooks_from_[us * 2];
             pieces_[Piece::Rook] ^= castle_rooks_from_[us * 2];
@@ -170,21 +174,20 @@ void Position::makemove(const Move &move) noexcept {
             assert(!(squares_attacked(them) &
                      (squares_between(from, castle_king_to[us * 2]) | from | pieces(us, Piece::King))));
 
-#ifndef NO_HASH
-            hash_ ^= zobrist::piece_key(Piece::Rook, us, castle_rooks_from_[us * 2]);
-            hash_ ^= zobrist::piece_key(Piece::Rook, us, ksc_rook_to[us]);
-#endif
-
             break;
         case MoveType::qsc:
             assert(piece_on(move.from()) == Piece::King);
             assert(piece_on(move.to()) == Piece::Rook);
             colours_[us] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2 + 1]);
             pieces_[piece] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2 + 1]);
+
 #ifndef NO_HASH
             hash_ ^= zobrist::piece_key(piece, us, move.from());
             hash_ ^= zobrist::piece_key(piece, us, castle_king_to[us * 2 + 1]);
+            hash_ ^= zobrist::piece_key(Piece::Rook, us, castle_rooks_from_[us * 2 + 1]);
+            hash_ ^= zobrist::piece_key(Piece::Rook, us, qsc_rook_to[us]);
 #endif
+
             // Remove the rook
             colours_[us] ^= castle_rooks_from_[us * 2 + 1];
             pieces_[Piece::Rook] ^= castle_rooks_from_[us * 2 + 1];
@@ -218,11 +221,6 @@ void Position::makemove(const Move &move) noexcept {
             // Check if all squares touched by king are not attacked
             assert(!(squares_attacked(them) &
                      (squares_between(from, castle_king_to[us * 2 + 1]) | from | pieces(us, Piece::King))));
-
-#ifndef NO_HASH
-            hash_ ^= zobrist::piece_key(Piece::Rook, us, castle_rooks_from_[us * 2 + 1]);
-            hash_ ^= zobrist::piece_key(Piece::Rook, us, qsc_rook_to[us]);
-#endif
 
             break;
         case MoveType::promo:

@@ -146,25 +146,25 @@ void Position::makemove(const Move &move) noexcept {
             assert(can_castle(us, MoveType::ksc));
             assert(move.to() == castle_rooks_from_[us * 2]);
 
-            // no overlap between any pieces and the path of the king, exclude the castling rook
+            // No overlap between any pieces and the path of the king, exclude the castling rook
             assert(!(occupied() & squares_between(from, castle_king_to[us * 2]) & ~Bitboard(ksc_rook_to[us])));
-            // no overlap between any pieces and the path of the rook, exclude the castled king
+            // No overlap between any pieces and the path of the rook, exclude the castled king
             assert(
                 !(occupied() & squares_between(castle_rooks_from_[us * 2], ksc_rook_to[us]) & ~occupancy(Piece::King)));
 
-            // check if rook is at destination
+            // Check if rook is at destination
             assert(piece_on(ksc_rook_to[us]) == Piece::Rook);
-            // check that king is on its destination square
+            // Check that king is on its destination square
             assert(piece_on(castle_king_to[us * 2]) == Piece::King);
 
-            //  start square of king is either empty, its own or the rooks target square
+            // Start square of king is either empty, its own, or the rook's target square
             assert(piece_on(from) == Piece::None || from == ksc_rook_to[us] || from == castle_king_to[us * 2]);
-            //  start square of rook is either empty, its own or the kings target square
+            // Start square of rook is either empty, its own, or the king's target square
             assert(piece_on(castle_rooks_from_[us * 2]) == Piece::None ||
                    castle_rooks_from_[us * 2] == ksc_rook_to[us] ||
                    castle_rooks_from_[us * 2] == castle_king_to[us * 2]);
 
-            // check if all squares touched by king are not attacked
+            // Check if all squares touched by king are not attacked
             assert(!(squares_attacked(them) &
                      (squares_between(from, castle_king_to[us * 2]) | from | pieces(us, Piece::King))));
 
@@ -192,26 +192,26 @@ void Position::makemove(const Move &move) noexcept {
             assert(promo == Piece::None);
             assert(can_castle(us, MoveType::qsc));
             assert(move.to() == castle_rooks_from_[us * 2 + 1]);
-            // no overlap between any pieces and the path of the king, exclude the castling rook
+            // No overlap between any pieces and the path of the king, exclude the castling rook
             assert(!(occupied() & squares_between(from, castle_king_to[us * 2 + 1]) & ~Bitboard(qsc_rook_to[us])));
-            // no overlap between any pieces and the path of the rook, exclude the castled king
+            // No overlap between any pieces and the path of the rook, exclude the castled king
             assert(!(occupied() & squares_between(castle_rooks_from_[us * 2 + 1], qsc_rook_to[us]) &
                      ~occupancy(Piece::King)));
 
-            // check if rook is at destination
+            // Check if rook is at destination
             assert(piece_on(qsc_rook_to[us]) == Piece::Rook);
-            // check that king is on its destination square
+            // Check that king is on its destination square
             assert(piece_on(castle_king_to[us * 2 + 1]) == Piece::King);
             assert(castle_king_to[us * 2 + 1] == pieces(us, Piece::King).hsb());
 
-            // start square of rook is either empty, its own or the kings target square
+            // Start square of rook is either empty, its own, or the kings target square
             assert(piece_on(castle_rooks_from_[us * 2 + 1]) == Piece::None ||
                    castle_rooks_from_[us * 2 + 1] == qsc_rook_to[us] ||
                    castle_rooks_from_[us * 2 + 1] == castle_king_to[us * 2 + 1]);
-            //  start square of king is either empty, its own or the rooks target square
+            // Start square of king is either empty, its own, or the rook's target square
             assert(piece_on(from) == Piece::None || from == qsc_rook_to[us] || from == castle_king_to[us * 2 + 1]);
 
-            // check if all squares touched by king are not attacked
+            // Check if all squares touched by king are not attacked
             assert(!(squares_attacked(them) &
                      (squares_between(from, castle_king_to[us * 2 + 1]) | from | pieces(us, Piece::King))));
 

@@ -127,6 +127,8 @@ void Position::makemove(const Move &move) noexcept {
             }
             break;
         case MoveType::ksc:
+            assert(piece_on(move.from()) == Piece::King);
+            assert(piece_on(move.to()) == Piece::Rook);
             colours_[us] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2]);
             pieces_[piece] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2]);
 #ifndef NO_HASH
@@ -175,6 +177,8 @@ void Position::makemove(const Move &move) noexcept {
 
             break;
         case MoveType::qsc:
+            assert(piece_on(move.from()) == Piece::King);
+            assert(piece_on(move.to()) == Piece::Rook);
             colours_[us] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2 + 1]);
             pieces_[piece] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2 + 1]);
 #ifndef NO_HASH

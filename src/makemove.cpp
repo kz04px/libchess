@@ -204,7 +204,7 @@ void Position::makemove(const Move &move) noexcept {
             assert(piece_on(castle_king_to[us * 2 + 1]) == Piece::King);
             assert(castle_king_to[us * 2 + 1] == pieces(us, Piece::King).hsb());
 
-            // Start square of rook is either empty, its own, or the kings target square
+            // Start square of rook is either empty, its own, or the king's target square
             assert(piece_on(castle_rooks_from_[us * 2 + 1]) == Piece::None ||
                    castle_rooks_from_[us * 2 + 1] == qsc_rook_to[us] ||
                    castle_rooks_from_[us * 2 + 1] == castle_king_to[us * 2 + 1]);

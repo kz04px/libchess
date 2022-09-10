@@ -205,10 +205,8 @@ void Position::legal_noncaptures(std::vector<Move> &moves) const noexcept {
     if (us == Side::White) {
         if (!checked && can_castle(Side::White, MoveType::ksc)) {
             const auto blockers = occupied() ^ Bitboard(ksq) ^ Bitboard(castle_rooks_from_[0]);
-
             const auto king_path = (squares_between(ksq, squares::G1) | Bitboard(squares::G1)) & ~Bitboard(ksq);
             const auto king_path_clear = (king_path & blockers).empty();
-
             const auto rook_path = squares_between(squares::F1, castle_rooks_from_[0]) | Bitboard(squares::F1);
             const auto rook_path_clear = (rook_path & blockers).empty() && !(rook_pinned & castle_rooks_from_[0]);
 
@@ -218,10 +216,8 @@ void Position::legal_noncaptures(std::vector<Move> &moves) const noexcept {
         }
         if (!checked && can_castle(Side::White, MoveType::qsc)) {
             const auto blockers = occupied() ^ Bitboard(ksq) ^ Bitboard(castle_rooks_from_[1]);
-
             const auto king_path = (squares_between(ksq, squares::C1) | Bitboard(squares::C1)) & ~Bitboard(ksq);
             const auto king_path_clear = (king_path & blockers).empty();
-
             const auto rook_path = squares_between(squares::D1, castle_rooks_from_[1]) | Bitboard(squares::D1);
             const auto rook_path_clear = (rook_path & blockers).empty() && !(rook_pinned & castle_rooks_from_[1]);
 
@@ -232,10 +228,8 @@ void Position::legal_noncaptures(std::vector<Move> &moves) const noexcept {
     } else {
         if (!checked && can_castle(Side::Black, MoveType::ksc)) {
             const auto blockers = occupied() ^ Bitboard(ksq) ^ Bitboard(castle_rooks_from_[2]);
-
             const auto king_path = (squares_between(ksq, squares::G8) | Bitboard(squares::G8)) & ~Bitboard(ksq);
             const auto king_path_clear = (king_path & blockers).empty();
-
             const auto rook_path = squares_between(squares::F8, castle_rooks_from_[2]) | Bitboard(squares::F8);
             const auto rook_path_clear = (rook_path & blockers).empty() && !(rook_pinned & castle_rooks_from_[2]);
 
@@ -245,7 +239,6 @@ void Position::legal_noncaptures(std::vector<Move> &moves) const noexcept {
         }
         if (!checked && can_castle(Side::Black, MoveType::qsc)) {
             const auto blockers = occupied() ^ Bitboard(ksq) ^ Bitboard(castle_rooks_from_[3]);
-
             const auto king_path = (squares_between(ksq, squares::C8) | Bitboard(squares::C8)) & ~Bitboard(ksq);
             const auto king_path_clear = (king_path & blockers).empty();
             const auto rook_path = squares_between(squares::D8, castle_rooks_from_[3]) | Bitboard(squares::D8);

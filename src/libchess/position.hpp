@@ -205,10 +205,10 @@ class Position {
 
     [[nodiscard]] Move parse_move(const std::string &str) const {
         const auto moves = legal_moves();
-        const auto wksc = str == "e1g1" && piece_on(squares::E1) == Piece::King && !turn();
-        const auto wqsc = str == "e1c1" && piece_on(squares::E1) == Piece::King && !turn();
-        const auto bksc = str == "e8g8" && piece_on(squares::E8) == Piece::King && turn();
-        const auto bqsc = str == "e8c8" && piece_on(squares::E8) == Piece::King && turn();
+        const auto wksc = str == "e1g1" && piece_on(squares::E1) == Piece::King && turn() == Side::White;
+        const auto wqsc = str == "e1c1" && piece_on(squares::E1) == Piece::King && turn() == Side::White;
+        const auto bksc = str == "e8g8" && piece_on(squares::E8) == Piece::King && turn() == Side::Black;
+        const auto bqsc = str == "e8c8" && piece_on(squares::E8) == Piece::King && turn() == Side::Black;
         const auto ksc = wksc | bksc;
         const auto qsc = wqsc | bqsc;
         for (const auto &move : moves) {

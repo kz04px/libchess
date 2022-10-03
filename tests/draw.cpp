@@ -99,7 +99,7 @@ TEST_CASE("Position::is_draw() fiftymoves") {
         {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 99 1", false},
         {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 100 1", true},
         {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 101 1", true},
-        // more than fiftymoves according to fen, but checkmate
+        // More than fiftymoves according to fen, but checkmate
         {"3k1R2/8/3K4/8/8/8/8/8 b - - 110 1", false},
     }};
 

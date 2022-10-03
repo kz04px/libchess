@@ -16,11 +16,12 @@ make
 
 ## Example Programs
 ```
-perft   -- Counts the number of nodes at a given depth
-suite   -- Runs perft on a set of 126 positions
-ttperft -- Same as perft but with a transposition table
-ttsuite -- Same as suite but with a transposition table
-split   -- Runs perft on each move in a position
+perft    -- Counts the number of nodes at a given depth
+suite    -- Runs perft on a set of 126 positions
+suite960 -- Runs perft on a set of chess960 positions
+ttperft  -- Same as perft but with a transposition table
+ttsuite  -- Same as suite but with a transposition table
+split    -- Runs perft on each move in a position
 ```
 
 ---

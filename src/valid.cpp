@@ -56,37 +56,37 @@ namespace libchess {
     }
 
     if (can_castle(Side::White, MoveType::ksc)) {
-        if (piece_on(squares::E1) != Piece::King) {
+        if (!(Bitboard(king_position(Side::White)) & bitboards::Rank1)) {
             return false;
         }
-        if (piece_on(squares::H1) != Piece::Rook) {
+        if (piece_on(castle_rooks_from_[0]) != Piece::Rook) {
             return false;
         }
     }
 
     if (can_castle(Side::White, MoveType::qsc)) {
-        if (piece_on(squares::E1) != Piece::King) {
+        if (!(Bitboard(king_position(Side::White)) & bitboards::Rank1)) {
             return false;
         }
-        if (piece_on(squares::A1) != Piece::Rook) {
+        if (piece_on(castle_rooks_from_[1]) != Piece::Rook) {
             return false;
         }
     }
 
     if (can_castle(Side::Black, MoveType::ksc)) {
-        if (piece_on(squares::E8) != Piece::King) {
+        if (!(Bitboard(king_position(Side::Black)) & bitboards::Rank8)) {
             return false;
         }
-        if (piece_on(squares::H8) != Piece::Rook) {
+        if (piece_on(castle_rooks_from_[2]) != Piece::Rook) {
             return false;
         }
     }
 
     if (can_castle(Side::Black, MoveType::qsc)) {
-        if (piece_on(squares::E8) != Piece::King) {
+        if (!(Bitboard(king_position(Side::Black)) & bitboards::Rank8)) {
             return false;
         }
-        if (piece_on(squares::A8) != Piece::Rook) {
+        if (piece_on(castle_rooks_from_[3]) != Piece::Rook) {
             return false;
         }
     }

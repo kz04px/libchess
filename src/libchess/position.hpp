@@ -23,10 +23,9 @@ enum Castling : int
     themQSC
 };
 
-constexpr const Square ksc_rook_fr[] = {squares::H1, squares::H8};
-constexpr const Square qsc_rook_fr[] = {squares::A1, squares::A8};
 constexpr const Square ksc_rook_to[] = {squares::F1, squares::F8};
 constexpr const Square qsc_rook_to[] = {squares::D1, squares::D8};
+constexpr const Square castle_king_to[] = {squares::G1, squares::C1, squares::G8, squares::C8};
 
 }  // namespace
 
@@ -83,11 +82,11 @@ class Position {
     [[nodiscard]] bool is_stalemate() const noexcept {
         return legal_moves().empty() && !in_check();
     }
-    
+
     [[nodiscard]] bool is_draw() const noexcept {
         return (threefold() || fiftymoves()) && !is_checkmate();
     }
-    
+
     [[nodiscard]] bool threefold() const noexcept {
         if (halfmove_clock_ < 8) {
             return false;
@@ -206,8 +205,15 @@ class Position {
 
     [[nodiscard]] Move parse_move(const std::string &str) const {
         const auto moves = legal_moves();
+        const auto wksc = str == "e1g1" && piece_on(squares::E1) == Piece::King && turn() == Side::White;
+        const auto wqsc = str == "e1c1" && piece_on(squares::E1) == Piece::King && turn() == Side::White;
+        const auto bksc = str == "e8g8" && piece_on(squares::E8) == Piece::King && turn() == Side::Black;
+        const auto bqsc = str == "e8c8" && piece_on(squares::E8) == Piece::King && turn() == Side::Black;
+        const auto ksc = wksc | bksc;
+        const auto qsc = wqsc | bqsc;
         for (const auto &move : moves) {
-            if (static_cast<std::string>(move) == str) {
+            if ((ksc && move.type() == MoveType::ksc) || (qsc && move.type() == MoveType::qsc) ||
+                static_cast<std::string>(move) == str) {
                 return move;
             }
         }
@@ -366,6 +372,7 @@ class Position {
     Square ep_ = squares::OffSq;
     std::uint64_t hash_ = 0;
     bool castling_[4] = {};
+    std::array<Square, 4> castle_rooks_from_ = {{squares::H1, squares::A1, squares::H8, squares::A8}};
     Side to_move_ = Side::White;
     std::vector<meh> history_;
 };

@@ -127,6 +127,12 @@ add_executable(
     examples/ttsuite.cpp
 )
 
+# Add example
+add_executable(
+    suite960
+    examples/suite960.cpp
+)
+
 set_target_properties(
     libchess-static
     PROPERTIES
@@ -153,3 +159,4 @@ target_link_libraries(ttperft libchess-static)
 target_link_libraries(split libchess-static)
 target_link_libraries(suite libchess-static)
 target_link_libraries(ttsuite libchess-static)
+target_link_libraries(suite960 libchess-static)

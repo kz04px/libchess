@@ -83,11 +83,11 @@ class Position {
     [[nodiscard]] bool is_stalemate() const noexcept {
         return legal_moves().empty() && !in_check();
     }
-    
+
     [[nodiscard]] bool is_draw() const noexcept {
         return (threefold() || fiftymoves()) && !is_checkmate();
     }
-    
+
     [[nodiscard]] bool threefold() const noexcept {
         if (halfmove_clock_ < 8) {
             return false;
@@ -150,6 +150,8 @@ class Position {
     [[nodiscard]] std::vector<Move> legal_captures() const noexcept;
 
     [[nodiscard]] std::vector<Move> legal_noncaptures() const noexcept;
+
+    void legal_moves(std::vector<Move> &moves) const noexcept;
 
     void legal_captures(std::vector<Move> &moves) const noexcept;
 

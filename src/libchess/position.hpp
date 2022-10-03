@@ -87,7 +87,7 @@ class Position {
     [[nodiscard]] bool is_draw() const noexcept {
         return (threefold() || fiftymoves()) && !is_checkmate();
     }
-
+    
     [[nodiscard]] bool threefold() const noexcept {
         if (halfmove_clock_ < 8) {
             return false;

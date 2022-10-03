@@ -83,7 +83,7 @@ class Position {
     [[nodiscard]] bool is_stalemate() const noexcept {
         return legal_moves().empty() && !in_check();
     }
-
+    
     [[nodiscard]] bool is_draw() const noexcept {
         return (threefold() || fiftymoves()) && !is_checkmate();
     }

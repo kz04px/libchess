@@ -10,4 +10,9 @@ namespace libchess {
     return moves;
 }
 
+void Position::legal_moves(std::vector<Move> &moves) const noexcept {
+    legal_captures(moves);
+    legal_noncaptures(moves);
+}
+
 }  // namespace libchess

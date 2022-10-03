@@ -150,6 +150,8 @@ class Position {
 
     [[nodiscard]] std::vector<Move> legal_noncaptures() const noexcept;
 
+    void legal_moves(std::vector<Move> &moves) const noexcept;
+
     void legal_captures(std::vector<Move> &moves) const noexcept;
 
     void legal_noncaptures(std::vector<Move> &moves) const noexcept;

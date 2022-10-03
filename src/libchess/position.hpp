@@ -212,7 +212,8 @@ class Position {
         const auto ksc = wksc | bksc;
         const auto qsc = wqsc | bqsc;
         for (const auto &move : moves) {
-            if ((ksc && move.type() == MoveType::ksc) || (qsc && move.type() == MoveType::qsc) || static_cast<std::string>(move) == str) {
+            if ((ksc && move.type() == MoveType::ksc) || (qsc && move.type() == MoveType::qsc) ||
+                static_cast<std::string>(move) == str) {
                 return move;
             }
         }

@@ -152,7 +152,7 @@ class Bitboard {
         assert(mask_);
         return Square(std::countr_zero(mask_));
     }
-   
+
     [[nodiscard]] constexpr Square hsb() const noexcept {
         assert(mask_);
         return Square(63 - std::countl_zero(mask_));

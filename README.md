@@ -9,7 +9,7 @@ git clone https://github.com/kz04px/libchess/
 mkdir libchess/build
 cd libchess/build
 cmake ..
-make
+cmake --build .
 ```
 
 ---

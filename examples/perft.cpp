@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
         fen = "startpos";
     }
 
-    auto pos = libchess::Position(fen);
+    auto pos = libchess::Position(fen, true);
 
     std::cout << pos << std::endl;
     std::cout << std::endl;

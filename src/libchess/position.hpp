@@ -33,8 +33,8 @@ class Position {
    public:
     [[nodiscard]] Position() = default;
 
-    [[nodiscard]] explicit Position(const std::string &fen) {
-        set_fen(fen);
+    [[nodiscard]] explicit Position(const std::string &fen, const bool dfrc = false) {
+        set_fen(fen, dfrc);
     }
 
     [[nodiscard]] constexpr Side turn() const noexcept {
@@ -65,9 +65,9 @@ class Position {
         return hash_;
     }
 
-    void set_fen(const std::string &fen) noexcept;
+    void set_fen(const std::string &fen, const bool dfrc = false) noexcept;
 
-    [[nodiscard]] std::string get_fen() const noexcept;
+    [[nodiscard]] std::string get_fen(const bool dfrc = false) const noexcept;
 
     [[nodiscard]] bool is_legal(const Move &m) const noexcept;
 
@@ -352,6 +352,22 @@ class Position {
     }
 
     [[nodiscard]] bool valid() const noexcept;
+
+    [[nodiscard]] Square get_castling_square(const Side s, const MoveType mt) const noexcept {
+        if (s == Side::White) {
+            if (mt == MoveType::ksc) {
+                return castle_rooks_from_[0];
+            } else {
+                return castle_rooks_from_[1];
+            }
+        } else {
+            if (mt == MoveType::ksc) {
+                return castle_rooks_from_[2];
+            } else {
+                return castle_rooks_from_[3];
+            }
+        }
+    }
 
    private:
     void set(const Square sq, const Side s, const Piece p) noexcept {

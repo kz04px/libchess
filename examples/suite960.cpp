@@ -978,7 +978,7 @@ int main() {
                 continue;
             }
 
-            auto pos = libchess::Position(fen);
+            auto pos = libchess::Position(fen, true);
             const auto exp = nodes[i];
             const auto got = pos.perft(i + 1);
             std::cout << "\r" << j << "/" << jmax;

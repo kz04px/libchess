@@ -140,16 +140,8 @@ TEST_CASE("Perft - Many moves") {
 }
 
 TEST_CASE("Perft - Shallow") {
-    const std::array<pair_type, 34> tests = {{
+    const std::array<pair_type, 26> tests = {{
         {"startpos", {20, 400, 8902, 197281}},
-        {"bqnb1rkr/pp3ppp/3ppn2/2p5/5P2/P2P4/NPP1P1PP/BQ1BNRKR w HFhf - 2 9", {21, 528, 12189, 326672}},
-        {"2nnrbkr/p1qppppp/8/1ppb4/6PP/3PP3/PPP2P2/BQNNRBKR w HEhe - 1 9", {21, 807, 18002, 667366}},
-        {"b1q1rrkb/pppppppp/3nn3/8/P7/1PPP4/4PPPP/BQNNRKRB w GE - 1 9", {20, 479, 10471, 273318}},
-        {"qbbnnrkr/2pp2pp/p7/1p2pp2/8/P3PP2/1PPP1KPP/QBBNNR1R w hf - 0 9", {22, 593, 13440, 382958}},
-        {"1nbbnrkr/p1p1ppp1/3p4/1p3P1p/3Pq2P/8/PPP1P1P1/QNBBNRKR w HFhf - 0 9", {28, 1120, 31058, 1171749}},
-        {"qnbnr1kr/ppp1b1pp/4p3/3p1p2/8/2NPP3/PPP1BPPP/QNB1R1KR w HEhe - 1 9", {29, 899, 26578, 824055}},
-        {"r1kbbqrn/ppp3pp/2np1p2/1P2p3/3P1P2/8/P1P1P1PP/RNKBBQRN w GAga - 0 9", {32, 920, 28916, 844881}},
-        {"rk1qbbrn/p2npppp/1p6/2p4Q/8/4P3/PPPP1PPP/RNK1B1RN w GA - 2 9", {35, 657, 22359, 495406}},
         {"4k3/b7/8/2Pp4/8/8/8/6K1 w - d6 0 2", {5}},
         {"4k3/7b/8/4pP2/8/8/8/1K6 w - e6 0 2", {5}},
         {"6k1/8/8/8/2pP4/8/B7/3K4 b - d3 0 2", {5}},
@@ -180,6 +172,29 @@ TEST_CASE("Perft - Shallow") {
     for (const auto &[fen, nodes] : tests) {
         INFO(fen);
         auto pos = libchess::Position(fen);
+        for (std::size_t i = 0; i < nodes.size(); ++i) {
+            INFO("DEPTH: ");
+            INFO(i);
+            REQUIRE(pos.perft(i + 1) == nodes.at(i));
+        }
+    }
+}
+
+TEST_CASE("Perft DFRC - Shallow") {
+    const std::array<pair_type, 8> tests = {{
+        {"bqnb1rkr/pp3ppp/3ppn2/2p5/5P2/P2P4/NPP1P1PP/BQ1BNRKR w HFhf - 2 9", {21, 528, 12189, 326672}},
+        {"2nnrbkr/p1qppppp/8/1ppb4/6PP/3PP3/PPP2P2/BQNNRBKR w HEhe - 1 9", {21, 807, 18002, 667366}},
+        {"b1q1rrkb/pppppppp/3nn3/8/P7/1PPP4/4PPPP/BQNNRKRB w GE - 1 9", {20, 479, 10471, 273318}},
+        {"qbbnnrkr/2pp2pp/p7/1p2pp2/8/P3PP2/1PPP1KPP/QBBNNR1R w hf - 0 9", {22, 593, 13440, 382958}},
+        {"1nbbnrkr/p1p1ppp1/3p4/1p3P1p/3Pq2P/8/PPP1P1P1/QNBBNRKR w HFhf - 0 9", {28, 1120, 31058, 1171749}},
+        {"qnbnr1kr/ppp1b1pp/4p3/3p1p2/8/2NPP3/PPP1BPPP/QNB1R1KR w HEhe - 1 9", {29, 899, 26578, 824055}},
+        {"r1kbbqrn/ppp3pp/2np1p2/1P2p3/3P1P2/8/P1P1P1PP/RNKBBQRN w GAga - 0 9", {32, 920, 28916, 844881}},
+        {"rk1qbbrn/p2npppp/1p6/2p4Q/8/4P3/PPPP1PPP/RNK1B1RN w GA - 2 9", {35, 657, 22359, 495406}},
+    }};
+
+    for (const auto &[fen, nodes] : tests) {
+        INFO(fen);
+        auto pos = libchess::Position(fen, true);
         for (std::size_t i = 0; i < nodes.size(); ++i) {
             INFO("DEPTH: ");
             INFO(i);

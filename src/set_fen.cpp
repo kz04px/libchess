@@ -4,7 +4,7 @@
 
 namespace libchess {
 
-void Position::set_fen(const std::string &fen) noexcept {
+void Position::set_fen(const std::string &fen, const bool dfrc) noexcept {
     if (fen == "startpos") {
         set_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         return;
@@ -95,60 +95,94 @@ void Position::set_fen(const std::string &fen) noexcept {
 
     // Castling perms
     ss >> word;
-    {
-        auto get_square = [](const char &c) noexcept -> Square {
-            if (c == 'K') {
-                return squares::H1;
-            } else if (c == 'Q') {
-                return squares::A1;
-            } else if (c == 'k') {
-                return squares::H8;
-            } else if (c == 'q') {
-                return squares::A8;
-            } else if ('A' <= c && c <= 'H') {
-                return Square(c - 'A');
-            } else if ('a' <= c && c <= 'h') {
-                return Square(56 + c - 'a');
-            } else {
-                return squares::OffSq;
-            }
-        };
-
-        auto is_uppercase = [](const char &c) noexcept -> bool {
-            return 'A' <= c && c <= 'Z';
-        };
+    if (word != "-") {
         const auto wksq = king_position(Side::White);
         const auto bksq = king_position(Side::Black);
+        const auto white_rooks = pieces(Side::White, libchess::Rook);
+        const auto black_rooks = pieces(Side::Black, libchess::Rook);
+
         for (const auto &c : word) {
-            const auto perm_square = get_square(c);
-            if (perm_square == squares::OffSq) {
-                break;
-            }
+            if (dfrc) {
+                // White
+                if ('A' <= c && c <= 'H') {
+                    const auto sq = Square(c - 'A');
+                    const auto is_king_side = sq.file() > wksq.file();
+                    if (is_king_side && white_rooks.get(sq)) {
+                        castling_[0] = true;
+                        castle_rooks_from_[0] = sq;
+                    } else if (!is_king_side && white_rooks.get(sq)) {
+                        castling_[1] = true;
+                        castle_rooks_from_[1] = sq;
+                    }
+                }
+                // Black
+                else if ('a' <= c && c <= 'h') {
+                    const auto sq = Square(56 + c - 'a');
+                    const auto is_king_side = sq.file() > bksq.file();
+                    if (is_king_side && black_rooks.get(sq)) {
+                        castling_[2] = true;
+                        castle_rooks_from_[2] = sq;
+                    } else if (!is_king_side && black_rooks.get(sq)) {
+                        castling_[3] = true;
+                        castle_rooks_from_[3] = sq;
+                    }
+                }
+                // This castling notation is bad and wrong
+                // Let's do the best we can
+                else if (c == 'K') {
+                    auto bb = Bitboard(wksq);
+                    while (bb) {
+                        bb = bb.east();
 
-            const auto is_white = is_uppercase(c);
-            const auto rooks =
-                pieces(is_white ? Side::White : Side::Black, libchess::Rook) & bitboards::ranks[perm_square.rank()];
-            const auto ksq = is_white ? wksq : bksq;
-            const auto is_ksc = perm_square.file() > ksq.file();
-            const auto rook_found = rooks.get(perm_square);
-            const auto rook_east = rook_found ? perm_square : rooks.hsb();
-            const auto rook_west = rook_found ? perm_square : rooks.lsb();
+                        if (bb & white_rooks) {
+                            castling_[0] = true;
+                            castle_rooks_from_[0] = (bb & white_rooks).lsb();
+                        }
+                    }
+                } else if (c == 'Q') {
+                    auto bb = Bitboard(wksq);
+                    while (bb) {
+                        bb = bb.west();
 
-            if (is_white) {
-                if (is_ksc) {
-                    castling_[0] = true;
-                    castle_rooks_from_[0] = rook_east;
-                } else {
-                    castling_[1] = true;
-                    castle_rooks_from_[1] = rook_west;
+                        if (bb & white_rooks) {
+                            castling_[1] = true;
+                            castle_rooks_from_[1] = (bb & white_rooks).lsb();
+                        }
+                    }
+                } else if (c == 'k') {
+                    auto bb = Bitboard(bksq);
+                    while (bb) {
+                        bb = bb.east();
+
+                        if (bb & black_rooks) {
+                            castling_[2] = true;
+                            castle_rooks_from_[2] = (bb & black_rooks).lsb();
+                        }
+                    }
+                } else if (c == 'q') {
+                    auto bb = Bitboard(bksq);
+                    while (bb) {
+                        bb = bb.west();
+
+                        if (bb & black_rooks) {
+                            castling_[3] = true;
+                            castle_rooks_from_[3] = (bb & black_rooks).lsb();
+                        }
+                    }
                 }
             } else {
-                if (is_ksc) {
+                if (c == 'K' && white_rooks.get(squares::H1)) {
+                    castling_[0] = true;
+                    castle_rooks_from_[0] = squares::H1;
+                } else if (c == 'Q' && white_rooks.get(squares::A1)) {
+                    castling_[1] = true;
+                    castle_rooks_from_[1] = squares::A1;
+                } else if (c == 'k' && black_rooks.get(squares::H8)) {
                     castling_[2] = true;
-                    castle_rooks_from_[2] = rook_east;
-                } else {
+                    castle_rooks_from_[2] = squares::H8;
+                } else if (c == 'q' && black_rooks.get(squares::A8)) {
                     castling_[3] = true;
-                    castle_rooks_from_[3] = rook_west;
+                    castle_rooks_from_[3] = squares::A8;
                 }
             }
         }

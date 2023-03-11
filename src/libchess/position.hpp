@@ -369,6 +369,26 @@ class Position {
         }
     }
 
+    [[nodiscard]] auto move_string(const Move &move, const bool dfrc = false) const noexcept -> std::string {
+        if (dfrc) {
+            return static_cast<std::string>(move);
+        } else if (move.type() == MoveType::ksc) {
+            if (turn() == Side::White) {
+                return "e1g1";
+            } else {
+                return "e8g8";
+            }
+        } else if (move.type() == MoveType::qsc) {
+            if (turn() == Side::White) {
+                return "e1c1";
+            } else {
+                return "e8c8";
+            }
+        } else {
+            return static_cast<std::string>(move);
+        }
+    }
+
    private:
     void set(const Square sq, const Side s, const Piece p) noexcept {
         colours_[s] |= sq;

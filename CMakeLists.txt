@@ -89,6 +89,7 @@ add_executable(
     tests/is_legal.cpp
     tests/is_stalemate.cpp
     tests/legal_moves.cpp
+    tests/move.cpp
     tests/movegen.cpp
     tests/parse_move.cpp
     tests/passed_pawns.cpp

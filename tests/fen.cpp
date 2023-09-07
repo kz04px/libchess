@@ -98,12 +98,21 @@ TEST_CASE("Counters") {
 }
 
 TEST_CASE("FEN - 960") {
-    const std::array<std::string, 5> fens = {{
+    const std::array<std::string, 14> fens = {{
         "bbqnnrkr/pppppppp/8/8/8/8/PPPPPPPP/BBQNNRKR w HFhf - 0 1",
         "bnnbrqkr/pppppppp/8/8/8/8/PPPPPPPP/BNNBRQKR w HEhe - 0 1",
         "bqrknbnr/pppppppp/8/8/8/8/PPPPPPPP/BQRKNBNR w HChc - 0 1",
         "rknbbrqn/pppppppp/8/8/8/8/PPPPPPPP/RKNBBRQN w FAfa - 0 1",
         "rkbrnbnq/pppppppp/8/8/8/8/PPPPPPPP/RKBRNBNQ w DAda - 0 1",
+        "r3k2r/8/8/8/8/8/8/R3K2R w HAha - 0 1",
+        "r3k2r/8/8/8/8/8/8/R3K2R w H - 0 1",
+        "r3k2r/8/8/8/8/8/8/R3K2R w A - 0 1",
+        "r3k2r/8/8/8/8/8/8/R3K2R w h - 0 1",
+        "r3k2r/8/8/8/8/8/8/R3K2R w a - 0 1",
+        "r3k2r/8/8/8/8/8/8/R3K2R w HA - 0 1",
+        "r3k2r/8/8/8/8/8/8/R3K2R w ha - 0 1",
+        "r3k2r/8/8/8/8/8/8/R3K2R w Hh - 0 1",
+        "r3k2r/8/8/8/8/8/8/R3K2R w Aa - 0 1",
     }};
 
     for (const auto &fen : fens) {

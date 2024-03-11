@@ -19,10 +19,9 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
-# Add the static library
 add_library(
-    libchess-static
-    STATIC
+    libchess_obj
+    OBJECT
     src/attackers.cpp
     src/checkers.cpp
     src/check_evasions.cpp
@@ -44,38 +43,37 @@ add_library(
     src/undomove.cpp
     src/valid.cpp
     src/zobrist.cpp
+)
+
+# Add the static library
+add_library(
+    libchess_static
+    STATIC
+    $<TARGET_OBJECTS:libchess_obj>
 )
 
 # Add the shared library
 add_library(
-    libchess-shared
+    libchess_shared
     SHARED
-    src/attackers.cpp
-    src/checkers.cpp
-    src/check_evasions.cpp
-    src/count_moves.cpp
-    src/get_fen.cpp
-    src/is_legal.cpp
-    src/king_allowed.cpp
-    src/legal_captures.cpp
-    src/legal_moves.cpp
-    src/legal_noncaptures.cpp
-    src/makemove.cpp
-    src/movegen.cpp
-    src/perft.cpp
-    src/pinned.cpp
-    src/predict_hash.cpp
-    src/set_fen.cpp
-    src/square_attacked.cpp
-    src/squares_attacked.cpp
-    src/undomove.cpp
-    src/valid.cpp
-    src/zobrist.cpp
+    $<TARGET_OBJECTS:libchess_obj>
+)
+
+target_include_directories(
+    libchess_static
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
+target_include_directories(
+    libchess_shared
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 # Add the test executable
 add_executable(
-    libchess-test
+    libchess_test
     tests/main.cpp
     tests/bitboard.cpp
     tests/checkers.cpp
@@ -135,7 +133,7 @@ add_executable(
 )
 
 set_target_properties(
-    libchess-static
+    libchess_static
     PROPERTIES
     OUTPUT_NAME "chess"
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/static"
@@ -144,7 +142,7 @@ set_target_properties(
 )
 
 set_target_properties(
-    libchess-shared
+    libchess_shared
     PROPERTIES
     OUTPUT_NAME "chess"
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/shared"
@@ -152,12 +150,12 @@ set_target_properties(
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/shared"
 )
 
-set_property(TARGET libchess-test PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELEASE FALSE)
+set_property(TARGET libchess_test PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELEASE FALSE)
 
-target_link_libraries(libchess-test libchess-static)
-target_link_libraries(perft libchess-static)
-target_link_libraries(ttperft libchess-static)
-target_link_libraries(split libchess-static)
-target_link_libraries(suite libchess-static)
-target_link_libraries(ttsuite libchess-static)
-target_link_libraries(suite960 libchess-static)
+target_link_libraries(libchess_test libchess_static)
+target_link_libraries(perft libchess_static)
+target_link_libraries(ttperft libchess_static)
+target_link_libraries(split libchess_static)
+target_link_libraries(suite libchess_static)
+target_link_libraries(ttsuite libchess_static)
+target_link_libraries(suite960 libchess_static)

@@ -213,7 +213,6 @@ namespace libchess {
                 if (king_path_clear && rook_path_clear && !(squares_attacked(Side::Black) & king_path)) {
                     if (piece_on(castle_king_to[0]) == libchess::None && piece_on(ksc_rook_to[0]) == libchess::None) {
                         moves.emplace_back(MoveType::ksc, ksq, castle_king_to[0], Piece::King);
-                        moves.emplace_back(MoveType::ksc, castle_rooks_from_[0], ksc_rook_to[0], Piece::Rook);
                     }
                 }
             }
@@ -227,7 +226,6 @@ namespace libchess {
                 if (king_path_clear && rook_path_clear && !(squares_attacked(Side::Black) & king_path)) {
                     if(piece_on(castle_king_to[1]) == libchess::None && piece_on(qsc_rook_to[0]) == libchess::None) {
                         moves.emplace_back(MoveType::qsc, ksq, castle_king_to[1], Piece::King);
-                        moves.emplace_back(MoveType::qsc, castle_rooks_from_[1], qsc_rook_to[0], Piece::Rook);
                     }
                 }
             }
@@ -242,7 +240,6 @@ namespace libchess {
                 if (king_path_clear && rook_path_clear && !(squares_attacked(Side::White) & king_path)) {
                     if(piece_on(castle_king_to[2]) == libchess::None && piece_on(ksc_rook_to[1]) == libchess::None) {
                         moves.emplace_back(MoveType::ksc, ksq, castle_king_to[2], Piece::King);
-                        moves.emplace_back(MoveType::ksc, castle_rooks_from_[2], ksc_rook_to[1], Piece::Rook);
                     }
                 }
             }
@@ -256,7 +253,6 @@ namespace libchess {
                 if (king_path_clear && rook_path_clear && !(squares_attacked(Side::White) & king_path)) {
                     if (piece_on(castle_king_to[3]) == libchess::None && piece_on(qsc_rook_to[1]) == libchess::None) {
                         moves.emplace_back(MoveType::qsc, ksq, castle_king_to[3], Piece::King);
-                        moves.emplace_back(MoveType::qsc, castle_rooks_from_[3], qsc_rook_to[1], Piece::Rook);
                     }
                 }
             }

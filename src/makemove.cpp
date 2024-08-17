@@ -127,7 +127,7 @@ void Position::makemove(const Move &move) noexcept {
             }
             break;
         case MoveType::ksc:
-            assert(piece_on(move.from()) == Piece::King || piece_on(move.from()) == Piece::Rook);
+            assert(piece_on(move.from()) == Piece::King);
             if (piece_on(move.from()) == Piece::King) assert(piece_on(move.to()) == Piece::None);
             colours_[us] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2 + 0]);
             pieces_[piece] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2 + 0]);
@@ -140,13 +140,13 @@ void Position::makemove(const Move &move) noexcept {
 #endif
 
             // Remove the rook
-            colours_[us] ^= castle_rooks_from_[us * 2];
-            pieces_[Piece::Rook] ^= castle_rooks_from_[us * 2];
+            colours_[us] ^= castle_rooks_from_[us * 2 + 0];
+            pieces_[Piece::Rook] ^= castle_rooks_from_[us * 2 + 0];
             // Add the rook
             colours_[us] ^= ksc_rook_to[us];
             pieces_[Piece::Rook] ^= ksc_rook_to[us];
 
-            assert(piece == Piece::King || piece == Piece::Rook);
+            assert(piece == Piece::King);
             assert(captured == Piece::None);
             assert(promo == Piece::None);
             assert(can_castle(us, MoveType::ksc));
@@ -178,7 +178,7 @@ void Position::makemove(const Move &move) noexcept {
 
             break;
         case MoveType::qsc:
-            assert(piece_on(move.from()) == Piece::King || piece_on(move.from()) == Piece::Rook);
+            assert(piece_on(move.from()) == Piece::King);
             if (piece_on(move.from()) == Piece::King) assert(piece_on(move.to()) == Piece::None);
             colours_[us] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2 + 1]);
             pieces_[piece] ^= Bitboard(move.from()) ^ Bitboard(castle_king_to[us * 2 + 1]);
@@ -197,7 +197,7 @@ void Position::makemove(const Move &move) noexcept {
             colours_[us] ^= qsc_rook_to[us];
             pieces_[Piece::Rook] ^= qsc_rook_to[us];
 
-            assert(piece == Piece::King || piece == Piece::Rook);
+            assert(piece == Piece::King);
             assert(captured == Piece::None);
             assert(promo == Piece::None);
             assert(can_castle(us, MoveType::qsc));

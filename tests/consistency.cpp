@@ -72,7 +72,7 @@ TEST_CASE("Consistency") {
         "5k2/8/8/1K1Pp1r1/8/8/8/8 w - e6 0 2",
         "r1kb3r/pppbpp1p/2p3p1/3P4/8/8/PPPB1PPP/RK1B1Q1R b kq - 0 9",
         "rnb2b1r/ppqppkpp/2p2p1n/8/8/2NBPN2/PPPP1PPP/R1BQKR2 b - - 4 6",
-        "r2q3r/pp3kpp/2p5/4Q3/3pPN2/b7/PPPP1P2/R1B3K1 w - - 0 27",
+        "r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4",
         "r2kbrqb/pppppppp/2nn4/8/8/2NN2P1/PPPPPP1P/R2KBRQB b Qq - 4 3",
     }};
 

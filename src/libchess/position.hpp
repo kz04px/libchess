@@ -17,15 +17,14 @@ namespace {
 
 enum Castling : int
 {
-    usKSC,
-    usQSC,
-    themKSC,
-    themQSC
+    usKSC = 0,
+    usQSC = 1,
+    themKSC = 2,
+    themQSC = 3,
 };
 
-constexpr const Square ksc_rook_to[] = {squares::F1, squares::F8};
-constexpr const Square qsc_rook_to[] = {squares::D1, squares::D8};
-constexpr const Square castle_king_to[] = {squares::G1, squares::C1, squares::G8, squares::C8};
+    constexpr const Square castle_rook_to[] = {squares::F1, squares::D1, squares::F8, squares::D8};
+    constexpr const Square castle_king_to[] = {squares::G1, squares::C1, squares::G8, squares::C8};
 
 }  // namespace
 
@@ -33,8 +32,12 @@ class Position {
    public:
     [[nodiscard]] Position() = default;
 
-    [[nodiscard]] explicit Position(const std::string &fen, const bool dfrc = false) {
-        set_fen(fen, dfrc);
+    bool CFEN;
+    bool XFEN;
+    bool NONC;
+
+    [[nodiscard]] explicit Position(const std::string &fen) {
+        set_fen(fen);
     }
 
     [[nodiscard]] constexpr Side turn() const noexcept {
@@ -65,9 +68,9 @@ class Position {
         return hash_;
     }
 
-    void set_fen(const std::string &fen, const bool dfrc = false) noexcept;
+    void set_fen(const std::string &fen) noexcept;
 
-    [[nodiscard]] std::string get_fen(const bool dfrc = false) const noexcept;
+    [[nodiscard]] std::string get_fen() const noexcept;
 
     [[nodiscard]] bool is_legal(const Move &m) const noexcept;
 
@@ -207,15 +210,8 @@ class Position {
 
     [[nodiscard]] Move parse_move(const std::string &str) const {
         const auto moves = legal_moves();
-        const auto wksc = str == "e1g1" && piece_on(squares::E1) == Piece::King && turn() == Side::White;
-        const auto wqsc = str == "e1c1" && piece_on(squares::E1) == Piece::King && turn() == Side::White;
-        const auto bksc = str == "e8g8" && piece_on(squares::E8) == Piece::King && turn() == Side::Black;
-        const auto bqsc = str == "e8c8" && piece_on(squares::E8) == Piece::King && turn() == Side::Black;
-        const auto ksc = wksc | bksc;
-        const auto qsc = wqsc | bqsc;
         for (const auto &move : moves) {
-            if ((ksc && move.type() == MoveType::ksc) || (qsc && move.type() == MoveType::qsc) ||
-                static_cast<std::string>(move) == str) {
+            if (static_cast<std::string>(move) == str) {
                 return move;
             }
         }
@@ -421,31 +417,31 @@ inline std::ostream &operator<<(std::ostream &os, const Position &pos) noexcept 
         const auto sq = Square(i);
         const auto bb = Bitboard{sq};
         if (pos.pieces(Side::White, Piece::Pawn) & bb) {
-            os << 'P';
+            os << " ♟ ";
         } else if (pos.pieces(Side::White, Piece::Knight) & bb) {
-            os << 'N';
+            os << " ♞ ";
         } else if (pos.pieces(Side::White, Piece::Bishop) & bb) {
-            os << 'B';
+            os << " ♝ ";
         } else if (pos.pieces(Side::White, Piece::Rook) & bb) {
-            os << 'R';
+            os << " ♜ ";
         } else if (pos.pieces(Side::White, Piece::Queen) & bb) {
-            os << 'Q';
+            os << " ♛ ";
         } else if (pos.pieces(Side::White, Piece::King) & bb) {
-            os << 'K';
+            os << " ♚ ";
         } else if (pos.pieces(Side::Black, Piece::Pawn) & bb) {
-            os << 'p';
+            os << " ♙ ";
         } else if (pos.pieces(Side::Black, Piece::Knight) & bb) {
-            os << 'n';
+            os << " ♘ ";
         } else if (pos.pieces(Side::Black, Piece::Bishop) & bb) {
-            os << 'b';
+            os << " ♗ ";
         } else if (pos.pieces(Side::Black, Piece::Rook) & bb) {
-            os << 'r';
+            os << " ♖ ";
         } else if (pos.pieces(Side::Black, Piece::Queen) & bb) {
-            os << 'q';
+            os << " ♕ ";
         } else if (pos.pieces(Side::Black, Piece::King) & bb) {
-            os << 'k';
+            os << " ♔ ";
         } else {
-            os << '-';
+            os << " · ";
         }
 
         if (i % 8 == 7) {

@@ -1,10 +1,11 @@
 #include <cassert>
 #include <sstream>
+#include <regex>
 #include "libchess/position.hpp"
 
 namespace libchess {
 
-void Position::set_fen(const std::string &fen, const bool dfrc) noexcept {
+void Position::set_fen(const std::string &fen) noexcept {
     if (fen == "startpos") {
         set_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
         return;
@@ -95,94 +96,108 @@ void Position::set_fen(const std::string &fen, const bool dfrc) noexcept {
 
     // Castling perms
     ss >> word;
-    if (word != "-") {
+
+    if (word == "-") {
+        NONC = false;
+    }
+    else {
         const auto wksq = king_position(Side::White);
         const auto bksq = king_position(Side::Black);
         const auto white_rooks = pieces(Side::White, libchess::Rook);
         const auto black_rooks = pieces(Side::Black, libchess::Rook);
 
-        for (const auto &c : word) {
-            if (dfrc) {
-                // White
-                if ('A' <= c && c <= 'H') {
-                    const auto sq = Square(c - 'A');
-                    const auto is_king_side = sq.file() > wksq.file();
-                    if (is_king_side && white_rooks.get(sq)) {
+        static std::regex patternX("[ABCDEFGHabcdefgh]");
+        static std::regex patternC("[KQkq]");
+
+        XFEN = std::regex_search(word, patternX);
+        CFEN = !XFEN || std::regex_search(word, patternC);
+        NONC = !XFEN && !CFEN;
+
+        if (!NONC) {
+            for (const auto &c : word) {
+                if (CFEN) {
+                    if (c == 'K' && white_rooks.get(squares::H1)) {
                         castling_[0] = true;
-                        castle_rooks_from_[0] = sq;
-                    } else if (!is_king_side && white_rooks.get(sq)) {
+                        castle_rooks_from_[0] = squares::H1;
+                    } else if (c == 'Q' && white_rooks.get(squares::A1)) {
                         castling_[1] = true;
-                        castle_rooks_from_[1] = sq;
-                    }
-                }
-                // Black
-                else if ('a' <= c && c <= 'h') {
-                    const auto sq = Square(56 + c - 'a');
-                    const auto is_king_side = sq.file() > bksq.file();
-                    if (is_king_side && black_rooks.get(sq)) {
+                        castle_rooks_from_[1] = squares::A1;
+                    } else if (c == 'k' && black_rooks.get(squares::H8)) {
                         castling_[2] = true;
-                        castle_rooks_from_[2] = sq;
-                    } else if (!is_king_side && black_rooks.get(sq)) {
+                        castle_rooks_from_[2] = squares::H8;
+                    } else if (c == 'q' && black_rooks.get(squares::A8)) {
                         castling_[3] = true;
-                        castle_rooks_from_[3] = sq;
+                        castle_rooks_from_[3] = squares::A8;
                     }
                 }
-                // This castling notation is bad and wrong
-                // Let's do the best we can
-                else if (c == 'K') {
-                    auto bb = Bitboard(wksq);
-                    while (bb) {
-                        bb = bb.east();
-
-                        if (bb & white_rooks) {
+                if (XFEN) {
+                    // White
+                    if ('A' <= c && c <= 'H') {
+                        const auto sq = Square(c - 'A');
+                        const auto is_king_side = sq.file() > wksq.file();
+                        if (is_king_side && white_rooks.get(sq)) {
                             castling_[0] = true;
-                            castle_rooks_from_[0] = (bb & white_rooks).lsb();
-                        }
-                    }
-                } else if (c == 'Q') {
-                    auto bb = Bitboard(wksq);
-                    while (bb) {
-                        bb = bb.west();
-
-                        if (bb & white_rooks) {
+                            castle_rooks_from_[0] = sq;
+                        } else if (!is_king_side && white_rooks.get(sq)) {
                             castling_[1] = true;
-                            castle_rooks_from_[1] = (bb & white_rooks).lsb();
+                            castle_rooks_from_[1] = sq;
                         }
                     }
-                } else if (c == 'k') {
-                    auto bb = Bitboard(bksq);
-                    while (bb) {
-                        bb = bb.east();
-
-                        if (bb & black_rooks) {
+                    // Black
+                    else if ('a' <= c && c <= 'h') {
+                        const auto sq = Square(56 + c - 'a');
+                        const auto is_king_side = sq.file() > bksq.file();
+                        if (is_king_side && black_rooks.get(sq)) {
                             castling_[2] = true;
-                            castle_rooks_from_[2] = (bb & black_rooks).lsb();
-                        }
-                    }
-                } else if (c == 'q') {
-                    auto bb = Bitboard(bksq);
-                    while (bb) {
-                        bb = bb.west();
-
-                        if (bb & black_rooks) {
+                            castle_rooks_from_[2] = sq;
+                        } else if (!is_king_side && black_rooks.get(sq)) {
                             castling_[3] = true;
-                            castle_rooks_from_[3] = (bb & black_rooks).lsb();
+                            castle_rooks_from_[3] = sq;
                         }
                     }
-                }
-            } else {
-                if (c == 'K' && white_rooks.get(squares::H1)) {
-                    castling_[0] = true;
-                    castle_rooks_from_[0] = squares::H1;
-                } else if (c == 'Q' && white_rooks.get(squares::A1)) {
-                    castling_[1] = true;
-                    castle_rooks_from_[1] = squares::A1;
-                } else if (c == 'k' && black_rooks.get(squares::H8)) {
-                    castling_[2] = true;
-                    castle_rooks_from_[2] = squares::H8;
-                } else if (c == 'q' && black_rooks.get(squares::A8)) {
-                    castling_[3] = true;
-                    castle_rooks_from_[3] = squares::A8;
+                    // This castling notation is bad and wrong
+                    // Let's do the best we can
+                    else if (c == 'K') {
+                        auto bb = Bitboard(wksq);
+                        while (bb) {
+                            bb = bb.east();
+
+                            if (bb & white_rooks) {
+                                castling_[0] = true;
+                                castle_rooks_from_[0] = (bb & white_rooks).lsb();
+                            }
+                        }
+                    } else if (c == 'Q') {
+                        auto bb = Bitboard(wksq);
+                        while (bb) {
+                            bb = bb.west();
+
+                            if (bb & white_rooks) {
+                                castling_[1] = true;
+                                castle_rooks_from_[1] = (bb & white_rooks).lsb();
+                            }
+                        }
+                    } else if (c == 'k') {
+                        auto bb = Bitboard(bksq);
+                        while (bb) {
+                            bb = bb.east();
+
+                            if (bb & black_rooks) {
+                                castling_[2] = true;
+                                castle_rooks_from_[2] = (bb & black_rooks).lsb();
+                            }
+                        }
+                    } else if (c == 'q') {
+                        auto bb = Bitboard(bksq);
+                        while (bb) {
+                            bb = bb.west();
+
+                            if (bb & black_rooks) {
+                                castling_[3] = true;
+                                castle_rooks_from_[3] = (bb & black_rooks).lsb();
+                            }
+                        }
+                    }
                 }
             }
         }

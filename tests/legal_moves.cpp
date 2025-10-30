@@ -28,7 +28,7 @@ TEST_CASE("Position::legal_captures()") {
         const auto num_captures = std::ranges::count_if(legal_moves, [](const auto &move) {
             return move.is_capturing();
         });
-        REQUIRE(num_captures == legal_captures.size());
+        REQUIRE(static_cast<uint64_t>(num_captures) == static_cast<uint64_t>(legal_captures.size()));
 
         for (const auto &move : legal_captures) {
             REQUIRE(move.is_capturing());

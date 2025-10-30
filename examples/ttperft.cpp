@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
     }
 
     TT<TTEntry> tt{256};
-    auto pos = libchess::Position(fen, true);
+    auto pos = libchess::Position(fen);
 
     std::cout << pos << std::endl;
     std::cout << std::endl;

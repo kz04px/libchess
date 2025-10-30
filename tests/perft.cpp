@@ -233,7 +233,7 @@ TEST_CASE("Perft DFRC - Shallow") {
 
     for (const auto &[fen, nodes] : tests) {
         INFO(fen);
-        auto pos = libchess::Position(fen, true);
+        auto pos = libchess::Position(fen);
         for (std::size_t i = 0; i < nodes.size(); ++i) {
             INFO("DEPTH: ");
             INFO(i);

@@ -73,7 +73,7 @@ void test(libchess::Position &pos, const int depth) noexcept {
         const auto prediction = pos.predict_hash(move);
         pos.makemove(move);
 
-        REQUIRE(pos.hash() == prediction);
+        REQUIRE(static_cast<uint64_t>(pos.hash()) == static_cast<uint64_t>(prediction));
 
         test(pos, depth - 1);
         pos.undomove();

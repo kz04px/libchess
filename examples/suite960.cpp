@@ -974,11 +974,11 @@ int main() {
         int j = 1;
         int jmax = suite.size();
         for (const auto &[fen, nodes] : suite) {
-            if (i >= nodes.size()) {
+            if (static_cast<size_t>(i) >= static_cast<size_t>(nodes.size())) {
                 continue;
             }
 
-            auto pos = libchess::Position(fen, true);
+            auto pos = libchess::Position(fen);
             const auto exp = nodes[i];
             const auto got = pos.perft(i + 1);
             std::cout << "\r" << j << "/" << jmax;

@@ -40,8 +40,8 @@ TEST_CASE("Position::get_fen() DFRC") {
 
     for (const auto &fen : fens) {
         INFO(fen);
-        const libchess::Position pos{fen, true};
-        REQUIRE(pos.get_fen(true) == fen);
+        const libchess::Position pos{fen};
+        REQUIRE(pos.get_fen() == fen);
     }
 }
 
@@ -49,20 +49,19 @@ TEST_CASE("FEN - DFRC handling KQkq") {
     using pair_type = std::pair<std::string, std::string>;
 
     const std::array<pair_type, 6> fens = {{
-        {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-         "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w HAha - 0 1"},
-        {"r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1", "r3k2r/8/8/8/8/8/8/R3K2R w HAha - 0 1"},
-        {"r5kr/8/8/8/8/8/8/R5KR w KQkq - 0 1", "r5kr/8/8/8/8/8/8/R5KR w HAha - 0 1"},
-        {"rk5r/8/8/8/8/8/8/RK5R w KQkq - 0 1", "rk5r/8/8/8/8/8/8/RK5R w HAha - 0 1"},
-        {"1r2k1r1/8/8/8/8/8/8/1R2K1R1 w KQkq - 0 1", "1r2k1r1/8/8/8/8/8/8/1R2K1R1 w GBgb - 0 1"},
-        {"2r1kr2/8/8/8/8/8/8/2R1KR2 w KQkq - 0 1", "2r1kr2/8/8/8/8/8/8/2R1KR2 w FCfc - 0 1"},
+        {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"},
+        {"r3k2r/8/8/8/8/8/8/R3K2R w HAha - 0 1", "r3k2r/8/8/8/8/8/8/R3K2R w HAha - 0 1"},
+        {"r5kr/8/8/8/8/8/8/R5KR w KQkq - 0 1", "r5kr/8/8/8/8/8/8/R5KR w KQkq - 0 1"},
+        {"rk5r/8/8/8/8/8/8/RK5R w HAha - 0 1", "rk5r/8/8/8/8/8/8/RK5R w HAha - 0 1"},
+        {"1r2k1r1/8/8/8/8/8/8/1R2K1R1 w GBgb - 0 1", "1r2k1r1/8/8/8/8/8/8/1R2K1R1 w GBgb - 0 1"},
+        {"2r1kr2/8/8/8/8/8/8/2R1KR2 w FCfc - 0 1", "2r1kr2/8/8/8/8/8/8/2R1KR2 w FCfc - 0 1"},
     }};
 
     for (const auto &[fen, expected] : fens) {
         INFO(fen);
 
-        auto pos = libchess::Position{fen, true};
-        CHECK(pos.get_fen(true) == expected);
+        auto pos = libchess::Position{fen};
+        CHECK(pos.get_fen() == expected);
     }
 }
 
@@ -92,8 +91,8 @@ TEST_CASE("Counters") {
         INFO(movestr);
         const auto move = pos.parse_move(movestr);
         pos.makemove(move);
-        REQUIRE(pos.halfmoves() == half);
-        REQUIRE(pos.fullmoves() == full);
+        REQUIRE(static_cast<uint64_t>(pos.halfmoves()) == static_cast<uint64_t>(half));
+        REQUIRE(static_cast<uint64_t>(pos.fullmoves()) == static_cast<uint64_t>(full));
     }
 }
 
@@ -118,11 +117,11 @@ TEST_CASE("FEN - 960") {
     for (const auto &fen : fens) {
         INFO(fen);
 
-        auto pos = libchess::Position{fen, true};
-        CHECK(pos.get_fen(true) == fen);
+        auto pos = libchess::Position{fen};
+        CHECK(pos.get_fen() == fen);
 
-        pos.set_fen(fen, true);
-        CHECK(pos.get_fen(true) == fen);
+        pos.set_fen(fen);
+        CHECK(pos.get_fen() == fen);
     }
 }
 
@@ -157,7 +156,7 @@ TEST_CASE("FEN - DFRC Illegal castling") {
 
     for (const auto &[fen, corrected] : tests) {
         INFO(fen);
-        auto pos = libchess::Position{fen, true};
-        CHECK(pos.get_fen(true) == corrected);
+        auto pos = libchess::Position{fen};
+        CHECK(pos.get_fen() == corrected);
     }
 }

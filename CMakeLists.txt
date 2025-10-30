@@ -27,6 +27,7 @@ add_library(
     src/check_evasions.cpp
     src/count_moves.cpp
     src/get_fen.cpp
+    src/set_fen.cpp
     src/is_legal.cpp
     src/king_allowed.cpp
     src/legal_captures.cpp
